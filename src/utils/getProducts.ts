@@ -1,0 +1,26 @@
+// src/utils/getProducts.ts
+
+import type { ApiResPromise } from '@/types/api';
+import type { Product } from '@/types/Product';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
+
+/**
+ * 상품 목록을 조회합니다.
+ * @returns {Promise<ApiRes<Product[]>>} 상품 목록 API 응답
+ */
+export async function getProducts(): ApiResPromise<Product[]> {
+  try {
+    const res = await fetch(`${API_URL}/products`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+      },
+      cache: 'force-cache',
+    });
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    return { ok: 0, message: '일시적인 네트워크 문제로 상품 목록을 불러오지 못했습니다.' };
+  }
+}
