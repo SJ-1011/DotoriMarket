@@ -1,3 +1,7 @@
+'use client';
+
+import Header from '@/components/common/Header';
+
 export default function Home() {
-  return <h1>final-project-sample v02</h1>;
+  return <Header />;
 }
