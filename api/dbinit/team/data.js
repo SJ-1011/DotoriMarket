@@ -17,7 +17,7 @@ export const initData = async (clientId, nextSeq) => {
         address: '서울시 강남구 역삼동 123',
         type: 'admin',
         loginType: 'email',
-        image: `/files/${clientId}/user-muzi.png`,
+        image: `files/${clientId}/user-muzi.png`,
         createdAt: getTime(-100, -60 * 60 * 3),
         updatedAt: getTime(-100, -60 * 60 * 3),
         extra: {
@@ -33,7 +33,7 @@ export const initData = async (clientId, nextSeq) => {
         address: '서울시 강남구 삼성동 456',
         type: 'seller',
         loginType: 'email',
-        image: `/files/${clientId}/user-neo.png`,
+        image: `files/${clientId}/user-neo.png`,
         createdAt: getTime(-50),
         updatedAt: getTime(-30, -60 * 60 * 3),
         extra: {
@@ -51,14 +51,14 @@ export const initData = async (clientId, nextSeq) => {
         shippingFees: 0,
         show: true,
         active: true,
-        name: '캥거루 스턴트 독 로봇완구',
+        name: '부가티',
         quantity: 320,
         buyQuantity: 310,
         mainImages: [
           {
-            path: `/files/${clientId}/sample-dog.jpg`,
-            name: 'sample-dog.jpg',
-            originalname: '스턴트 독.jpg',
+            path: `files/${clientId}/sample-bugatti.png`,
+            name: 'sample-bugatti.png',
+            originalname: '부가티.png',
           },
         ],
         content: `
@@ -81,14 +81,14 @@ export const initData = async (clientId, nextSeq) => {
         shippingFees: 2500,
         show: true,
         active: true,
-        name: '헬로카봇 스톰다이버',
+        name: '부가티',
         quantity: 200,
         buyQuantity: 198,
         mainImages: [
           {
-            path: `/files/${clientId}/sample-diver.jpg`,
-            name: 'sample-diver.jpg',
-            originalname: '헬로카봇.jpg',
+            path: `files/${clientId}/sample-bugatti.png`,
+            name: 'sample-bugatti.png',
+            originalname: '부가티.png',
           },
         ],
         content: `
@@ -127,7 +127,7 @@ export const initData = async (clientId, nextSeq) => {
         user: {
           _id: 2,
           name: '네오',
-          image: `/files/${clientId}/user-neo.png`,
+          image: `files/${clientId}/user-neo.png`,
         },
         title: '회원 가입했어요.',
         content: '잘 부탁드려요.',
