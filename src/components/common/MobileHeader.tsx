@@ -42,7 +42,7 @@ export default function MobileHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-20 text-sm">
+      <header className="sticky top-0 left-0 z-20 text-sm bg-white">
         <nav>
           <div aria-label="상단 메뉴" className="flex flex-row flex-nowrap p-4 justify-between gap-8 items-center">
             <div className="flex flex-row flex-nowrap gap-6">
@@ -71,7 +71,7 @@ export default function MobileHeader() {
         <hr className=" border-primary" />
       </header>
       {isOpenMenu && (
-        <nav className="absolute top-0 left-0 z-30 w-full h-full bg-white p-4 text-sm flex flex-col flex-nowrap gap-4">
+        <nav className="fixed top-0 left-0 z-30 w-full h-full bg-white p-4 text-sm flex flex-col flex-nowrap gap-4">
           {/* 로고와 닫기 버튼 */}
           <div className="flex flex-row flex-nowrap justify-between items-center">
             <Link href="/">
