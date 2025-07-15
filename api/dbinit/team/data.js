@@ -40,34 +40,84 @@ export const initData = async (clientId, nextSeq) => {
           birthday: '11-23',
         },
       },
-      
     ],
 
     // 상품
     product: [
-
+      {
+        _id: await nextSeq('product'),
+        seller_id: 2,
+        price: 22800,
+        shippingFees: 0,
+        show: true,
+        active: true,
+        name: '캥거루 스턴트 독 로봇완구',
+        quantity: 320,
+        buyQuantity: 310,
+        mainImages: [
+          {
+            path: `/files/${clientId}/sample-dog.jpg`,
+            name: 'sample-dog.jpg',
+            originalname: '스턴트 독.jpg',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>캥거루 스턴트 독 로봇완구 상세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: true,
+          category: ['PC03', 'PC0301'],
+          sort: 5,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 333,
+        price: 17260,
+        shippingFees: 2500,
+        show: true,
+        active: true,
+        name: '헬로카봇 스톰다이버',
+        quantity: 200,
+        buyQuantity: 198,
+        mainImages: [
+          {
+            path: `/files/${clientId}/sample-diver.jpg`,
+            name: 'sample-diver.jpg',
+            originalname: '헬로카봇.jpg',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>헬로카봇 스톰다이버 상세 설명</p>
+          </div>`,
+        createdAt: getTime(-38, -60 * 60 * 6),
+        updatedAt: getTime(-33, -60 * 55),
+        extra: {
+          isNew: false,
+          isBest: true,
+          category: ['PC01', 'PC0103'],
+          sort: 4,
+        },
+      },
     ],
 
     // 주문
-    order: [
-
-    ],
+    order: [],
 
     // 후기
-    review: [
-
-    ],
+    review: [],
 
     // 장바구니
-    cart: [
-
-    ],
+    cart: [],
 
     // 즐겨찾기/북마크
-    bookmark: [
+    bookmark: [],
 
-    ],
-    
     // QnA, 공지사항 등의 게시판
     post: [
       {
@@ -77,7 +127,7 @@ export const initData = async (clientId, nextSeq) => {
         user: {
           _id: 2,
           name: '네오',
-          image: `/files/${clientId}/user-neo.png`
+          image: `/files/${clientId}/user-neo.png`,
         },
         title: '회원 가입했어요.',
         content: '잘 부탁드려요.',
@@ -87,13 +137,9 @@ export const initData = async (clientId, nextSeq) => {
     ],
 
     // 코드
-    code: [
-
-    ],
+    code: [],
 
     // 설정
-    config: [
-
-    ],
+    config: [],
   };
 };
