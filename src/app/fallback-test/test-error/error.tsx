@@ -14,7 +14,7 @@ export default function Error({ error }: { error: Error }) {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 flex flex-col items-center justify-center">
+      <main className="flex-1 flex flex-col items-center justify-cente py-32">
         <Image src="/error-dotori.png" alt="에러 도토리 이미지" width={200} height={200} priority />
         <h1 className="mt-10 text-center">
           앗, 도토리가 길을 잃었어요🍂
