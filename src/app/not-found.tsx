@@ -9,7 +9,7 @@ export default function NotFound() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 flex flex-col items-center justify-center">
+      <main className="flex-1 flex flex-col items-center justify-center py-32">
         <Image src="/404-dotori.png" alt="404 도토리 이미지" width={200} height={200} priority />
 
         <h1 className="mt-10 text-center">
