@@ -3,7 +3,8 @@ import type { User } from '@/types/User';
 
 import { getProducts } from '@/utils/getProducts';
 import type { Product } from '@/types/Product';
-
+import Image from 'next/image';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default async function Page() {
   /////회원 정보 조회
   const resUsers = await getUsers();
@@ -40,7 +41,7 @@ export default async function Page() {
           {products.map(product => (
             <li key={product._id}>
               {product.name} - {product.price}원<br />
-              <img src={product.mainImages[0]?.path} alt={product.mainImages[0]?.originalname} width={100} />
+              <Image src={`${API_URL}/${product.mainImages[0].path}`} alt={product.mainImages[0]?.originalname} width={100} height={100} />
             </li>
           ))}
         </ul>
