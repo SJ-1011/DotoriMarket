@@ -1,3 +1,5 @@
+'use client';
+
 import BarIcon from '@/components/icon/BarIcon';
 import BellIcon from '@/components/icon/BellIcon';
 import CartIcon from '@/components/icon/CartIcon';
