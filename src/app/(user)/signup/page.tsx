@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 import SignupForm from './SignupForm';
-import Header from '@/components/common/Header';
-import Footer from '@/components/common/Footer';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -23,14 +21,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function SignupPage() {
   return (
     <>
-      <Header />
       <main className="min-h-screen flex-grow flex items-center justify-center bg-background px-4 py-16">
         <div className="p-12 rounded-lg w-full max-w-[600px] bg-white">
           <h2 className="text-xl sm:text-2xl  font-bold mb-10 mt-8 ">회원가입</h2>
           <SignupForm />
         </div>
       </main>
-      <Footer />
     </>
   );
 }
