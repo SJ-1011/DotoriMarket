@@ -68,7 +68,7 @@ export default function DesktopHeader() {
               </Link>
             </li>
             <li>
-              <Link href="/" aria-label="마이페이지">
+              <Link href="/mypage" aria-label="마이페이지">
                 <MypageIcon svgProps={{ className: 'w-6 h-6' }} />
               </Link>
             </li>
