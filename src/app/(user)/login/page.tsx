@@ -8,12 +8,14 @@ import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useLoginStore } from '@/stores/loginStore';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
 export default function Login() {
   const router = useRouter();
+  const loginStore = useLoginStore();
   const [errorMsg, setErrorMsg] = useState('');
   // 이메일 유효성 검사
   const isValidEmail = (email: string) => {
@@ -64,10 +66,21 @@ export default function Login() {
           },
         );
 
-        console.log(res.data);
-        console.log(res.data.ok);
-        console.log(res.data.item);
-        console.log(res.data.item.name);
+        const userData = res.data.item;
+        loginStore.login({
+          _id: userData._id,
+          birthday: userData.birthday,
+          createdAt: userData.createdAt,
+          email: userData.email,
+          image: userData.image,
+          loginType: userData.loginType,
+          name: userData.name,
+          notifications: userData.notifications,
+          phone: userData.phone,
+          token: userData.token,
+          type: userData.type,
+          updatedAt: userData.updatedAt,
+        });
 
         alert(`${res.data.item.name}님, 환영합니다!`);
         setErrorMsg('');
