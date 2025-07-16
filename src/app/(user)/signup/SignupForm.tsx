@@ -14,6 +14,7 @@ import BirthdayField from './BirthdayField';
 import PhoneField from './PhoneField';
 import ProfileImageField from './ProfileImageField';
 
+// 폼 입력값 타입 정의
 export interface SignupFormValues {
   type: string;
   email: string;
@@ -27,12 +28,13 @@ export interface SignupFormValues {
   attach?: FileList;
 }
 
+// 이메일 중복확인 API 응답 타입 정의
 interface ApiEmailCheckRes {
   ok: number;
   message?: string;
 }
 
-// FormData 변환 함수
+// 폼 데이터를 FormData 타입으로 변환하는 함수
 function convertToFormData(data: SignupFormValues): FormData {
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => {
@@ -47,6 +49,7 @@ function convertToFormData(data: SignupFormValues): FormData {
   return formData;
 }
 
+// react-hook-form으로 폼 상태 및 메서드 생성, onChange 모드로 유효성 검사
 export default function SignupForm() {
   const router = useRouter();
   const methods = useForm<SignupFormValues>({ mode: 'onChange' });
@@ -58,6 +61,7 @@ export default function SignupForm() {
     formState: { isSubmitting },
   } = methods;
 
+  // 약관 동의 상태 관리
   const [agreements, setAgreements] = useState<AgreementMap>({
     all: false,
     age: false,
@@ -74,10 +78,15 @@ export default function SignupForm() {
   const [emailCheckMessage, setEmailCheckMessage] = useState<string | null>(null);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
 
+  /**
+   * 회원가입 폼 제출 시 실행되는 함수
+   * @param data 폼 입력값 전체
+   */
   const onSubmit: SubmitHandler<SignupFormValues> = async data => {
     setFormMessage(null);
     setEmailCheckMessage(null);
 
+    // 필수 약관 항목 체크 여부 확인
     const requiredChecked = agreements.age && agreements.tos && agreements.privacy;
     if (!requiredChecked) {
       setShowAgreementError(true);
@@ -98,6 +107,7 @@ export default function SignupForm() {
     const formData = convertToFormData({ ...data, type: 'user' });
 
     try {
+      // createUser API 호출 (서버에 회원가입 요청)
       const result = await createUser(null, formData);
 
       if (result.ok) {
@@ -115,6 +125,10 @@ export default function SignupForm() {
     }
   };
 
+  /**
+   * 폼 유효성 검사 실패 시 실행
+   * 첫 번째 에러 필드로 포커스 및 스크롤 이동
+   */
   const onError = (errors: FieldErrors<SignupFormValues>) => {
     if (errors.email) {
       const el = document.getElementById('email');
@@ -132,7 +146,12 @@ export default function SignupForm() {
     }
   };
 
-  // 이메일 중복 확인 함수
+  /**
+   * 이메일 중복 확인 함수
+   * - 이메일 형식 체크
+   * - API 요청으로 중복 여부 확인
+   * - 결과에 따라 메시지 및 에러 상태 처리
+   */
   const handleCheckEmail = async () => {
     const email = watch('email');
     setEmailCheckMessage(null);
@@ -149,9 +168,6 @@ export default function SignupForm() {
         headers: { 'Client-Id': process.env.NEXT_PUBLIC_CLIENT_ID || '' },
         validateStatus: status => status >= 200 && status < 500,
       });
-
-      console.log('응답 상태:', res.status);
-      console.log('응답 데이터:', res.data);
 
       if (res.data.ok) {
         clearErrors('email');
