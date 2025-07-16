@@ -12,6 +12,16 @@ export interface PostProduct {
   image: string | null;
 }
 
+//댓글 추가
+export interface PostReply {
+  _id: number | string;
+  user: PostUser;
+  content: string;
+  like: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Post {
   _id: number | string;
   type: BoardType;
@@ -24,4 +34,5 @@ export interface Post {
   bookmarks: number;
   repliesCount: number;
   product: PostProduct;
+  replies?: PostReply[];
 }
