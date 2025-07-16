@@ -41,14 +41,14 @@ export default async function NoticeBoardPage() {
         <table className="w-full text-center">
           <thead>
             <tr className="text-[#A97452] border-b border-[#965b29]">
-              <th className="py-2 font-bold text-base sm:text-lg lg:text-xl w-14 sm:w-24 lg:w-32 " style={{ width: 60 }}>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base w-14 sm:w-24 lg:w-32 " style={{ width: 60 }}>
                 번호
               </th>
-              <th className="py-2 font-bold text-base sm:text-lg lg:text-xl w-14 sm:w-24 lg:w-32  ">제목</th>
-              <th className="py-2 font-bold text-base sm:text-lg lg:text-xl w-14 sm:w-24 lg:w-32 " style={{ width: 150 }}>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base-xl w-14 sm:w-24 lg:w-32  ">제목</th>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base w-14 sm:w-24 lg:w-32 " style={{ width: 150 }}>
                 작성자
               </th>
-              <th className="py-2 font-bold text-base sm:text-lg lg:text-xl w-14 sm:w-24 lg:w-32 " style={{ width: 120 }}>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base w-14 sm:w-24 lg:w-32 " style={{ width: 120 }}>
                 작성일
               </th>
             </tr>
@@ -56,21 +56,21 @@ export default async function NoticeBoardPage() {
           <tbody>
             {posts.length === 0 ? (
               <tr>
-                <td colSpan={4} className="py-8 text-base sm:text-lg lg:text-xl text-gray-400">
+                <td colSpan={4} className="py-8 text-xs sm:text-sm lg:text-base text-gray-400">
                   게시글이 없습니다.
                 </td>
               </tr>
             ) : (
               posts.map(post => (
                 <tr key={post._id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-2 text-base sm:text-lg lg:text-xl">{post._id}</td>
-                  <td className="py-2 text-center px-2 text-base sm:text-lg lg:text-xl">
+                  <td className="py-2 text-xs sm:text-sm lg:text-base">{post._id}</td>
+                  <td className="py-2 text-center px-2 text-xs sm:text-sm lg:text-base">
                     <Link href={`/notice/${post._id}`} className="hover:underline">
                       {post.title}
                     </Link>
                   </td>
-                  <td className="py-2 text-base sm:text-lg lg:text-xl">도토리섬 관리자</td>
-                  <td className="py-2 text-base sm:text-lg lg:text-xl">{post.createdAt?.substring(0, 10)}</td>
+                  <td className="py-2 text-xs sm:text-sm lg:text-base">도토리섬 관리자</td>
+                  <td className="py-2 text-xs sm:text-sm lg:text-base">{post.createdAt?.substring(0, 10)}</td>
                 </tr>
               ))
             )}
