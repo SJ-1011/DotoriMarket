@@ -81,17 +81,17 @@ export default function SignupForm() {
       const result = await createUser(null, formData);
 
       if (result.ok) {
-        setFormMessage('회원 가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
+        alert('회원 가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
         setTimeout(() => router.replace('/login'), 1500);
       } else if (result.errors) {
         Object.entries(result.errors).forEach(([field, error]) => {
           setError(field as keyof SignupFormValues, { message: error?.msg });
         });
       } else {
-        setFormMessage(result.message || '회원가입에 실패했습니다.');
+        alert(result.message || '회원가입에 실패했습니다.');
       }
     } catch {
-      setFormMessage('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      alert('일시적인 네트워크 문제가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
