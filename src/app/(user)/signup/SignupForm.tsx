@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import axios from 'axios';
 import { useForm, FormProvider, SubmitHandler, FieldErrors } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import AgreementSection, { AgreementMap } from './AgreementSection';
@@ -24,6 +25,11 @@ export interface SignupFormValues {
   phone2: string;
   phone3: string;
   attach?: FileList;
+}
+
+interface ApiEmailCheckRes {
+  ok: number;
+  message?: string;
 }
 
 // FormData 변환 함수
@@ -125,41 +131,53 @@ export default function SignupForm() {
     }
   };
 
+  // 이메일 중복 확인 함수 (axios 사용)
   const handleCheckEmail = async () => {
+    const email = watch('email');
     setEmailCheckMessage(null);
     setIsEmailChecked(false);
 
-    const email = watch('email');
     if (!email || !email.includes('@')) {
       setError('email', { message: '이메일 형식이 올바르지 않습니다.' });
       return;
     }
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/email?email=${encodeURIComponent(email)}`, {
-        method: 'GET',
-        headers: {
-          'Client-Id': process.env.NEXT_PUBLIC_CLIENT_ID || '',
-        },
+      const res = await axios.get<ApiEmailCheckRes>(`${process.env.NEXT_PUBLIC_API_URL}/users/email`, {
+        params: { email },
+        headers: { 'Client-Id': process.env.NEXT_PUBLIC_CLIENT_ID || '' },
+        validateStatus: status => status >= 200 && status < 500, // 200~499는 정상 응답으로 처리
       });
 
-      const result = await res.json();
+      console.log('응답 상태:', res.status);
+      console.log('응답 데이터:', res.data);
 
-      if (result.ok) {
+      if (res.data.ok) {
         setEmailCheckMessage('사용 가능한 이메일입니다.');
         setIsEmailChecked(true);
       } else {
-        setError('email', { message: result.message || '이미 등록된 이메일입니다.' });
+        setError('email', { message: res.data.message ?? '이미 등록된 이메일입니다.' });
       }
-    } catch {
-      setError('email', { message: '이메일 중복 확인 중 오류가 발생했습니다.' });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error 응답:', error.response);
+        if (error.response) {
+          console.log('에러 상태:', error.response.status);
+          console.log('에러 데이터:', error.response.data);
+          setError('email', { message: error.response.data?.message ?? '이메일 중복 확인 중 오류가 발생했습니다.' });
+        } else {
+          setError('email', { message: '서버에 연결할 수 없습니다. 잠시 후 다시 시도하세요.' });
+        }
+      } else {
+        console.error('알 수 없는 에러:', error);
+        setError('email', { message: '알 수 없는 오류가 발생했습니다.' });
+      }
     }
   };
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
-        {/* 전체 폼 전반 메시지 */}
         {formMessage && <p className="mb-4 text-center text-sm text-red-500">{formMessage}</p>}
 
         <EmailField onCheck={handleCheckEmail} message={emailCheckMessage} />
