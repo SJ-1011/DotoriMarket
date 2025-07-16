@@ -1,4 +1,4 @@
-//공지 게시판
+//문의 게시판
 
 import FilterIcon from '@/components/icon/FilterIcon';
 import SearchIcon from '@/components/icon/SearchIcon';
@@ -13,18 +13,18 @@ export default async function NoticeBoardPage() {
     <>
       <div className="bg-white px-8 pt-6 pb-12 min-h-[80vh]">
         {/* 좌측 '홈 > COMMUNITY' */}
-        <div className="mb-3 text-base sm:text-lg lg:text-xl  text-gray-400">홈 &gt; COMMUNITY</div>
+        <div className="mb-3  text-xs sm:text-sm lg:text-base  text-gray-400">홈 &gt; COMMUNITY</div>
 
         {/* 제목 & 검색탭 */}
         <div className="flex items-start justify-between mb-6 relative">
-          <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-[#A97452]  pt-2">공지게시판</h1>
+          <h1 className="text-base sm:text-lg lg:text-xl font-bold text-[#A97452]  pt-2">공지게시판</h1>
           {/* 우측 검색 */}
           <div className="flex flex-col items-end">
             {/* 검색-bar */}
-            <div className="flex items-center justify-between gap-2 border border-[#A97452] rounded-3xl px-3 py-2 w-60 sm:w-72 lg:w-80 bg-white">
-              <input type="text" placeholder="검색어를 입력하세요" className="flex-1 outline-none border-none bg-transparent text-sm lg:text-base py-2 h-1 lg:py-3 lg:h-9" />
+            <div className="flex items-center justify-between gap-2 border border-[#A97452] rounded-3xl px-3 py-2 w-48 sm:w-60 lg:w-72 h-8 sm:h-8 lg:h-10 bg-white">
+              <input type="text" placeholder="검색어를 입력하세요" className="flex-1 outline-none border-none bg-transparent text-xs sm:text-sm lg:text-base py-2" />
               <button type="submit" className="ml-2">
-                <SearchIcon className="w-6 h-6 text-[#A97452]" />
+                <SearchIcon className="w-4 h-4 sm:w-4 sm:h-4 lg:w-6 lg:h-6 text-[#A97452]" />
               </button>
             </div>
             {/* 필터 버튼 (검색창 바로 아래, 우측 정렬) */}
