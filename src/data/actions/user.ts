@@ -1,22 +1,28 @@
 import axios from 'axios';
-import { ApiRes, User } from '@/types';
+import { ApiRes, User, UserImage } from '@/types';
 import { uploadFile } from '@/data/actions/file';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
 export async function createUser(_: ApiRes<User> | null, formData: FormData): Promise<ApiRes<User>> {
-  let image: string | undefined;
+  let image: UserImage | undefined;
   const attach = formData.get('attach') as File | null;
+
   if (attach && attach.size > 0) {
     const fileRes = await uploadFile(formData);
     if (fileRes.ok) {
-      image = fileRes.item[0].path;
+      image = {
+        path: fileRes.item[0].path,
+        name: fileRes.item[0].name,
+        originalname: fileRes.item[0].originalname,
+      };
+      console.log('생성된 image 객체:', image);
     } else {
+      console.log('파일 업로드 실패:', fileRes);
       return fileRes;
     }
   }
-
   const body = {
     type: (formData.get('type') as string) || 'user',
     name: formData.get('name') as string | null,
@@ -27,6 +33,7 @@ export async function createUser(_: ApiRes<User> | null, formData: FormData): Pr
 
     ...(image ? { image } : {}),
   };
+  console.log('회원가입 요청 body:', body);
 
   try {
     const res = await axios.post<ApiRes<User>>(`${API_URL}/users`, body, {

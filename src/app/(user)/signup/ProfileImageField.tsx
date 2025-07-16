@@ -28,7 +28,17 @@ export default function ProfileImageField() {
         프로필 이미지
       </label>
       <div className="flex items-start gap-4 mt-3">
-        <input type="file" id="attach" accept="image/*" {...register('attach')} onChange={onFileChange} className="hidden" />
+        <input
+          type="file"
+          id="attach"
+          accept="image/*"
+          {...register('attach')}
+          onChange={e => {
+            register('attach').onChange(e);
+            onFileChange(e);
+          }}
+          className="hidden"
+        />
         <label htmlFor="attach" className="inline-block cursor-pointer bg-primary-light text-sm text-white px-4 py-2 mr-8 rounded">
           파일 선택
         </label>

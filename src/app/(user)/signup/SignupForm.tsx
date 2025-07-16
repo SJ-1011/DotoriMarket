@@ -54,6 +54,7 @@ export default function SignupForm() {
     handleSubmit,
     setError,
     watch,
+    clearErrors,
     formState: { isSubmitting },
   } = methods;
 
@@ -131,7 +132,7 @@ export default function SignupForm() {
     }
   };
 
-  // 이메일 중복 확인 함수 (axios 사용)
+  // 이메일 중복 확인 함수
   const handleCheckEmail = async () => {
     const email = watch('email');
     setEmailCheckMessage(null);
@@ -146,13 +147,14 @@ export default function SignupForm() {
       const res = await axios.get<ApiEmailCheckRes>(`${process.env.NEXT_PUBLIC_API_URL}/users/email`, {
         params: { email },
         headers: { 'Client-Id': process.env.NEXT_PUBLIC_CLIENT_ID || '' },
-        validateStatus: status => status >= 200 && status < 500, // 200~499는 정상 응답으로 처리
+        validateStatus: status => status >= 200 && status < 500,
       });
 
       console.log('응답 상태:', res.status);
       console.log('응답 데이터:', res.data);
 
       if (res.data.ok) {
+        clearErrors('email');
         setEmailCheckMessage('사용 가능한 이메일입니다.');
         setIsEmailChecked(true);
       } else {
