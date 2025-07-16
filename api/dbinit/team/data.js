@@ -116,7 +116,21 @@ export const initData = async (clientId, nextSeq) => {
     cart: [],
 
     // 즐겨찾기/북마크
-    bookmark: [],
+    bookmark: [
+      {
+        _id: await nextSeq('bookmark'),
+        user_id: 2,
+        user: {
+          _id: 2,
+          name: '무지',
+          image: `/files/${clientId}/user-jayg.webp`,
+        },
+        type: 'post',
+        target_id: 3,
+        memo: '첫째 크리스마스 선물.',
+        createdAt: getTime(-3, -60 * 60 * 2),
+      },
+    ],
 
     // QnA, 공지사항 등의 게시판
     //community가 자유게시판, notice가 공지게시판, qna 문의게시판
@@ -134,8 +148,6 @@ export const initData = async (clientId, nextSeq) => {
         content: '잘 부탁드려요.',
         createdAt: getTime(-1, -60 * 60 * 14),
         updatedAt: getTime(-1, -60 * 60 * 2),
-        bookmarks: 555,
-        repliesCount: 444,
         product: {
           image: null,
         },
@@ -167,6 +179,44 @@ export const initData = async (clientId, nextSeq) => {
         content: '잘 부탁드려요.',
         createdAt: getTime(-1, -60 * 60 * 14),
         updatedAt: getTime(-1, -60 * 60 * 2),
+        replies: [
+          {
+            _id: await nextSeq('reply'),
+            user: {
+              _id: 2,
+              name: '네오',
+              image: 'user-neo.png',
+            },
+            content: '크기는 상품 상세정보에 나와 있습니다.',
+            like: 5,
+            createdAt: getTime(-2, -60 * 60 * 20),
+            updatedAt: getTime(-2, -60 * 60 * 2),
+          },
+          {
+            _id: await nextSeq('reply'),
+            user: {
+              _id: 4,
+              name: '제이지',
+              image: 'user-jayg.webp',
+            },
+            content: '어디있나 모르겠어요.',
+            like: 7,
+            createdAt: getTime(-2, -60 * 60 * 10),
+            updatedAt: getTime(-2, -60 * 60 * 1),
+          },
+          {
+            _id: await nextSeq('reply'),
+            user: {
+              _id: 2,
+              name: '네오',
+              image: 'user-neo.png',
+            },
+            content: '높이 60cm 입니다.',
+            like: 3,
+            createdAt: getTime(-2, -60 * 60 * 9),
+            updatedAt: getTime(-1, -60 * 60 * 20),
+          },
+        ],
       },
     ],
 
