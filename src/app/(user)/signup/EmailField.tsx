@@ -3,7 +3,12 @@
 import { useFormContext } from 'react-hook-form';
 import type { SignupFormValues } from './SignupForm';
 
-export default function EmailField({ onCheck }: { onCheck: () => void }) {
+interface EmailFieldProps {
+  onCheck: () => void;
+  message: string | null;
+}
+
+export default function EmailField({ onCheck, message }: EmailFieldProps) {
   const {
     register,
     formState: { errors },
@@ -32,7 +37,8 @@ export default function EmailField({ onCheck }: { onCheck: () => void }) {
           중복 확인
         </button>
       </div>
-      {errors.email && <p className="ml-2 mt-1 text-sm text-red-500">{errors.email.message}</p>}
+      {/* 에러 메시지 우선, 없으면 중복확인 결과 메시지 출력 */}
+      {errors.email ? <p className="ml-2 mt-1 text-sm text-red-500">{errors.email.message}</p> : message && <p className="ml-2 mt-1 text-sm text-green-500">{message}</p>}
     </div>
   );
 }

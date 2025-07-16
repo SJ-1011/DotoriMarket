@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
+import { useForm, FormProvider, SubmitHandler, FieldErrors } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import AgreementSection, { AgreementMap } from './AgreementSection';
 import { createUser } from '@/data/actions/user';
@@ -26,7 +26,7 @@ export interface SignupFormValues {
   attach?: FileList;
 }
 
-// FormData 유틸 함수
+// FormData 변환 함수
 function convertToFormData(data: SignupFormValues): FormData {
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => {
@@ -64,9 +64,12 @@ export default function SignupForm() {
 
   const [showAgreementError, setShowAgreementError] = useState(false);
   const [formMessage, setFormMessage] = useState<string | null>(null);
+  const [emailCheckMessage, setEmailCheckMessage] = useState<string | null>(null);
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
 
   const onSubmit: SubmitHandler<SignupFormValues> = async data => {
     setFormMessage(null);
+    setEmailCheckMessage(null);
 
     const requiredChecked = agreements.age && agreements.tos && agreements.privacy;
     if (!requiredChecked) {
@@ -74,6 +77,16 @@ export default function SignupForm() {
       return;
     }
     setShowAgreementError(false);
+
+    if (!isEmailChecked) {
+      setError('email', { message: '이메일 중복확인을 해주세요.' });
+      const el = document.getElementById('email');
+      if (el) {
+        el.focus();
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
 
     const formData = convertToFormData({ ...data, type: 'user' });
 
@@ -95,7 +108,27 @@ export default function SignupForm() {
     }
   };
 
+  const onError = (errors: FieldErrors<SignupFormValues>) => {
+    if (errors.email) {
+      const el = document.getElementById('email');
+      if (el) {
+        el.focus();
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    const firstErrorKey = Object.keys(errors)[0] as keyof SignupFormValues;
+    const el = document.getElementById(firstErrorKey);
+    if (el) {
+      el.focus();
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   const handleCheckEmail = async () => {
+    setEmailCheckMessage(null);
+    setIsEmailChecked(false);
+
     const email = watch('email');
     if (!email || !email.includes('@')) {
       setError('email', { message: '이메일 형식이 올바르지 않습니다.' });
@@ -113,7 +146,8 @@ export default function SignupForm() {
       const result = await res.json();
 
       if (result.ok) {
-        setFormMessage('사용 가능한 이메일입니다.');
+        setEmailCheckMessage('사용 가능한 이메일입니다.');
+        setIsEmailChecked(true);
       } else {
         setError('email', { message: result.message || '이미 등록된 이메일입니다.' });
       }
@@ -124,11 +158,11 @@ export default function SignupForm() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        {/* 폼 전반 메시지 출력 */}
+      <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
+        {/* 전체 폼 전반 메시지 */}
         {formMessage && <p className="mb-4 text-center text-sm text-red-500">{formMessage}</p>}
 
-        <EmailField onCheck={handleCheckEmail} />
+        <EmailField onCheck={handleCheckEmail} message={emailCheckMessage} />
         <PasswordField />
         <PasswordConfirmField />
         <NameField />
