@@ -1,11 +1,3 @@
-import Footer from "@/components/common/Footer";
-import Header from "@/components/common/Header";
-
 export default function Home() {
-  return (
-    <>
-      <Header />
-      <Footer />
-    </>
-  );
+  return <div>메인 페이지</div>;
 }
