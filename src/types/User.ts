@@ -2,6 +2,12 @@ export interface UserExtra {
   birthday?: string;
 }
 
+export interface UserImage {
+  path: string;
+  name: string;
+  originalname: string;
+}
+
 export interface User {
   _id: number | string;
   email: string;
@@ -11,7 +17,7 @@ export interface User {
   address: string;
   type: string;
   loginType: string;
-  image: string;
+  image: UserImage | null;
   createdAt: string;
   updatedAt: string;
   extra?: UserExtra;
