@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Loading from './loading';
-import Header from '@/components/common/Header';
-import Footer from '@/components/common/Footer';
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,12 +17,10 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <div className="flex flex-col">
       <main className="flex-1 flex items-center justify-center">
         <p>로딩 테스트 페이지</p>
       </main>
-      <Footer />
     </div>
   );
 }
