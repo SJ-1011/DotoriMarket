@@ -31,7 +31,8 @@ export default async function Page() {
   //상품 목록 잘 가져왔는지 콘솔 확인
   // console.log(products);
 
-  const results = await Promise.all(boards.map(board => getPosts(board.key)));
+  //게시글 조회
+  const resPosts = await Promise.all(boards.map(board => getPosts(board.key)));
   ///게시글 목록 잘 가져왔는지 콘솔 확인
   // results.forEach((res, idx) => {
   //   const board = boards[idx];
@@ -68,7 +69,7 @@ export default async function Page() {
       </div>
       {/* 게시판 글 목록 */}
       <div style={{ padding: '40px' }}>
-        {results.map((res, idx) => {
+        {resPosts.map((res, idx) => {
           const board = boards[idx]; // 현재 게시판 정보
           return (
             <div key={board.key} className="mb-10">
