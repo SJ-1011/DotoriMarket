@@ -1,10 +1,17 @@
 import { getUsers } from '@/utils/getUsers';
 import type { User } from '@/types/User';
-
+import type { Post, BoardType } from '@/types/Post';
 import { getProducts } from '@/utils/getProducts';
 import type { Product } from '@/types/Product';
 import Image from 'next/image';
+import { getPosts } from '@/utils/getPosts';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const boards: { key: BoardType; label: string }[] = [
+  { key: 'community', label: '커뮤니티' },
+  { key: 'notice', label: '공지사항' },
+  { key: 'qna', label: '질문게시판' },
+];
 export default async function Page() {
   /////회원 정보 조회
   const resUsers = await getUsers();
@@ -21,7 +28,20 @@ export default async function Page() {
     return <p>상품 목록 로딩 실패: {resProducts.message}</p>;
   }
   const products: Product[] = resProducts.item;
-  console.log(products);
+  //상품 목록 잘 가져왔는지 콘솔 확인
+  // console.log(products);
+
+  const results = await Promise.all(boards.map(board => getPosts(board.key)));
+  ///게시글 목록 잘 가져왔는지 콘솔 확인
+  // results.forEach((res, idx) => {
+  //   const board = boards[idx];
+  //   if (res.ok === 1) {
+  //     console.log(`[${board.label}] 게시글 ${res.item.length}개`);
+  //     console.log(res.item);
+  //   } else {
+  //     console.warn(`[${board.label}] 게시글 로딩 실패: ${res.message}`);
+  //   }
+  // });
   return (
     <>
       {/* 회원 정보 */}
@@ -45,6 +65,39 @@ export default async function Page() {
             </li>
           ))}
         </ul>
+      </div>
+      {/* 게시판 글 목록 */}
+      <div style={{ padding: '40px' }}>
+        {results.map((res, idx) => {
+          const board = boards[idx]; // 현재 게시판 정보
+          return (
+            <div key={board.key} className="mb-10">
+              <h2 className="text-2xl font-bold mb-4">{board.label}</h2>
+
+              {res.ok === 0 && <p className="text-red-500">{res.message}</p>}
+
+              {res.ok === 1 && res.item.length === 0 && <p className="text-gray-500">게시글이 없습니다.</p>}
+
+              {res.ok === 1 && res.item.length > 0 && (
+                <ul className="space-y-4">
+                  {res.item.map((post: Post) => (
+                    <li key={post._id} className="p-4 border border-gray-300 rounded-lg">
+                      <h3 className="text-lg font-semibold mb-1">{post.title}</h3>
+                      <p className="mb-2 text-gray-700">{post.content}</p>
+                      <div className="text-sm text-gray-500 mb-2">
+                        조회수: {post.views} / 댓글: {post.repliesCount} / 북마크: {post.bookmarks}
+                      </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Image src={`${API_URL}/${post.user.image}`} alt={post.user.name} width={32} height={32} className="rounded-full" />
+                        <span className="text-sm text-gray-800">{post.user.name}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          );
+        })}
       </div>
     </>
   );
