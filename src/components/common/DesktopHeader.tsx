@@ -9,8 +9,11 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import SearchIcon from '../icon/SearchIcon';
 import { CHARACTER_CATEGORIES, LIVING_CATEGORIES, STATIONERY_CATEGORIES } from '@/constants/categories';
+import { useLoginStore } from '@/stores/loginStore';
 
 export default function DesktopHeader() {
+  const { isLogin } = useLoginStore();
+
   // 햄버거 바 클릭 시 카테고리가 열려있는지 useState로 상태 관리
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
@@ -68,9 +71,17 @@ export default function DesktopHeader() {
               </Link>
             </li>
             <li>
-              <Link href="/mypage" aria-label="마이페이지">
-                <MypageIcon svgProps={{ className: 'w-6 h-6' }} />
-              </Link>
+              {/* TODO 로그인이 안된 상태면 로그인 페이지로 이동 */}
+              {isLogin && (
+                <Link href="/mypage" aria-label="마이페이지">
+                  <MypageIcon svgProps={{ className: 'w-6 h-6' }} />
+                </Link>
+              )}
+              {!isLogin && (
+                <Link href="/login" aria-label="로그인하기">
+                  <MypageIcon svgProps={{ className: 'w-6 h-6' }} />
+                </Link>
+              )}
             </li>
             <li>
               <Link href="/" aria-label="알림">
