@@ -6,11 +6,43 @@ import KakaotalkIcon from '@/components/icon/KakaotalkIcon';
 import NaverIcon from '@/components/icon/NaverIcon';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Login() {
+  const [errorMsg, setErrorMsg] = useState('');
+  // 이메일 유효성 검사
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  // 비밀번호 유효성 검사 8~15자리만 검사
+  const isValidPassword = (password: string) => {
+    return password.length >= 8 && password.length <= 15;
+  };
+
+  // TODO 회원이랑 일치하는 로그인 정보가 있는지 확인하기
+
+  // 서버에 로그인 정보 전달!!
+  // TODO 로그인 이후 작업 zustand?
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // 폼 데이터를 이벤트에서 가져오기
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    console.log(email, password);
+
+    // Form을 작성하면 유효성부터 검사하기
+    // TODO 회원이랑 일치하는 로그인 정보가 있는지 확인하기
+    if (!isValidEmail(email) || !isValidPassword(password)) {
+      setErrorMsg('아이디 혹은 비밀번호를 확인해주세요.');
+    } else {
+      setErrorMsg('');
+    }
   };
+
   return (
     <>
       <Header />
@@ -28,6 +60,7 @@ export default function Login() {
               <label htmlFor="password">비밀번호</label>
               <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요." className="p-4 border border-black rounded-xl bg-white" />
             </div>
+            <span className="text-red">{errorMsg}</span>
             <button type="submit" className="p-4 w-full bg-secondary-green text-white rounded-xl mt-4 cursor-pointer">
               로그인
             </button>
