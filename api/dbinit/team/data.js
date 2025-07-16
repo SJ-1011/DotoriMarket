@@ -119,10 +119,44 @@ export const initData = async (clientId, nextSeq) => {
     bookmark: [],
 
     // QnA, 공지사항 등의 게시판
+    //community가 자유게시판, notice가 공지게시판, qna 문의게시판
     post: [
       {
         _id: await nextSeq('post'),
         type: 'community',
+        views: 23,
+        user: {
+          _id: 2,
+          name: '네오',
+          image: `files/${clientId}/user-neo.png`,
+        },
+        title: '회원 가입했어요.',
+        content: '잘 부탁드려요.',
+        createdAt: getTime(-1, -60 * 60 * 14),
+        updatedAt: getTime(-1, -60 * 60 * 2),
+        bookmarks: 555,
+        repliesCount: 444,
+        product: {
+          image: null,
+        },
+      },
+      {
+        _id: await nextSeq('post'),
+        type: 'notice',
+        views: 23,
+        user: {
+          _id: 1,
+          name: '무지',
+          image: `files/${clientId}/user-muzi.png`,
+        },
+        title: '공지글 테스트',
+        content: '공지글 컨텐츠 테스트',
+        createdAt: getTime(-1, -60 * 60 * 14),
+        updatedAt: getTime(-1, -60 * 60 * 2),
+      },
+      {
+        _id: await nextSeq('post'),
+        type: 'qna',
         views: 23,
         user: {
           _id: 2,
