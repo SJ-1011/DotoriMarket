@@ -20,8 +20,15 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  */
 export async function createPost(state: ApiRes<Post> | null, formData: FormData): ApiResPromise<Post> {
   // FormData를 일반 Object로 변환
-  const body = Object.fromEntries(formData.entries());
-
+  const body = Object.fromEntries(formData.entries()) as Record<string, any>;
+  body.extra = {};
+  Object.keys(body).forEach(key => {
+    if (key.startsWith('extra.')) {
+      const subKey = key.split('.')[1];
+      body.extra[subKey] = body[key];
+      delete body[key];
+    }
+  });
   let res: Response;
   let data: ApiRes<Post>;
 
