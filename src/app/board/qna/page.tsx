@@ -8,7 +8,7 @@ import { getPosts } from '@/utils/getPosts';
 import Link from 'next/link';
 
 export default async function QnaBoardPage() {
-  const res = await getPosts('notice');
+  const res = await getPosts('qna');
   const posts: Post[] = res.ok === 1 ? res.item : [];
   return (
     <>
@@ -88,7 +88,7 @@ export default async function QnaBoardPage() {
                       {post.title}
                     </Link>
                   </td>
-                  <td className="py-2 text-xs sm:text-sm lg:text-base">도토리섬 관리자</td>
+                  <td className="py-2 text-xs sm:text-sm lg:text-base">{post._id}</td>
                   <td className="py-2 text-xs sm:text-sm lg:text-base">{post.createdAt?.substring(0, 10)}</td>
                 </tr>
               ))
@@ -96,9 +96,13 @@ export default async function QnaBoardPage() {
           </tbody>
         </table>
         <div className="mt-4 flex justify-end mb-4">
-          <button type="button" className="px-4 py-2 rounded-xl bg-[#A97452] text-white text-xs sm:text-sm lg:text-base hover:bg-[#966343] transition-colors">
-            글쓰기
-          </button>
+          <Link href="/board/qna/new">
+            {' '}
+            {/* 이동할 경로를 href 속성에 지정합니다. */}
+            <button type="button" className="px-4 py-2 rounded-xl bg-[#A97452] text-white text-xs sm:text-sm lg:text-base hover:bg-[#966343] transition-colors">
+              글쓰기
+            </button>
+          </Link>
         </div>
         {/* 페이지네이션 일단 더미로 넣어놓음 */}
         <div className="flex justify-center mt-7 gap-1 sm:gap-2 lg:gap-4 ">
