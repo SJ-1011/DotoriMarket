@@ -218,6 +218,34 @@ export const initData = async (clientId, nextSeq) => {
           },
         ],
       },
+      {
+        _id: await nextSeq('post'),
+        type: 'notice',
+        views: 23,
+        user: {
+          _id: 1,
+          name: '어피치',
+          image: `files/${clientId}/user-muzi.png`,
+        },
+        title: '2025년 여름 세일 안내',
+        content: '2025년 여름 세일 안내\n2025년 여름 세일 안내\n2025년 여름 세일 안내\n2025년 여름 세일 안내\n2025년 여름 세일 안내\n',
+        createdAt: getTime(-1, -60 * 60 * 14),
+        updatedAt: getTime(-1, -60 * 60 * 2),
+      },
+      {
+        _id: await nextSeq('post'),
+        type: 'notice',
+        views: 23,
+        user: {
+          _id: 1,
+          name: '프로도',
+          image: `files/${clientId}/user-muzi.png`,
+        },
+        title: '공지공지',
+        content: '공지사항',
+        createdAt: getTime(-1, -60 * 60 * 14),
+        updatedAt: getTime(-1, -60 * 60 * 2),
+      },
     ],
 
     // 코드
