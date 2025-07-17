@@ -21,7 +21,7 @@ const imageLoader = ({ src, width }: { src: string; width: number }) => {
 
 export default function MyPage() {
   return (
-    <div className="flex flex-col items-center space-y-10 mt-2">
+    <div className="flex flex-col items-center  p-2 sm:p-4 space-y-10 mt-4">
       {/* 주민증 */}
       <div className="relative w-80 h-35 sm:w-120 sm:h-50 lg:w-150 lg:h-60 bg-[#E7D8CC] rounded-md shadow-lg flex items-center justify-center">
         {/* 카드 배경 이미지 */}
