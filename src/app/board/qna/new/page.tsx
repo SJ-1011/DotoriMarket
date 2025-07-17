@@ -1,7 +1,7 @@
 import RegistForm from './RegistForm';
 
 export default async function NewQnaPage() {
-  const boardType = await 'qna';
+  const boardType = 'qna';
 
   return (
     <main className="flex-1 min-w-[320px] p-4">
