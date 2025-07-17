@@ -2,11 +2,20 @@
 
 import KakaotalkIcon from '@/components/icon/KakaotalkIcon';
 import NaverIcon from '@/components/icon/NaverIcon';
+import { LoginResponse } from '@/types';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useLoginStore } from '@/stores/loginStore';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
 export default function Login() {
+  const router = useRouter();
+  const loginStore = useLoginStore();
   const [errorMsg, setErrorMsg] = useState('');
   // 이메일 유효성 검사
   const isValidEmail = (email: string) => {
@@ -33,12 +42,55 @@ export default function Login() {
     console.log(email, password);
 
     // Form을 작성하면 유효성부터 검사하기
-    // TODO 회원이랑 일치하는 로그인 정보가 있는지 확인하기
     if (!isValidEmail(email) || !isValidPassword(password)) {
       setErrorMsg('아이디 혹은 비밀번호를 확인해주세요.');
+      return;
     } else {
       setErrorMsg('');
     }
+    // TODO 회원이랑 일치하는 로그인 정보가 있는지 확인하기
+    // 확인하고 로그인 하기
+    const handleLogin = async () => {
+      try {
+        const res = await axios.post<LoginResponse>(
+          `${API_URL}/users/login`,
+          {
+            email,
+            password,
+          },
+          {
+            headers: {
+              'Client-Id': CLIENT_ID,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        const userData = res.data.item;
+        loginStore.login({
+          _id: userData._id,
+          birthday: userData.birthday,
+          createdAt: userData.createdAt,
+          email: userData.email,
+          image: userData.image,
+          loginType: userData.loginType,
+          name: userData.name,
+          notifications: userData.notifications,
+          phone: userData.phone,
+          token: userData.token,
+          type: userData.type,
+          updatedAt: userData.updatedAt,
+        });
+
+        alert(`${res.data.item.name}님, 환영합니다!`);
+        setErrorMsg('');
+        router.push('/');
+      } catch {
+        setErrorMsg('아이디 혹은 비밀번호를 확인해주세요.');
+      }
+    };
+
+    handleLogin();
   };
 
   return (
@@ -77,7 +129,7 @@ export default function Login() {
             카카오 로그인
           </button>
 
-          <Link href="/" className="p-4 block text-center w-full border-2 border-secondary-green text-secondary-green rounded-xl mt-8 lg:mt-12 cursor-pointer">
+          <Link href="/signup" className="p-4 block text-center w-full border-2 border-secondary-green text-secondary-green rounded-xl mt-8 lg:mt-12 cursor-pointer">
             회원 가입
           </Link>
         </section>

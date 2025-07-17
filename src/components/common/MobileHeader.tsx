@@ -10,8 +10,13 @@ import { Fragment, useState } from 'react';
 import CloseIcon from '../icon/CloseIcon';
 import ArrowIcon from '../icon/ArrowIcon';
 import { CHARACTER_CATEGORIES, LIVING_CATEGORIES, STATIONERY_CATEGORIES } from '@/constants/categories';
+import { useLoginStore } from '@/stores/loginStore';
+import { useRouter } from 'next/navigation';
 
 export default function MobileHeader() {
+  const { isLogin, logout } = useLoginStore();
+  const router = useRouter();
+
   // 메뉴창 상태 관리
   const [isOpenMenu, setIsOpenMenu] = useState(false);
 
@@ -22,7 +27,7 @@ export default function MobileHeader() {
   const menuContent = {
     category: ['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품', '랜덤박스'],
     board: ['공지사항', '자유게시판', '문의게시판'],
-    myInfo: ['내가 쓴 글', '배송 주소록 관리', '장바구니', '관심 상품', '회원 정보 수정', '로그아웃'],
+    myInfo: ['마이페이지', '내가 쓴 글', '배송 주소록 관리', '장바구니', '관심 상품', '회원 정보 수정', '로그아웃'],
   };
 
   // 더 세부적인 카테고리(캐릭터, 문구, 리빙&소품) 토글하는 함수
@@ -35,10 +40,15 @@ export default function MobileHeader() {
     }
   };
 
-  // 로그인 정보 가져오기
-  // TODO 로컬 스토리지에 어떤 식으로 값을 넣을지 논의 후 수정
-  const isLogin = localStorage.getItem('login') === 'true';
-  console.log(isLogin);
+  // TODO 링크 연결하기
+  const menuLink = {
+    마이페이지: 'mypage',
+    '내가 쓴 글': 'mypage',
+    '배송 주소록 관리': 'mypage',
+    장바구니: 'mypage',
+    '관심 상품': 'mypage',
+    '회원 정보 수정': 'mypage/edit-info',
+  };
 
   return (
     <>
@@ -84,10 +94,10 @@ export default function MobileHeader() {
           {/* 로그인과 회원가입 */}
           {!isLogin && (
             <div className="flex flex-row flex-nowrap items-center gap-2">
-              <Link href="/" onClick={() => setIsOpenMenu(false)} className="w-1/2 text-center py-2 px-4 text-white bg-primary rounded-lg">
+              <Link href="/login" onClick={() => setIsOpenMenu(false)} className="w-1/2 text-center py-2 px-4 text-white bg-primary rounded-lg">
                 로그인
               </Link>
-              <Link href="/" onClick={() => setIsOpenMenu(false)} className="w-1/2 text-center py-2 px-4 text-primary border border-primary rounded-lg">
+              <Link href="/signup" onClick={() => setIsOpenMenu(false)} className="w-1/2 text-center py-2 px-4 text-primary border border-primary rounded-lg">
                 회원가입
               </Link>
             </div>
@@ -155,12 +165,25 @@ export default function MobileHeader() {
                     </ul>
                   </Fragment>
                 );
+
+              if (item === '로그아웃')
+                return (
+                  <li
+                    key={i}
+                    onClick={() => {
+                      setIsOpenMenu(false);
+                      logout();
+                      alert('로그아웃');
+                      router.push('/');
+                    }}
+                    className="cursor-pointer"
+                  >
+                    {item}
+                  </li>
+                );
               return (
                 <li key={i}>
-                  {/* TODO 각각에 맞는 페이지로 라우팅하기
-                            각 페이지를 매치시키는 배열 하나 생성하기
-                        */}
-                  <Link href="/" onClick={() => setIsOpenMenu(false)}>
+                  <Link href={`/${menuLink[item as keyof typeof menuLink] || ''}`} onClick={() => setIsOpenMenu(false)}>
                     {item}
                   </Link>
                 </li>

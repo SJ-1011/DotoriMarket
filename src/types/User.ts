@@ -8,6 +8,31 @@ export interface UserImage {
   originalname: string;
 }
 
+export interface UserToken {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface LoginUser {
+  _id: number;
+  email: string;
+  name: string;
+  type: 'user' | 'admin' | string;
+  loginType: 'email' | 'kakao' | 'google' | string;
+  phone: string;
+  birthday: string;
+  token: UserToken;
+  image: UserImage;
+  notifications: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LoginResponse {
+  item: LoginUser;
+  ok: number;
+}
+
 export interface User {
   _id: number | string;
   email: string;
