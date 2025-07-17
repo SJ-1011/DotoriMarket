@@ -1,7 +1,3 @@
-import Footer from '@/components/common/Footer';
-import Header from '@/components/common/Header';
-import Link from 'next/link';
-
 export default function BoardPageLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
