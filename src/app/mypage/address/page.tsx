@@ -61,9 +61,9 @@ export default function Address() {
   };
 
   return (
-    <div className="w-full p-2 sm:p-4 mt-4">
+    <div className="w-full p-2 sm:p-4 mt-4 text-dark-gray">
       {/* 타이틀 */}
-      <div className="mb-2 sm:mb-4 lg:mb-8">
+      <div className="mb-2 sm:mb-4 lg:mb-4">
         <h2 className="font-bold text-base sm:text-lg lg:text-xl">배송 주소록 관리</h2>
       </div>
 
@@ -74,7 +74,7 @@ export default function Address() {
         <div className="space-y-4 sm:space-y-0 sm:table w-full rounded sm:border-none">
           {/* 헤더 (데스크탑) */}
           <div className="hidden sm:table-header-group">
-            <div className="table-row text-sm sm:text-xs lg:text-base  font-bold text-dark-gray">
+            <div className="table-row text-sm sm:text-xs lg:text-base  font-bold ">
               {['선택', '대표배송지', '배송지명', '수령인', '휴대전화', '주소', '관리'].map((col, idx) => (
                 <div key={idx} className="table-cell text-center px-3 py-2 whitespace-nowrap border-b border-gray">
                   {col}
@@ -122,7 +122,7 @@ export default function Address() {
               </div>
 
               {/* 모바일 */}
-              <div className="sm:hidden px-2 py-1 text-dark-gray text-sm">
+              <div className="sm:hidden px-2 py-1  text-sm">
                 <p className="py-1 font-medium">
                   {addr.deliveryName} / {addr.recipient}
                 </p>
@@ -130,16 +130,16 @@ export default function Address() {
               </div>
 
               {/* 배송지명 */}
-              <div className="hidden sm:table-cell px-2 py-1 lg:text-sm text-dark-gray text-sm text-center">{addr.deliveryName}</div>
+              <div className="hidden sm:table-cell px-2 py-1 lg:text-sm y text-sm text-center">{addr.deliveryName}</div>
 
               {/* 수령인 */}
-              <div className="hidden sm:table-cell px-2 py-1 lg:text-sm text-dark-gray text-sm text-center">{addr.recipient}</div>
+              <div className="hidden sm:table-cell px-2 py-1 lg:text-sm  text-sm text-center">{addr.recipient}</div>
 
               {/* 데스크탑: 휴대번호 */}
-              <div className="hidden sm:table-cell px-2 py-1 text-dark-gray text-sm sm:text-xs lg:text-sm text-center  whitespace-nowrap">{addr.mobile}</div>
+              <div className="hidden sm:table-cell px-2 py-1  text-sm sm:text-xs lg:text-sm text-center  whitespace-nowrap">{addr.mobile}</div>
 
               {/* 주소 */}
-              <div className="sm:table-cell px-2 py-1 sm:p-2  text-dark-gray text-sm sm:text-xs lg:text-sm">{addr.address}</div>
+              <div className="sm:table-cell px-2 py-1 sm:p-2   text-sm sm:text-xs lg:text-sm">{addr.address}</div>
 
               {/* 관리 버튼 (데스크탑) */}
               <div className="hidden sm:flex sm:flex-col px-2 py-2 text-center sm:space-y-1">
