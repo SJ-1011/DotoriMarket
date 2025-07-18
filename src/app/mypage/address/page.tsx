@@ -11,34 +11,11 @@ type Address = {
   mobile: string;
   isDefault: boolean;
 };
-const mockAddresses: Address[] = [
-  {
-    id: 1,
-    deliveryName: '집',
-    recipient: '황유빈',
-    address: '(18279) 경기 화성시 남양읍 현대아파트 324번길 5 23동 1203호',
-    mobile: '010-1234-1234',
-    isDefault: true,
-  },
-  {
-    id: 2,
-    deliveryName: '회사',
-    recipient: '황유빈',
-    address: '(04512) 서울 중구 을지로 100',
-    mobile: '010-5678-9101',
-    isDefault: false,
-  },
-];
 
 export default function Address() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [showAddress, setShowAddress] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-
-  const handleAddAddress = () => {
-    setAddresses(mockAddresses);
-    setShowAddress(true);
-  };
 
   const toggleDefault = (id: number) => {
     setAddresses(prev => prev.map(addr => (addr.id === id ? { ...addr, isDefault: !addr.isDefault } : { ...addr, isDefault: false })));
@@ -46,13 +23,6 @@ export default function Address() {
 
   const toggleSelect = (id: number) => {
     setSelectedIds(prev => (prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]));
-  };
-
-  const handleDeleteSelected = () => {
-    const updated = addresses.filter(addr => !selectedIds.includes(addr.id));
-    setAddresses(updated);
-    setSelectedIds([]);
-    if (updated.length === 0) setShowAddress(false);
   };
 
   const handleDelete = (id: number) => {
@@ -160,11 +130,6 @@ export default function Address() {
       <div className="flex justify-between mt-4">
         {/* 데스크탑: 양쪽 배치 */}
         <div className="hidden sm:flex  justify-between w-full">
-          {addresses.length > 0 && (
-            <button onClick={handleDeleteSelected} className="cursor-pointer px-4 py-2 border rounded text-sm text-gray-700">
-              선택 주소록 삭제
-            </button>
-          )}
           <Link href="/mypage/address/add" className="cursor-pointer px-4 py-2 bg-dark-gray text-white rounded text-sm">
             배송지 등록
           </Link>
@@ -172,9 +137,9 @@ export default function Address() {
 
         {/* 모바일: 등록 버튼만 */}
         <div className="sm:hidden w-full">
-          <button onClick={handleAddAddress} className="w-full cursor-pointer px-4 py-2 bg-dark-gray text-white rounded text-sm">
+          <Link href="/mypage/address/add" className="cursor-pointer px-4 py-2 bg-dark-gray text-white rounded text-sm">
             배송지 등록
-          </button>
+          </Link>
         </div>
       </div>
     </div>
