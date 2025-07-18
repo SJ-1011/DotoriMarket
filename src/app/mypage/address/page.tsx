@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 
 type Address = {
@@ -164,9 +165,9 @@ export default function Address() {
               선택 주소록 삭제
             </button>
           )}
-          <button onClick={handleAddAddress} className="cursor-pointer px-4 py-2 bg-dark-gray text-white rounded text-sm">
+          <Link href="/mypage/address/add" className="cursor-pointer px-4 py-2 bg-dark-gray text-white rounded text-sm">
             배송지 등록
-          </button>
+          </Link>
         </div>
 
         {/* 모바일: 등록 버튼만 */}
