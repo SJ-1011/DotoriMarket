@@ -9,13 +9,13 @@ interface AddAddressPayload {
   extra: {
     address: UserAddress[];
   };
-  address?: string; // isDefault true일 때만 필요
+  address?: string; 
 }
 
 export async function addAddress(
   userId: number,
   accessToken: string,
-  newAddress: Omit<UserAddress, 'id'>, // id 없는 상태로 받음
+  newAddress: Omit<UserAddress, 'id'>,
 ): ApiResPromise<{ ok: number }> {
   try {
     const authAPI = axios.create({
@@ -29,8 +29,6 @@ export async function addAddress(
 
     const { data: user } = await authAPI.get(`/users/${userId}`);
     const currentAddresses: UserAddress[] = user.item.extra?.address || [];
-
-    // 새 id 생성 (마지막 id + 1)
     const lastId = currentAddresses.length > 0 ? currentAddresses[currentAddresses.length - 1].id : 0;
 
     const newAddressWithId: UserAddress = {
@@ -38,7 +36,6 @@ export async function addAddress(
       id: lastId + 1,
     };
 
-    // 기존 기본배송지 해제는 새 주소가 기본배송지일 때만
     const updatedAddresses = newAddressWithId.isDefault
       ? [
           ...currentAddresses.map(addr => ({
@@ -62,7 +59,7 @@ export async function addAddress(
     const { data: result } = await authAPI.patch(`/users/${userId}`, payload);
     return result;
   } catch (error) {
-    console.error('🚨 addAddress Error (axios):', error);
+    console.error('addAddress Error (axios):', error);
     throw error;
   }
 }
