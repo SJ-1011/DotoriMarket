@@ -9,14 +9,10 @@ interface AddAddressPayload {
   extra: {
     address: UserAddress[];
   };
-  address?: string; 
+  address?: string;
 }
 
-export async function addAddress(
-  userId: number,
-  accessToken: string,
-  newAddress: Omit<UserAddress, 'id'>,
-): ApiResPromise<{ ok: number }> {
+export async function addAddress(userId: number, accessToken: string, newAddress: Omit<UserAddress, 'id'>): ApiResPromise<{ ok: number }> {
   try {
     const authAPI = axios.create({
       baseURL: API_URL,
@@ -32,8 +28,8 @@ export async function addAddress(
     const lastId = currentAddresses.length > 0 ? currentAddresses[currentAddresses.length - 1].id : 0;
 
     const newAddressWithId: UserAddress = {
-      ...newAddress,
       id: lastId + 1,
+      ...newAddress,
     };
 
     const updatedAddresses = newAddressWithId.isDefault

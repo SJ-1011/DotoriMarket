@@ -43,7 +43,7 @@ export default function AddAddressPage() {
     postcode: '',
     address: '',
     detailAddress: '',
-    mobile: '',
+    mobile: '010',
     isDefault: false,
   });
 
@@ -120,38 +120,38 @@ export default function AddAddressPage() {
     <div className="w-full mx-auto p-4 mt-4 text-dark-gray">
       <h2 className="font-bold text-lg mb-4">배송 주소록 등록</h2>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-[100px_1fr_auto]  sm:grid-cols-[150px_minmax(300px,300px)_150px] lg:grid-cols-[200px_minmax(200px,350px)_150px] gap-y-4 gap-x-2  ">
+      <form onSubmit={handleSubmit} className="grid grid-cols-[100px_1fr_auto]  sm:grid-cols-[150px_minmax(300px,300px)_150px] lg:grid-cols-[200px_minmax(200px,350px)_150px] gap-y-4 sm:gap-y-6 lg:gap-y-6 gap-x-2  ">
         {/* 배송지명 */}
-        <label htmlFor="deliveryName" className="self-center text-xs font-medium">
+        <label htmlFor="deliveryName" className="self-center text-xs sm:text-sm lg:text-base font-medium">
           배송지명 <span className="text-red">*</span>
         </label>
-        <input id="deliveryName" name="deliveryName" value={form.deliveryName} onChange={handleChange} placeholder="예) 집, 회사" required className="border rounded px-2 py-2 text-xs w-full col-span-2" />
+        <input id="deliveryName" name="deliveryName" value={form.deliveryName} onChange={handleChange} placeholder="예) 집, 회사" required className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2" />
 
         {/* 수령인 */}
-        <label htmlFor="recipient" className="self-center text-xs font-medium">
+        <label htmlFor="recipient" className="self-center text-xs sm:text-sm lg:text-base font-medium">
           수령인 <span className="text-red">*</span>
         </label>
-        <input id="recipient" name="recipient" value={form.recipient} onChange={handleChange} required className="border rounded px-2 py-2 text-xs w-full col-span-2" />
+        <input id="recipient" name="recipient" value={form.recipient} onChange={handleChange} required className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2" />
 
         {/* 주소 */}
-        <label htmlFor="postcode" className="self-center text-xs font-medium">
+        <label htmlFor="postcode" className="self-center text-xs sm:text-sm lg:text-base font-medium">
           주소 <span className="text-red">*</span>
         </label>
-        <input id="postcode" name="postcode" value={form.postcode} onChange={handleChange} placeholder="우편번호" readOnly required className="border rounded px-2 py-2 text-xs w-full" />
-        <button type="button" onClick={handleAddressSearch} className="bg-primary text-white rounded px-4 py-2 text-xs">
+        <input id="postcode" name="postcode" value={form.postcode} onChange={handleChange} placeholder="우편번호" readOnly required className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full" />
+        <button type="button" onClick={handleAddressSearch} className="bg-primary cursor-pointer text-white rounded px-4 py-2 text-xs sm:text-sm lg:text-base">
           주소검색
         </button>
 
         {/* 기본 주소 */}
         <div></div>
-        <input name="address" value={form.address} onChange={handleChange} placeholder="기본 주소" readOnly required className="border rounded px-2 py-2 text-xs w-full col-span-2" />
+        <input name="address" value={form.address} onChange={handleChange} placeholder="기본 주소" readOnly required className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2" />
 
         {/* 상세 주소 */}
         <div></div>
-        <input name="detailAddress" value={form.detailAddress} onChange={handleChange} placeholder="상세 주소" className="border rounded px-2 py-2 text-xs w-full col-span-2" />
+        <input name="detailAddress" value={form.detailAddress} onChange={handleChange} placeholder="상세 주소" className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2" />
 
         {/* 휴대전화 */}
-        <label htmlFor="mobile1" className="self-center text-xs font-medium">
+        <label htmlFor="mobile1" className="self-center text-xs sm:text-sm lg:text-base font-medium">
           휴대전화 <span className="text-red">*</span>
         </label>
         <div className="flex gap-2 col-span-2">
@@ -159,14 +159,18 @@ export default function AddAddressPage() {
           <select
             id="mobile1"
             name="mobile1"
-            value={form.mobile.split('-')[0] || '010'}
+            value={form.mobile.slice(0, 3) || '010'}
             onChange={e =>
-              setForm(prev => ({
-                ...prev,
-                mobile: `${e.target.value}-${prev.mobile.split('-')[1] || ''}-${prev.mobile.split('-')[2] || ''}`,
-              }))
+              setForm(prev => {
+                const mid = prev.mobile.slice(3, 7) || '';
+                const last = prev.mobile.slice(7, 11) || '';
+                return {
+                  ...prev,
+                  mobile: `${e.target.value}${mid}${last}`,
+                };
+              })
             }
-            className="border rounded px-2 py-2 text-xs w-20"
+            className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-20"
             required
           >
             <option value="010">010</option>
@@ -181,18 +185,18 @@ export default function AddAddressPage() {
           <input
             type="text"
             name="mobile2"
-            value={form.mobile.split('-')[1] || ''}
+            value={form.mobile.slice(3, 7) || ''}
             onChange={e => {
               const mid = e.target.value;
-              const last = form.mobile.split('-')[2] || '';
+              const last = form.mobile.slice(7, 11) || '';
               setForm(prev => ({
                 ...prev,
-                mobile: `${prev.mobile.split('-')[0]}-${mid}-${last}`,
+                mobile: `${prev.mobile.slice(0, 3)}${mid}${last}`,
               }));
             }}
             placeholder="0000"
             maxLength={4}
-            className="border rounded px-2 py-2 text-xs w-24"
+            className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-24"
             required
           />
 
@@ -200,25 +204,25 @@ export default function AddAddressPage() {
           <input
             type="text"
             name="mobile3"
-            value={form.mobile.split('-')[2] || ''}
+            value={form.mobile.slice(7, 11) || ''}
             onChange={e => {
               const last = e.target.value;
-              const mid = form.mobile.split('-')[1] || '';
+              const mid = form.mobile.slice(3, 7) || '';
               setForm(prev => ({
                 ...prev,
-                mobile: `${prev.mobile.split('-')[0]}-${mid}-${last}`,
+                mobile: `${prev.mobile.slice(0, 3)}${mid}${last}`,
               }));
             }}
             placeholder="0000"
             maxLength={4}
-            className="border rounded px-2 py-2 text-xs w-24"
+            className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-24"
             required
           />
         </div>
 
         {/* 기본 배송지 체크 */}
         <div className="col-span-3">
-          <label className="flex items-center w-full text-xs">
+          <label className="flex items-center w-full text-xs sm:text-sm lg:text-base">
             <input type="checkbox" name="isDefault" checked={form.isDefault} onChange={handleChange} className="w-4 h-4 mr-2 accent-primary" />
             기본 배송지로 저장
           </label>
@@ -226,10 +230,10 @@ export default function AddAddressPage() {
 
         {/* 버튼 영역 */}
         <div className="col-span-3 w-full flex gap-2 mt-2">
-          <button type="submit" className="flex-1 bg-primary text-white rounded px-4 py-2 text-xs" disabled={loading}>
+          <button type="submit" className="flex-1 bg-primary cursor-pointer text-white rounded px-4 py-2 text-xs sm:text-sm lg:text-base" disabled={loading}>
             {loading ? '등록 중...' : '등록'}
           </button>
-          <button type="button" onClick={() => router.back()} className="flex-1 border rounded px-4 py-2 text-xs" disabled={loading}>
+          <button type="button" onClick={() => router.back()} className="flex-1 cursor-pointer border rounded px-4 py-2 text-xs sm:text-sm lg:text-base" disabled={loading}>
             취소
           </button>
         </div>
