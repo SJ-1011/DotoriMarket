@@ -1,7 +1,7 @@
 // src/utils/getUsers.ts
 
 import type { ApiResPromise } from '@/types/api';
-import type { User } from '@/types/User';
+import type { User, UserAddress } from '@/types/User';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
@@ -22,5 +22,32 @@ export async function getUsers(): ApiResPromise<User[]> {
   } catch (error) {
     console.error(error);
     return { ok: 0, message: '일시적인 네트워크 문제로 유저 목록을 불러오지 못했습니다.' };
+  }
+}
+
+/**
+ * 특정 유저의 배송지 목록 가져오기
+ * @param userId 유저 ID
+ * @param accessToken 로그인 토큰
+ */
+export async function getUserAddress(userId: number, accessToken: string): ApiResPromise<UserAddress[]> {
+  try {
+    const res = await fetch(`${API_URL}/users/${userId}/extra/address`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: 'no-store',
+    });
+    const result = await res.json();
+
+    if (res.ok && result.ok) {
+      return { ok: 1, item: result.item.extra.address };
+    } else {
+      return { ok: 0, message: '배송지 목록을 불러오지 못했습니다.' };
+    }
+  } catch (error) {
+    console.error('getUserAddress 에러:', error);
+    return { ok: 0, message: '일시적인 네트워크 문제로 배송지 목록을 불러오지 못했습니다.' };
   }
 }
