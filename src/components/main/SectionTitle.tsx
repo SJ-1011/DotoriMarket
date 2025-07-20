@@ -2,9 +2,11 @@ import Image from 'next/image';
 
 export default function SectionTitle({ title }: { title: string }) {
   return (
-    <div className="flex items-center gap-2 my-6">
-      <Image src="/main-dotori.png" alt="도토리" width={800} height={300} className="w-6 h-6" />
-      <h2 className="text-lg font-bold">{title}</h2>
+    <div className="flex justify-center my-6">
+      <div className="inline-flex items-center gap-2 px-1 py-1 border-b-2 border-dashed border-primary">
+        <Image src="/main-dotori.png" alt="도토리" width={800} height={300} className="w-6 h-6" />
+        <h2 className="text-lg font-bold text-primary">{title}</h2>
+      </div>
     </div>
   );
 }
