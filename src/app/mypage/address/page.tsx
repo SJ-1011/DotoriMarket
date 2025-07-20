@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import { getUserAddress } from '@/utils/getUsers';
 import { patchUserAddresses } from '@/data/actions/patchUserAddresses';
+import Loading from '@/app/loading';
 
 type Address = {
   id: number;
@@ -20,10 +21,12 @@ export default function Address() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [showAddress, setShowAddress] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchAddresses = async () => {
       if (!user?.token?.accessToken) return;
+      setLoading(true);
 
       const res = await getUserAddress(user._id, user.token.accessToken);
       if (res.ok === 1 && res.item) {
@@ -32,11 +35,20 @@ export default function Address() {
       } else if (res.ok === 0) {
         console.error(res.message);
       }
+
+      setLoading(false);
     };
 
     fetchAddresses();
   }, [user]);
 
+  if (loading) {
+    return <Loading />;
+  }
+
+  {
+    /* 선택된 주소 id */
+  }
   const toggleSelect = (id: number) => {
     setSelectedIds(prev => (prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]));
   };
