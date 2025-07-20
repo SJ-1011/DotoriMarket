@@ -25,7 +25,6 @@ export async function patchUserAddresses(userId: number, accessToken: string, up
     });
 
     const data: PatchUserAddressesRes = await res.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error('patchUserAddresses 에러:', error);
