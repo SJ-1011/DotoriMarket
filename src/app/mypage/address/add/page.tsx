@@ -187,7 +187,8 @@ export default function AddAddressPage() {
             name="mobile2"
             value={form.mobile.slice(3, 7) || ''}
             onChange={e => {
-              const mid = e.target.value;
+              // 숫자만 허용
+              const mid = e.target.value.replace(/[^0-9]/g, '');
               const last = form.mobile.slice(7, 11) || '';
               setForm(prev => ({
                 ...prev,
@@ -206,7 +207,8 @@ export default function AddAddressPage() {
             name="mobile3"
             value={form.mobile.slice(7, 11) || ''}
             onChange={e => {
-              const last = e.target.value;
+              // 숫자만 허용
+              const last = e.target.value.replace(/[^0-9]/g, '');
               const mid = form.mobile.slice(3, 7) || '';
               setForm(prev => ({
                 ...prev,
