@@ -42,6 +42,28 @@ export default function Address() {
     setSelectedIds(prev => (prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]));
   };
 
+  {
+    /* 대표 배송지 설정 */
+  }
+  const handleSetDefault = async (id: number) => {
+    if (!user?.token?.accessToken) return;
+
+    const updatedAddresses = addresses.map(addr => ({
+      ...addr,
+      isDefault: addr.id === id,
+    }));
+    setAddresses(updatedAddresses);
+
+    const res = await patchUserAddresses(user._id, user.token.accessToken, updatedAddresses);
+    if (res.ok !== 1) {
+      console.error('대표배송지 변경 실패:', res.message);
+      setAddresses(addresses);
+    }
+  };
+
+  {
+    /* 주소 삭제 */
+  }
   const handleDelete = async (id: number) => {
     if (!user?.token?.accessToken) return;
 
@@ -92,6 +114,7 @@ export default function Address() {
               {/* 대표배송지 토글 (데스크탑) */}
               <div className="hidden sm:table-cell px-2 py-2 text-center">
                 <button
+                  onClick={() => handleSetDefault(addr.id)}
                   className={`cursor-pointer px-2 py-1 rounded text-xs font-medium 
                   ${addr.isDefault ? 'bg-primary text-background' : 'border border-primary bg-background text-primary'}`}
                 >
@@ -99,9 +122,10 @@ export default function Address() {
                 </button>
               </div>
 
-              {/* 모바일: 대표배송지 토글 & 수정/삭제 */}
+              {/* 모바일: 대표배송지 토글 */}
               <div className="flex justify-between items-center sm:hidden px-2 py-2">
                 <button
+                  onClick={() => handleSetDefault(addr.id)}
                   className={`cursor-pointer px-2 py-1 rounded text-xs font-medium 
                   ${addr.isDefault ? 'bg-primary text-background' : 'border border-primary bg-background text-primary'}`}
                 >
