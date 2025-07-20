@@ -1,5 +1,5 @@
 import type { UserAddress } from '@/types/User';
-
+import { PatchUserAddressesRes } from '@/types/UserAddressRes';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
@@ -8,9 +8,9 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  * @param userId 유저 ID
  * @param accessToken JWT 토큰
  * @param updatedAddresses 수정된 주소 배열
- * @returns { ok, message }
+ * @returns { ok, item, message }
  */
-export async function patchUserAddresses(userId: number, accessToken: string, updatedAddresses: UserAddress[]): Promise<{ ok: number; message?: string }> {
+export async function patchUserAddresses(userId: number, accessToken: string, updatedAddresses: UserAddress[]): Promise<PatchUserAddressesRes> {
   try {
     const res = await fetch(`${API_URL}/users/${userId}`, {
       method: 'PATCH',
@@ -23,7 +23,10 @@ export async function patchUserAddresses(userId: number, accessToken: string, up
         extra: { address: updatedAddresses },
       }),
     });
-    return await res.json();
+
+    const data: PatchUserAddressesRes = await res.json();
+    console.log(data);
+    return data;
   } catch (error) {
     console.error('patchUserAddresses 에러:', error);
     return { ok: 0, message: '주소 업데이트 실패' };

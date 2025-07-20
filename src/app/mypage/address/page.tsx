@@ -6,19 +6,11 @@ import { useLoginStore } from '@/stores/loginStore';
 import { getUserAddress } from '@/utils/getUsers';
 import { patchUserAddresses } from '@/data/actions/patchUserAddresses';
 import Loading from '@/app/loading';
-
-type Address = {
-  id: number;
-  name: string;
-  recipient: string;
-  value: string;
-  mobile: string;
-  isDefault: boolean;
-};
+import { UserAddress } from '@/types';
 
 export default function Address() {
   const user = useLoginStore(state => state.user);
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [showAddress, setShowAddress] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
@@ -54,8 +46,17 @@ export default function Address() {
   };
 
   {
+    /* 토글 헬퍼 함수 */
+  }
+  const updateAddressState = (newAddresses: UserAddress[]) => {
+    setAddresses(newAddresses);
+    setShowAddress(newAddresses.length > 0);
+  };
+
+  {
     /* 대표 배송지 설정 */
   }
+  /* 대표 배송지 설정 */
   const handleSetDefault = async (id: number) => {
     if (!user?.token?.accessToken) return;
 
@@ -63,12 +64,17 @@ export default function Address() {
       ...addr,
       isDefault: addr.id === id,
     }));
-    setAddresses(updatedAddresses);
+    updateAddressState(updatedAddresses);
 
-    const res = await patchUserAddresses(user._id, user.token.accessToken, updatedAddresses);
-    if (res.ok !== 1) {
-      console.error('대표배송지 변경 실패:', res.message);
-      setAddresses(addresses);
+    try {
+      const res = await patchUserAddresses(user._id, user.token.accessToken, updatedAddresses);
+      if (res.ok === 1 && res.item) {
+        const latestAddresses = res.item.extra.address;
+        updateAddressState(latestAddresses);
+      }
+    } catch (error) {
+      console.error('대표배송지 변경 중 에러 발생:', error);
+      updateAddressState(addresses);
     }
   };
 
@@ -77,17 +83,18 @@ export default function Address() {
   }
   const handleDelete = async (id: number) => {
     if (!user?.token?.accessToken) return;
-
     const updatedAddresses = addresses.filter(addr => addr.id !== id);
-    setAddresses(updatedAddresses);
-    setShowAddress(updatedAddresses.length > 0);
+    updateAddressState(updatedAddresses);
 
-    const res = await patchUserAddresses(user._id, user.token.accessToken, updatedAddresses);
-
-    if (res.ok !== 1) {
-      console.error('삭제 실패:', res.message);
-      setAddresses(addresses);
-      setShowAddress(addresses.length > 0);
+    try {
+      const res = await patchUserAddresses(user._id, user.token.accessToken, updatedAddresses);
+      if (res.ok === 1 && res.item) {
+        const latestAddresses = res.item.extra.address;
+        updateAddressState(latestAddresses);
+      }
+    } catch (error) {
+      console.error('주소 삭제 중 에러 발생:', error);
+      updateAddressState(addresses);
     }
   };
 
@@ -99,20 +106,17 @@ export default function Address() {
     if (selectedIds.length === 0) return;
 
     const updatedAddresses = addresses.filter(addr => !selectedIds.includes(addr.id));
-    setAddresses(updatedAddresses);
-    setShowAddress(updatedAddresses.length > 0);
-
-    const res = await patchUserAddresses(user._id, user.token.accessToken, updatedAddresses);
-
-    if (res.ok !== 1) {
-      console.error('선택 삭제 실패:', res.message);
-      const fetchRes = await getUserAddress(user._id, user.token.accessToken);
-      if (fetchRes.ok === 1 && fetchRes.item) {
-        setAddresses(fetchRes.item);
-        setShowAddress(fetchRes.item.length > 0);
+    updateAddressState(updatedAddresses);
+    try {
+      const res = await patchUserAddresses(user._id, user.token.accessToken, updatedAddresses);
+      if (res.ok === 1 && res.item) {
+        const latestAddresses = res.item.extra.address;
+        updateAddressState(latestAddresses);
+        setSelectedIds([]);
       }
-    } else {
-      setSelectedIds([]);
+    } catch (error) {
+      console.error('선택 삭제 실패:', error);
+      updateAddressState(addresses);
     }
   };
 
