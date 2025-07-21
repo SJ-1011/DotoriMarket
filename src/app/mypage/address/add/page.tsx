@@ -36,7 +36,6 @@ export default function AddAddressPage() {
   const router = useRouter();
   const user = useLoginStore(state => state.user);
   const [loading, setLoading] = useState(false);
-
   const [form, setForm] = useState<FormState>({
     deliveryName: '',
     recipient: '',
@@ -110,7 +109,6 @@ export default function AddAddressPage() {
       }
     } catch (err) {
       console.error('배송지 추가 실패:', err);
-      alert('오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setLoading(false);
     }
