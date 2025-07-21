@@ -7,6 +7,10 @@ export interface PostProduct {
   image: string | null;
 }
 
+export interface PostExtra {
+  qnatype?: string;
+}
+
 //댓글 추가
 export interface PostReply {
   _id: number | string;
@@ -33,6 +37,7 @@ export interface Post {
   extra?: {
     qnatype: string;
   };
+  image: string;
 }
 
 /**

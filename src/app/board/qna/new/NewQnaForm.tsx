@@ -16,7 +16,7 @@ const QNA_TYPES = [
   { type: '기타 문의', value: 'etc' },
 ];
 
-export default function RegistForm({ boardType }: { boardType: string }) {
+export default function NewQnaForm({ boardType }: { boardType: string }) {
   const [state, formAction, isLoading] = useActionState(createPost, null);
   const [selectedType, setSelectedType] = useState<string>('product');
 

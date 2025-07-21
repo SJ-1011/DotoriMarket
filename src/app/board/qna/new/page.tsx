@@ -1,4 +1,4 @@
-import RegistForm from './RegistForm';
+import NewQnaForm from './NewQnaForm';
 
 export default async function NewQnaPage() {
   const boardType = 'qna';
@@ -11,7 +11,7 @@ export default async function NewQnaPage() {
         <h2 className="text-center  text-2xl font-bold text-black ">문의하기</h2>
       </div>
       <section className="mb-8 p-4">
-        <RegistForm boardType={boardType} />
+        <NewQnaForm boardType={boardType} />
       </section>
     </main>
   );
