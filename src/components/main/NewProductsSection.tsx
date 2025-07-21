@@ -39,7 +39,7 @@ export default function NewProductsSection() {
 
   if (loading) {
     return (
-      <section>
+      <section className="my-8">
         <ProductGrid>
           {Array.from({ length: 8 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
@@ -50,7 +50,7 @@ export default function NewProductsSection() {
   }
 
   return (
-    <section>
+    <section className="my-8">
       <ProductGrid>
         {products.map(product => (
           <ProductCard key={product._id} product={product} />
