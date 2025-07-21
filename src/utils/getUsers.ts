@@ -40,12 +40,12 @@ export async function getUserAddress(userId: number, accessToken: string): ApiRe
       cache: 'no-store',
     });
     const result = await res.json();
-
-    if (res.ok && result.ok) {
-      return { ok: 1, item: result.item.extra.address };
-    } else {
-      return { ok: 0, message: '배송지 목록을 불러오지 못했습니다.' };
+    const addresses = result?.item?.extra?.address;
+    if (res.ok && Array.isArray(addresses)) {
+      return { ok: 1, item: addresses };
     }
+
+    return { ok: 1, item: [] };
   } catch (error) {
     console.error('getUserAddress 에러:', error);
     return { ok: 0, message: '일시적인 네트워크 문제로 배송지 목록을 불러오지 못했습니다.' };
