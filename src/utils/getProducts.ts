@@ -12,7 +12,7 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  */
 export async function getProducts(): ApiResPromise<Product[]> {
   try {
-    const res = await fetch(`${API_URL}/products`, {
+    const res = await fetch(`${API_URL}/products?showSoldOut=true`, {
       headers: {
         'Client-Id': CLIENT_ID,
       },
