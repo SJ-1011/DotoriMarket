@@ -31,6 +31,18 @@ export default function DesktopHeader() {
     console.log('검색어', query);
   };
 
+  const categoryAddress = {
+    신상품: 'new',
+    인기상품: 'popular',
+    캐릭터: 'character',
+    미니어처: 'miniature',
+    문구: 'stationery',
+    '리빙&소품': 'living-accessories',
+    COMMUNITY: 'board',
+  } as const;
+
+  type CategoryName = keyof typeof categoryAddress;
+
   useEffect(() => {
     switch (detailOpen) {
       case '신상품':
@@ -50,9 +62,6 @@ export default function DesktopHeader() {
         break;
       case '리빙&소품':
         setCategoryData(LIVING_CATEGORIES);
-        break;
-      case '랜덤박스':
-        setCategoryData(['랜덤박스 보러가기']);
         break;
       case 'COMMUNITY':
         setCategoryData(['공지사항', '자유게시판', '문의게시판']);
@@ -112,28 +121,25 @@ export default function DesktopHeader() {
               />
             </li>
             <li>
-              <Link href="/">신상품</Link>
+              <Link href="/category/new">신상품</Link>
             </li>
             <li>
-              <Link href="/">인기상품</Link>
+              <Link href="/category/popular">인기상품</Link>
             </li>
             <li>
-              <Link href="/">캐릭터</Link>
+              <Link href="/category/character">캐릭터</Link>
             </li>
             <li>
-              <Link href="/">미니어처</Link>
+              <Link href="/category/miniature">미니어처</Link>
             </li>
             <li>
-              <Link href="/">문구</Link>
+              <Link href="/category/stationery">문구</Link>
             </li>
             <li>
-              <Link href="/">리빙&소품</Link>
+              <Link href="/category/living-accessories">리빙&소품</Link>
             </li>
             <li>
-              <Link href="/">랜덤박스</Link>
-            </li>
-            <li>
-              <Link href="/">COMMUNITY</Link>
+              <Link href="/board">COMMUNITY</Link>
             </li>
           </ul>
         </nav>
@@ -143,20 +149,24 @@ export default function DesktopHeader() {
         {isCategoryOpen && (
           <nav aria-label="세부 카테고리 메뉴" className="absolute z-[50] left-1/2 -translate-x-1/2 top-full w-[30rem] lg:w-[40rem] text-sm lg:text-base mx-auto bg-[#E5CBB7] flex flex-row border-b border-x border-primary">
             <ul className="flex flex-col flex-nowrap text-center">
-              {['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품', '랜덤박스', 'COMMUNITY'].map(category => (
+              {['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품', 'COMMUNITY'].map(category => (
                 <li key={category} className={`p-4 cursor-pointer ${detailOpen === category ? 'bg-background' : ''}`} onClick={() => setDetailOpen(category)}>
                   {category}
                 </li>
               ))}
             </ul>
             <ul className="bg-background w-full flex flex-col flex-nowrap p-8 gap-4">
-              {categoryData.map((item, i) => (
-                <li key={i}>
-                  <Link href="/" className="cursor-pointer">
-                    {item} &gt;
-                  </Link>
-                </li>
-              ))}
+              {categoryData.map((item, i) => {
+                const val = categoryAddress[detailOpen as CategoryName];
+
+                return (
+                  <li key={i}>
+                    <Link href={`/category/${val}`} onClick={() => setIsCategoryOpen(false)}>
+                      {item} &gt;
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
         )}
