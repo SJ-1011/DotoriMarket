@@ -5,6 +5,11 @@ export type BoardType = 'community' | 'notice' | 'qna'; //커뮤니티, 공지, 
 export interface PostProduct {
   name: string;
   image: string | null;
+  name: string;
+}
+
+export interface PostExtra {
+  qnatype?: string;
 }
 
 //댓글 추가
@@ -33,6 +38,7 @@ export interface Post {
   extra?: {
     qnatype: string;
   };
+  image: string;
 }
 
 /**
