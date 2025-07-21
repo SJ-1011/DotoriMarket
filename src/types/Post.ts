@@ -3,6 +3,7 @@ import { User } from '@/types/User';
 export type BoardType = 'community' | 'notice' | 'qna'; //커뮤니티, 공지, 문의 게시판 3개
 
 export interface PostProduct {
+  name: string;
   image: string | null;
   name: string;
 }
