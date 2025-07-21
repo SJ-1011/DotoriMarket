@@ -5,7 +5,6 @@ export type BoardType = 'community' | 'notice' | 'qna'; //커뮤니티, 공지, 
 export interface PostProduct {
   name: string;
   image: string | null;
-  name: string;
 }
 
 export interface PostExtra {
