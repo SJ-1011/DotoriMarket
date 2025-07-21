@@ -25,7 +25,7 @@ export default function MobileHeader() {
 
   // 메뉴 종류
   const menuContent = {
-    category: ['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품', '랜덤박스'],
+    category: ['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품'],
     board: ['공지사항', '자유게시판', '문의게시판'],
     myInfo: ['마이페이지', '내가 쓴 글', '배송 주소록 관리', '장바구니', '관심 상품', '회원 정보 수정', '로그아웃'],
   };
@@ -42,6 +42,9 @@ export default function MobileHeader() {
 
   // TODO 링크 연결하기
   const menuLink = {
+    신상품: 'category/new',
+    인기상품: 'category/popular',
+    미니어처: 'category/miniature',
     마이페이지: 'mypage',
     '내가 쓴 글': 'mypage',
     '배송 주소록 관리': 'mypage',
@@ -133,7 +136,7 @@ export default function MobileHeader() {
                         <>
                           {CHARACTER_CATEGORIES.map((item, i) => (
                             <li key={i}>
-                              <Link href="/" onClick={() => setIsOpenMenu(false)}>
+                              <Link href="/category/character" onClick={() => setIsOpenMenu(false)}>
                                 {item}
                               </Link>
                             </li>
@@ -144,7 +147,7 @@ export default function MobileHeader() {
                         <>
                           {STATIONERY_CATEGORIES.map((item, i) => (
                             <li key={i}>
-                              <Link href="/" onClick={() => setIsOpenMenu(false)}>
+                              <Link href="/category/stationery" onClick={() => setIsOpenMenu(false)}>
                                 {item}
                               </Link>
                             </li>
@@ -155,7 +158,7 @@ export default function MobileHeader() {
                         <>
                           {LIVING_CATEGORIES.map((item, i) => (
                             <li key={i}>
-                              <Link href="/" onClick={() => setIsOpenMenu(false)}>
+                              <Link href="/category/living-accessories" onClick={() => setIsOpenMenu(false)}>
                                 {item}
                               </Link>
                             </li>
