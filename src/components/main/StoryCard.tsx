@@ -20,7 +20,7 @@ export default function StoryCard({ story }: StoryCardProps) {
     <>
       {/* 640 미만: 이미지 + 타이틀만 */}
       <Link href={href} className="block sm:hidden">
-        <div className="rounded-2xl border border-gray-200 shadow flex flex-col items-center p-4 text-center h-full cursor-pointer">
+        <div className="rounded-md border border-gray-200 shadow flex flex-col items-center p-4 text-center h-full cursor-pointer">
           <div className="w-16 h-16 relative mb-2">
             <Image src={story.image} alt={story.title} fill sizes="64px" className="object-contain" />
           </div>
@@ -29,7 +29,7 @@ export default function StoryCard({ story }: StoryCardProps) {
       </Link>
 
       {/* 640 이상: 요약 + 버튼 포함 */}
-      <div className="hidden sm:flex rounded-2xl border border-gray-200 shadow flex-col items-center p-4 text-center h-full">
+      <div className="hidden sm:flex rounded-md border border-gray-200 shadow flex-col items-center p-4 text-center h-full">
         <div className="w-16 h-16 relative mb-3">
           <Image src={story.image} alt={story.title} fill sizes="64px" className="object-contain" />
         </div>

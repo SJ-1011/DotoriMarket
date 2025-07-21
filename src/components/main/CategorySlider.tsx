@@ -106,7 +106,7 @@ export default function ProductGrid() {
         <div ref={scrollRef} className="sm:hidden flex gap-4 overflow-x-hidden whitespace-nowrap select-none" style={{ cursor: isDragging ? 'grabbing' : 'grab' }} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
           {mockProducts.map(product => (
             <div key={product.id} className="inline-flex flex-col items-center w-[160px] flex-shrink-0 select-none">
-              <div className="relative w-[160px] h-[160px] rounded-lg overflow-hidden bg-gray-200">
+              <div className="relative w-[160px] h-[160px] rounded-md overflow-hidden ">
                 <Image src={product.image} alt={product.name} fill className="object-cover" sizes="160px" />
               </div>
               <p className="mt-2 text-center text-sm font-medium">{product.name}</p>
@@ -120,7 +120,7 @@ export default function ProductGrid() {
         <div className="grid sm:hidden grid-cols-3 gap-4">
           {mockProducts.map(product => (
             <div key={product.id} className="flex flex-col items-center w-full select-none">
-              <div className="relative w-full pb-[100%] overflow-hidden bg-gray-200">
+              <div className="relative w-full pb-[100%] overflow-hidden rounded-md ">
                 <Image src={product.image} alt={product.name} fill className="object-cover" sizes="(max-width: 640px) 33vw" />
               </div>
               <p className="mt-2 text-center text-sm font-bold">{product.name}</p>
@@ -133,7 +133,7 @@ export default function ProductGrid() {
       <div className="hidden sm:grid lg:hidden grid-cols-3 gap-4">
         {mockProducts.map(product => (
           <div key={product.id} className="flex flex-col items-center w-full select-none">
-            <div className="relative w-full pb-[100%] overflow-hidden bg-gray-200">
+            <div className="relative w-full pb-[100%] overflow-hidden rounded-md ">
               <Image src={product.image} alt={product.name} fill className="object-cover" sizes="(min-width: 640px) and (max-width: 1023px) 33vw" />
             </div>
             <p className="mt-2 text-center text-sm font-bold">{product.name}</p>
@@ -145,7 +145,7 @@ export default function ProductGrid() {
       <div className="hidden lg:grid lg:grid-cols-4 gap-4">
         {mockProducts.map(product => (
           <div key={product.id} className="flex flex-col items-center w-full select-none">
-            <div className="relative w-full pb-[100%]  overflow-hidden bg-gray-100">
+            <div className="relative w-full pb-[100%]  overflow-hidden rounded-md">
               <Image src={product.image} alt={product.name} fill className="object-cover" sizes="(min-width: 1024px) 25vw" />
             </div>
             <p className="mt-2 text-center text-sm font-bold">{product.name}</p>
