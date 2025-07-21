@@ -4,7 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
 /**
- * 공통 PATCH 함수 - 등록, 수정, 삭제, 대표배송지 변경 처리
+ * 공통 PATCH 함수 - 수정, 삭제, 대표배송지 변경 처리
  * @param userId 유저 ID
  * @param accessToken JWT 토큰
  * @param updatedAddresses 수정된 주소 배열
