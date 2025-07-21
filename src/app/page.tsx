@@ -1,48 +1,40 @@
 import Carousel from '@/components/main/Carousel';
 import CategorySlider from '@/components/main/CategorySlider';
 import SectionTitle from '@/components/main/SectionTitle';
-import ProductGrid from '@/components/common/ProductGrid';
 import ReviewSlider from '@/components/main/ReviewSlider';
-import StoryCard from '@/components/main/StoryCard';
-import ProductCard from '@/components/main/ProductCard';
+import StoryCardList from '@/components/main/StoryCardList';
+import NewProductsSection from '@/components/main/NewProductsSection';
 
-const newProducts = Array.from({ length: 6 }, (_, i) => ({
-  id: i,
-  name: `신상품 ${i + 1}`,
-  price: (i + 1) * 1000,
-}));
-
-const storyProducts = Array.from({ length: 3 }, (_, i) => ({
-  id: i + 100,
-  title: `이야기 ${i + 1}`,
-  summary: `이야기 ${i + 1}의 간단한 요약입니다.`,
-}));
-
-export default function Home() {
+export default async function Home() {
   return (
     <main className="flex flex-col items-center">
+      {/* 캐러셀 섹션 */}
       <Carousel />
 
-      <section className="w-full px-4 max-w-screen-xl">
-        <SectionTitle title="도토리섬 인기 캐릭터 상품" />
-        <CategorySlider />
+      <section className="w-full px-4 max-w-[800px]">
+        {/* 인기 캐릭터 상품 섹션 */}
+        <div className="mb-20 mt-10">
+          <SectionTitle title="도토리섬 인기 캐릭터 상품" />
+          <CategorySlider />
+        </div>
 
-        <SectionTitle title="도토리섬 신상품 둘러보기" />
-        <ProductGrid>
-          {newProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </ProductGrid>
+        {/* 신상품 섹션 */}
+        <div className="mb-20">
+          <SectionTitle title="도토리섬 신상품 둘러보기" />
+          <NewProductsSection />
+        </div>
 
-        <SectionTitle title="도토리섬 베스트 포토리뷰" />
-        <ReviewSlider />
+        {/* 베스트 포토리뷰 섹션 */}
+        <div className="mb-20">
+          <SectionTitle title="도토리섬 베스트 포토리뷰" />
+          <ReviewSlider />
+        </div>
 
-        <SectionTitle title="도토리섬 이야기" />
-        <ProductGrid>
-          {storyProducts.map(story => (
-            <StoryCard key={story.id} story={story} />
-          ))}
-        </ProductGrid>
+        {/* 이야기 섹션 */}
+        <div className="mb-40">
+          <SectionTitle title="도토리섬 이야기" />
+          <StoryCardList />
+        </div>
       </section>
     </main>
   );
