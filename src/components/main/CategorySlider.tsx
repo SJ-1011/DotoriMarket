@@ -140,7 +140,7 @@ export default function ProductGrid() {
               <div className="relative w-full pb-[100%] overflow-hidden rounded-md">
                 <Image src={product.image} alt={`${product.name} 캐릭터 이미지`} fill className="object-cover" sizes="25vw" />
               </div>
-              <p className="mt-2 text-center text-sm font-bold">{product.name}</p>
+              <p className={`mt-2 text-center text-sm ${showAll ? '' : 'font-bold'}`}>{product.name}</p>
             </div>
           ))}
         </div>
