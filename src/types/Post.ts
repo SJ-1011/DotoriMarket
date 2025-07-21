@@ -34,7 +34,9 @@ export interface Post {
   repliesCount: number;
   product: PostProduct;
   replies?: PostReply[];
-  extra?: PostExtra;
+  extra?: {
+    qnatype: string;
+  };
   image: string;
 }
 
