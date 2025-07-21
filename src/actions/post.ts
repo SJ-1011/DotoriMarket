@@ -4,7 +4,7 @@ import { ApiRes, ApiResPromise } from '@/types';
 import { Post, PostReply } from '@/types/Post';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-
+import { uploadFile } from './file';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
@@ -29,6 +29,21 @@ export async function createPost(state: ApiRes<Post> | null, formData: FormData)
       delete body[key];
     }
   });
+  //이미지 있으면  Post 타입의 image 속성에 경로 할당
+  if (formData.get('attach') instanceof File) {
+    const uploadRes = await uploadFile(formData);
+    if (uploadRes.ok === 1 && uploadRes.item.length > 0) {
+      const uploadedPath = uploadRes.item[0].path;
+      //   //uploadRes.item 찍어보니까 아래와 같이 나옴
+      // originalname: 'KakaoTalk_20250624_224418829.jpg',
+      // name: 'SYOW6vB_t.jpg',
+      // path: 'files/febc13-final10-emjf/SYOW6vB_t.jpg'
+      console.log(uploadRes.item);
+      console.log(`업로드 패쓰 : ${uploadedPath}`);
+      body.image = `${API_URL}/${uploadedPath}`;
+    }
+  }
+
   let res: Response;
   let data: ApiRes<Post>;
 
