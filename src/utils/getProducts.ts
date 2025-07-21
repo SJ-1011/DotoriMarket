@@ -84,7 +84,7 @@ export async function getProductsCategory(category: string): ApiResPromise<Produ
       break;
   }
   try {
-    const res = await fetch(`${API_URL}/products?showSoldOut=true?custom=${encodeURIComponent(JSON.stringify(query))}`, {
+    const res = await fetch(`${API_URL}/products?showSoldOut=true&custom=${encodeURIComponent(JSON.stringify(query))}`, {
       headers: {
         'Client-Id': CLIENT_ID,
       },
