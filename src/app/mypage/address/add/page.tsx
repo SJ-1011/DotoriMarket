@@ -32,7 +32,7 @@ interface FormState {
   isDefault: boolean;
 }
 
-export default function AddAddressPage() {
+export default function AddAddress() {
   const router = useRouter();
   const user = useLoginStore(state => state.user);
   const [loading, setLoading] = useState(false);
@@ -83,7 +83,8 @@ export default function AddAddressPage() {
   const toUserAddress = (form: FormState): Omit<UserAddress, 'id'> => ({
     name: form.deliveryName,
     recipient: form.recipient,
-    value: `${form.postcode} ${form.address} ${form.detailAddress}`.trim(),
+    value: `${form.postcode} ${form.address}`.trim(),
+    detailAddress: form.detailAddress.trim(),
     mobile: form.mobile,
     isDefault: form.isDefault,
   });
@@ -97,18 +98,18 @@ export default function AddAddressPage() {
     }
 
     setLoading(true);
+
     try {
       const newAddress = toUserAddress(form);
       const result = await addAddress(user._id, user.token.accessToken, newAddress);
 
-      if (result.ok) {
-        alert('배송지가 추가되었습니다.');
-        router.push('/mypage/address');
-      } else {
-        alert('배송지 추가에 실패했습니다.');
-      }
+      if (!result.ok) throw new Error('배송지 추가에 실패했습니다.');
+
+      alert('배송지가 추가되었습니다.');
+      router.push('/mypage/address');
     } catch (err) {
       console.error('배송지 추가 실패:', err);
+      alert(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -230,7 +231,7 @@ export default function AddAddressPage() {
 
         {/* 버튼 영역 */}
         <div className="col-span-3 w-full flex gap-2 mt-2">
-          <button type="submit" className="flex-1 bg-primary cursor-pointer text-white rounded px-4 py-2 text-xs sm:text-sm lg:text-base" disabled={loading}>
+          <button type="submit" className="flex-1 bg-primary cursor-pointer text-white rounded px-4 py-2 text-xs sm:text-sm lg:text-base" disabled={loading || !form.address.trim()}>
             {loading ? '등록 중...' : '등록'}
           </button>
           <button type="button" onClick={() => router.back()} className="flex-1 cursor-pointer border rounded px-4 py-2 text-xs sm:text-sm lg:text-base" disabled={loading}>

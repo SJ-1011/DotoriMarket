@@ -54,6 +54,7 @@ export interface UserAddress {
   name: string;
   recipient: string;
   value: string;
+  detailAddress?: string;
   mobile: string;
   isDefault: boolean;
 }
