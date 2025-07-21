@@ -28,11 +28,24 @@ const mockProducts: Product[] = characterImagePaths.map((product, i) => ({
 
 export default function ProductGrid() {
   const [showAll, setShowAll] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // 윈도우 크기 상태 업데이트
   useEffect(() => {
-    if (!scrollRef.current || showAll || isDragging) return;
+    const updateWidth = () => setWindowWidth(window.innerWidth);
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
+
+  // 640px 미만이고 간략보기이고 드래그 중 아니면 자동 스크롤 실행
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    if (windowWidth >= 640) return;
+    if (showAll) return;
+    if (isDragging) return;
 
     let rafId: number;
     const speed = 0.5;
@@ -49,7 +62,7 @@ export default function ProductGrid() {
 
     rafId = requestAnimationFrame(step);
     return () => cancelAnimationFrame(rafId);
-  }, [showAll, isDragging]);
+  }, [windowWidth, showAll, isDragging]);
 
   const isTouching = useRef(false);
   const lastX = useRef(0);
@@ -92,22 +105,26 @@ export default function ProductGrid() {
     isMouseDown.current = false;
   };
 
+  const isMobile = windowWidth < 640;
+
   return (
     <section className="my-8 px-4">
-      {/* 640 이하에서만 전체보기 버튼 */}
-      <div className="flex justify-end mb-4 sm:hidden">
-        <button onClick={() => setShowAll(!showAll)} className="text-sm text-gray-600">
-          {showAll ? '간략 보기' : '전체 보기'}
-        </button>
-      </div>
+      {/* 전체보기 버튼 (640px 미만에서만 표시) */}
+      {isMobile && (
+        <div className="flex justify-end mb-4">
+          <button onClick={() => setShowAll(!showAll)} className="text-sm text-gray-600">
+            {showAll ? '간략 보기' : '전체 보기'}
+          </button>
+        </div>
+      )}
 
-      {/* 640 이하 자동 스크롤 + 드래그 */}
-      {!showAll && (
-        <div ref={scrollRef} className="sm:hidden flex gap-4 overflow-x-hidden whitespace-nowrap select-none" style={{ cursor: isDragging ? 'grabbing' : 'grab' }} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
+      {/* 간략보기(자동스크롤+드래그) - 640px 미만 & showAll이 false 일 때만 노출 */}
+      {isMobile && !showAll && (
+        <div ref={scrollRef} className="flex gap-4 overflow-x-hidden whitespace-nowrap select-none" style={{ cursor: isDragging ? 'grabbing' : 'grab' }} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
           {mockProducts.map(product => (
-            <div key={product.id} className="inline-flex flex-col items-center w-[160px] flex-shrink-0 select-none">
-              <div className="relative w-[160px] h-[160px] rounded-md overflow-hidden ">
-                <Image src={product.image} alt={product.name} fill className="object-cover" sizes="160px" />
+            <div key={product.id} className="inline-flex flex-col items-center w-[160px] flex-shrink-0">
+              <div className="relative w-[160px] h-[160px] rounded-md overflow-hidden">
+                <Image src={product.image} alt={`${product.name} 캐릭터 이미지`} fill className="object-cover" sizes="160px" />
               </div>
               <p className="mt-2 text-center text-sm font-medium">{product.name}</p>
             </div>
@@ -115,43 +132,19 @@ export default function ProductGrid() {
         </div>
       )}
 
-      {/* 640 이하: showAll일 때 3열 그리드 */}
-      {showAll && (
-        <div className="grid sm:hidden grid-cols-3 gap-4">
+      {/* 4열 그리드 - 640px 이상이거나, showAll이 true일 때 항상 노출 */}
+      {(showAll || !isMobile) && (
+        <div className="grid grid-cols-4 gap-4">
           {mockProducts.map(product => (
             <div key={product.id} className="flex flex-col items-center w-full select-none">
-              <div className="relative w-full pb-[100%] overflow-hidden rounded-md ">
-                <Image src={product.image} alt={product.name} fill className="object-cover" sizes="(max-width: 640px) 33vw" />
+              <div className="relative w-full pb-[100%] overflow-hidden rounded-md">
+                <Image src={product.image} alt={`${product.name} 캐릭터 이미지`} fill className="object-cover" sizes="25vw" />
               </div>
               <p className="mt-2 text-center text-sm font-bold">{product.name}</p>
             </div>
           ))}
         </div>
       )}
-
-      {/* 640 이상 ~ 1024 미만 */}
-      <div className="hidden sm:grid lg:hidden grid-cols-3 gap-4">
-        {mockProducts.map(product => (
-          <div key={product.id} className="flex flex-col items-center w-full select-none">
-            <div className="relative w-full pb-[100%] overflow-hidden rounded-md ">
-              <Image src={product.image} alt={product.name} fill className="object-cover" sizes="(min-width: 640px) and (max-width: 1023px) 33vw" />
-            </div>
-            <p className="mt-2 text-center text-sm font-bold">{product.name}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* 1024 이상: 4열 그리드 */}
-      <div className="hidden lg:grid lg:grid-cols-4 gap-4">
-        {mockProducts.map(product => (
-          <div key={product.id} className="flex flex-col items-center w-full select-none">
-            <div className="relative w-full pb-[100%]  overflow-hidden rounded-md">
-              <Image src={product.image} alt={product.name} fill className="object-cover" sizes="(min-width: 1024px) 25vw" />
-            </div>
-            <p className="mt-2 text-center text-sm font-bold">{product.name}</p>
-          </div>
-        ))}
-      </div>
     </section>
   );
 }
