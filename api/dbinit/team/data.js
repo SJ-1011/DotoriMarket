@@ -46,62 +46,1025 @@ export const initData = async (clientId, nextSeq) => {
     product: [
       {
         _id: await nextSeq('product'),
-        seller_id: 2,
-        price: 22800,
-        shippingFees: 0,
+        seller_id: 1,
+        price: 22000,
+        shippingFees: 3000,
         show: true,
         active: true,
-        name: '부가티',
-        quantity: 320,
-        buyQuantity: 310,
+        name: '지브리 토토로 릴패스 파우치',
+        quantity: 1,
+        buyQuantity: 5,
         mainImages: [
           {
-            path: `files/${clientId}/sample-bugatti.png`,
-            name: 'sample-bugatti.png',
-            originalname: '부가티.png',
+            path: `files/${clientId}/PC0101_01.webp`,
+            name: 'PC0101_01.webp',
+            originalname: '지브리 토토로 릴패스 파우치.png',
           },
         ],
         content: `
           <div class="product-detail">
-            <p>캥거루 스턴트 독 로봇완구 상세 설명</p>
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: false,
+          category: ['PC01', 'PC0101'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 5900,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '스튜디오 지브리 손수건 9종',
+        quantity: 10,
+        buyQuantity: 0,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0101_02.webp`,
+            name: 'PC0101_02.webp',
+            originalname: '스튜디오 지브리 손수건 9종.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
           </div>`,
         createdAt: getTime(-41, -60 * 60 * 2),
         updatedAt: getTime(-40, -60 * 15),
         extra: {
           isNew: true,
           isBest: true,
-          category: ['PC03', 'PC0301'],
+          category: ['PC01', 'PC0101'],
           sort: 5,
+          // options: 1,
         },
       },
       {
         _id: await nextSeq('product'),
-        seller_id: 333,
-        price: 17260,
-        shippingFees: 2500,
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
         show: true,
         active: true,
-        name: '부가티',
-        quantity: 200,
-        buyQuantity: 198,
+        name: '미키마우스 미니마우스 와펜',
+        quantity: 5,
+        buyQuantity: 10,
         mainImages: [
           {
-            path: `files/${clientId}/sample-bugatti.png`,
-            name: 'sample-bugatti.png',
-            originalname: '부가티.png',
+            path: `files/${clientId}/PC0102_01.webp`,
+            name: 'PC0102_01.webp',
+            originalname: '미키마우스 미니마우스 와펜.webp',
           },
         ],
         content: `
           <div class="product-detail">
-            <p>헬로카봇 스톰다이버 상세 설명</p>
+            <p>상품 살세 설명</p>
           </div>`,
-        createdAt: getTime(-38, -60 * 60 * 6),
-        updatedAt: getTime(-33, -60 * 55),
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: false,
+          category: ['PC01', 'PC0102'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 5000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '디즈니 스펀지 키친 매트',
+        quantity: 1,
+        buyQuantity: 50,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0102_02.webp`,
+            name: 'PC0102_02.webp',
+            originalname: '디즈니 스펀지 키친 매트.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
         extra: {
           isNew: false,
           isBest: true,
+          category: ['PC01', 'PC0102'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '키티 얼굴 다용도 멀티 케이스',
+        quantity: 10,
+        buyQuantity: 1,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0103_01.webp`,
+            name: 'PC0103_01.webp',
+            originalname: '키티 얼굴 다용도 멀티 케이스.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: false,
           category: ['PC01', 'PC0103'],
-          sort: 4,
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '마이멜로디 4칸 다용도 케이스',
+        quantity: 10,
+        buyQuantity: 1,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0103_02.webp`,
+            name: 'PC0103_02.webp',
+            originalname: '마이멜로디 4칸 다용도 케이스.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: false,
+          category: ['PC01', 'PC0103'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '미피 랜덤 액자 마그넷',
+        quantity: 0,
+        buyQuantity: 20,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0104_01.webp`,
+            name: 'PC0104_01.webp',
+            originalname: '미피 랜덤 액자 마그넷.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: true,
+          category: ['PC01', 'PC0104'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 6500,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '미피 스퀘어 메모패드',
+        quantity: 10,
+        buyQuantity: 0,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0104_02.webp`,
+            name: 'PC0104_02.webp',
+            originalname: '미피 스퀘어 메모패드.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: false,
+          category: ['PC01', 'PC0104'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 19000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '핑구 일상시리즈 인형 키링',
+        quantity: 0,
+        buyQuantity: 50,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0105_01.webp`,
+            name: 'PC0105_01.webp',
+            originalname: '핑구 일상시리즈 인형 키링.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: true,
+          category: ['PC01', 'PC0105'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 23000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: 'PINGU 핑구 랜덤 인형 키링',
+        quantity: 10,
+        buyQuantity: 5,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0105_02.webp`,
+            name: 'PC0105_02.webp',
+            originalname: 'PINGU 핑구 랜덤 인형 키링.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: false,
+          category: ['PC01', 'PC0105'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 9000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '짱구는못말려 랜덤 액자 마그넷',
+        quantity: 10,
+        buyQuantity: 5,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0106_01.webp`,
+            name: 'PC0106_01.webp',
+            originalname: '짱구는못말려 랜덤 액자 마그넷.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: false,
+          category: ['PC01', 'PC0106'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 33000,
+        shippingFees: 0,
+        show: true,
+        active: true,
+        name: '치이카와 택 키링 7종',
+        quantity: 10,
+        buyQuantity: 5,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0107_01.webp`,
+            name: 'PC0107_01.webp',
+            originalname: '치이카와 택 키링 7종.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: true,
+          category: ['PC01', 'PC0107'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 33000,
+        shippingFees: 0,
+        show: true,
+        active: true,
+        name: 'MINISO 치이카와 키링 미니백 마스코트',
+        quantity: 3,
+        buyQuantity: 100,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0107_02.webp`,
+            name: 'PC0107_02.webp',
+            originalname: 'MINISO 치이카와 키링 미니백 마스코트.webp',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: true,
+          category: ['PC01', 'PC0107'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 8000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '스누피 랜덤 자석 마그넷',
+        quantity: 0,
+        buyQuantity: 100,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0108_01.webp`,
+            name: 'PC0108_01.webp',
+            originalname: '스누피 랜덤 자석 마그넷',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: true,
+          category: ['PC01', 'PC0108'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 1500,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '스누피 에폭시 스티커',
+        quantity: 3,
+        buyQuantity: 100,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0108_02.webp`,
+            name: 'PC0108_02.webp',
+            originalname: '스누피 에폭시 스티커',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: true,
+          category: ['PC01', 'PC0108'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3500,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '미니어처 책상 의자 세트',
+        quantity: 3,
+        buyQuantity: 100,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0201_01.webp`,
+            name: 'PC0201_01.webp',
+            originalname: '미니어처 책상 의자 세트',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: true,
+          category: ['PC02', 'PC0201'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3500,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '컴퓨터 미니어처 소품 피규어',
+        quantity: 3,
+        buyQuantity: 100,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0201_02.webp`,
+            name: 'PC0201_02.webp',
+            originalname: '컴퓨터 미니어처 소품 피규어',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: true,
+          category: ['PC02', 'PC0201'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 8000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '산리오 캐릭터 볼펜 5종 세트',
+        quantity: 5,
+        buyQuantity: 20,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0301_01.webp`,
+            name: 'PC0301_01.webp',
+            originalname: '산리오 캐릭터 볼펜 5종 세트',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: false,
+          category: ['PC03', 'PC0301'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 12000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '산리오 흔들흔들 스윙 볼펜',
+        quantity: 5,
+        buyQuantity: 20,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0301_02.webp`,
+            name: 'PC0301_02.webp',
+            originalname: '산리오 흔들흔들 스윙 볼펜',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: false,
+          category: ['PC03', 'PC0301'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '꼬마마법사 레미 폭신 스티커 2종',
+        quantity: 0,
+        buyQuantity: 100,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0302_01.webp`,
+            name: 'PC0302_01.webp',
+            originalname: '꼬마마법사 레미 폭신 스티커 2종',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: true,
+          category: ['PC03', 'PC0302'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '산리오 스티커 4P 세트',
+        quantity: 5,
+        buyQuantity: 20,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0302_02.webp`,
+            name: 'PC0302_02.webp',
+            originalname: '산리오 스티커 4P 세트',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: false,
+          category: ['PC03', 'PC0302'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 2000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '치이카와 랜덤 마스킹테이프',
+        quantity: 0,
+        buyQuantity: 300,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0303_01.webp`,
+            name: 'PC0303_01.webp',
+            originalname: '치이카와 랜덤 마스킹테이프',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: true,
+          category: ['PC03', 'PC0303'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '디즈니 캐릭터 마스킹테이프',
+        quantity: 0,
+        buyQuantity: 20,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0303_02.webp`,
+            name: 'PC0303_02.webp',
+            originalname: '디즈니 캐릭터 마스킹테이프',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: false,
+          category: ['PC03', 'PC0303'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 12000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '산리오 정품 3공 다이어리',
+        quantity: 2,
+        buyQuantity: 40,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0304_01.webp`,
+            name: 'PC0304_01.webp',
+            originalname: '산리오 정품 3공 다이어리',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: false,
+          category: ['PC03', 'PC0304'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '2025 산리오 탁상용 달력',
+        quantity: 0,
+        buyQuantity: 20,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0304_02.webp`,
+            name: 'PC0304_02.webp',
+            originalname: '2025 산리오 탁상용 달력',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: true,
+          category: ['PC03', 'PC0304'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '빈티지 디저트 레시피 페이퍼 10P',
+        quantity: 10,
+        buyQuantity: 0,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0305_01.webp`,
+            name: 'PC0305_01.webp',
+            originalname: '빈티지 디저트 레시피 페이퍼 10P',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: false,
+          category: ['PC03', 'PC0304'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '빈티지 케이크 페이퍼 10P',
+        quantity: 10,
+        buyQuantity: 0,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0305_02.webp`,
+            name: 'PC0305_02.webp',
+            originalname: '빈티지 케이크 페이퍼 10P',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: false,
+          category: ['PC03', 'PC0305'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '산리오 모두의 타보 메모지',
+        quantity: 10,
+        buyQuantity: 20,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0306_01.webp`,
+            name: 'PC0306_01.webp',
+            originalname: '산리오 모두의 타보 메모지',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: false,
+          category: ['PC03', 'PC0306'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '산리오 케로케로케로피 메모지',
+        quantity: 10,
+        buyQuantity: 0,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0306_02.webp`,
+            name: 'PC0306_02.webp',
+            originalname: '산리오 케로케로케로피 메모지',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: false,
+          isBest: false,
+          category: ['PC03', 'PC0306'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 4000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '일본 고전 만화책 자체제작 키링',
+        quantity: 20,
+        buyQuantity: 50,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0401_01.webp`,
+            name: 'PC0401_01.webp',
+            originalname: '일본 고전 만화책 자체제작 키링',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: true,
+          category: ['PC04', 'PC0401'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 3000,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '벚꽃 스트랩 키링',
+        quantity: 20,
+        buyQuantity: 50,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0401_02.webp`,
+            name: 'PC0401_02.webp',
+            originalname: '벚꽃 스트랩 키링',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: true,
+          category: ['PC04', 'PC0401'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 2500,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '오목눈이 뱁새 헤어핀',
+        quantity: 20,
+        buyQuantity: 50,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0402_01.webp`,
+            name: 'PC0402_01.webp',
+            originalname: '오목눈이 뱁새 헤어핀',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: true,
+          category: ['PC04', 'PC0402'],
+          sort: 5,
+          // options: 1,
+        },
+      },
+      {
+        _id: await nextSeq('product'),
+        seller_id: 1,
+        price: 2500,
+        shippingFees: 3000,
+        show: true,
+        active: true,
+        name: '레트로 디저트 헤어핀',
+        quantity: 20,
+        buyQuantity: 50,
+        mainImages: [
+          {
+            path: `files/${clientId}/PC0402_02.webp`,
+            name: 'PC0402_02.webp',
+            originalname: '레트로 디저트 헤어핀',
+          },
+        ],
+        content: `
+          <div class="product-detail">
+            <p>상품 살세 설명</p>
+          </div>`,
+        createdAt: getTime(-41, -60 * 60 * 2),
+        updatedAt: getTime(-40, -60 * 15),
+        extra: {
+          isNew: true,
+          isBest: true,
+          category: ['PC04', 'PC0402'],
+          sort: 5,
+          // options: 1,
         },
       },
     ],
