@@ -14,7 +14,7 @@ const storyMap = {
 type StorySlug = keyof typeof storyMap;
 
 export default async function StoryPage({ params }: { params: { slug: StorySlug } }) {
-  const slug = params.slug;
+  const { slug } = await params;
 
   if (!(slug in storyMap)) {
     return notFound();

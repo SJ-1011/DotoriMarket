@@ -22,7 +22,7 @@ export default function ProductCard({ product, bookmarkId: initialBookmarkId }: 
     e.preventDefault();
 
     if (!user?.token?.accessToken) {
-      alert('로그인이 필요합니다!');
+      alert('로그인이 필요합니다.');
       return;
     }
 
@@ -48,6 +48,8 @@ export default function ProductCard({ product, bookmarkId: initialBookmarkId }: 
 
   // 재고 계산
   const remaining = product.quantity - product.buyQuantity;
+
+  // TODO 각 상품 페이지로 링크 걸기
   return (
     <Link href="/">
       <div className="relative w-full aspect-square">
