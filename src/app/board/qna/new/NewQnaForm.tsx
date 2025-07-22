@@ -55,15 +55,16 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
   const router = useRouter();
   const user = useLoginStore(state => state.user);
   const isLogin = useLoginStore(state => state.isLogin);
-  if (!isLogin || !user) {
-    return <div>로그인이 필요합니다.</div>;
-  }
   useEffect(() => {
-    if (!user) {
-      // 렌더링 중에 페이지를 이동하면 에러가 발생하므로 렌더링 완료 후 이동한다.
-      router.replace(`/board/${boardType}/new`);
+    if (!isLogin || !user) {
+      router.replace(`/login`); // 또는 원하는 위치
     }
-  }, [user]);
+  }, [isLogin, user, router]);
+
+  // 로그인 안된 경우 fallback UI만 보여주고 훅은 모두 실행시킴
+  if (!isLogin || !user) {
+    return <div>로그인 상태가 아닙니다. 로그인 페이지로 이동 중입니다...</div>;
+  }
 
   return (
     <>
