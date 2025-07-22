@@ -12,6 +12,23 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  */
 export async function patchUserIntro(userId: number, intro: string, token: string): ApiResPromise<User> {
   try {
+    // 먼저 기존 유저 데이터를 가져옴
+    const userRes = await fetch(`${API_URL}/users/${userId}`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(res => res.json());
+
+    if (userRes.ok !== 1 || !userRes.item) {
+      throw new Error('기존 유저 데이터를 불러오지 못했습니다.');
+    }
+
+    const newExtra = {
+      ...userRes.item.extra,
+      intro,
+    };
+
     const res = await fetch(`${API_URL}/users/${userId}`, {
       method: 'PATCH',
       headers: {
@@ -19,7 +36,7 @@ export async function patchUserIntro(userId: number, intro: string, token: strin
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ extra: { intro } }),
+      body: JSON.stringify({ extra: newExtra }),
     });
     return res.json();
   } catch (error) {

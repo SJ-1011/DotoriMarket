@@ -12,6 +12,22 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  */
 export async function patchUserAddresses(userId: number, accessToken: string, updatedAddresses: UserAddress[]): Promise<PatchUserAddressesRes> {
   try {
+    const userRes = await fetch(`${API_URL}/users/${userId}`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then(res => res.json());
+
+    if (userRes.ok !== 1 || !userRes.item) {
+      throw new Error('기존 유저 데이터를 불러오지 못했습니다.');
+    }
+
+    const newExtra = {
+      ...userRes.item.extra,
+      address: updatedAddresses,
+    };
+
     const res = await fetch(`${API_URL}/users/${userId}`, {
       method: 'PATCH',
       headers: {
@@ -19,9 +35,7 @@ export async function patchUserAddresses(userId: number, accessToken: string, up
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({
-        extra: { address: updatedAddresses },
-      }),
+      body: JSON.stringify({ extra: newExtra }),
     });
 
     const data: PatchUserAddressesRes = await res.json();
