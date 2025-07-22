@@ -5,7 +5,7 @@ import { Product } from '@/types/Product';
 import { getLikedProducts, getProducts, getProductsCategory } from '@/utils/getProducts';
 import ProductItemCard from '@/components/common/ProductItemCard';
 import Link from 'next/link';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import Loading from '@/app/loading';
 import Image from 'next/image';
@@ -42,12 +42,46 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
   // 데스크탑 정렬 상태 열림/닫힘
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
+  const handleChange = (input: React.ChangeEvent<HTMLSelectElement> | string) => {
+    let value;
+    if (typeof input === 'string') value = input;
+    else {
+      value = input.target.value;
+    }
     setSortOption(value);
     console.log('선택된 정렬 기준:', value);
-    // TODO: 여기에 정렬 로직 추가
   };
+
+  // 정렬
+  useEffect(() => {
+    if (!products) return;
+    const copy = [...products];
+
+    switch (sortOption) {
+      case 'latest':
+        setProducts(copy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+        break;
+      case 'popular':
+        setProducts(
+          copy.sort((a, b) => {
+            const aLeft = a.quantity - a.buyQuantity;
+            const bLeft = b.quantity - b.buyQuantity;
+            return aLeft - bLeft;
+          }),
+        );
+        break;
+      case 'lowPrice':
+        setProducts(copy.sort((a, b) => a.price - b.price));
+        break;
+      case 'highPrice':
+        setProducts(copy.sort((a, b) => b.price - a.price));
+        break;
+      default:
+        setProducts(copy);
+    }
+
+    setIsOpen(false);
+  }, [sortOption]);
 
   // 상품 가져오기
   useEffect(() => {
@@ -105,6 +139,14 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
 
     fetchLiked();
   }, [user]);
+
+  // 정렬
+  const sortState = [
+    { label: '최신순', value: 'latest' },
+    { label: '인기순', value: 'popular' },
+    { label: '낮은가격순', value: 'lowPrice' },
+    { label: '높은가격순', value: 'highPrice' },
+  ];
 
   return (
     <main className="flex flex-col-reverse sm:flex-row px-4 sm:max-w-[664px] lg:max-w-[1000px] mx-auto py-4 sm:py-12">
@@ -188,24 +230,25 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             <option value="lowPrice">낮은가격순</option>
             <option value="highPrice">높은가격순</option>
           </select>
-          <button type="button" className="hidden sm:block cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+          <button type="button" className="hidden cursor-pointer sm:flex sm:flex-row sm:flex-nowrap sm:gap-4 sm:items-center" onClick={() => setIsOpen(!isOpen)}>
+            <p>{sortState.find(item => item.value == `${sortOption}`)?.label}</p>
             <FilterIcon svgProps={{ className: 'w-8 h-8' }} />
           </button>
           {isOpen && (
             // TODO 여기에 이벤트 걸어서 정렬 로직 만들기
             <ul className="absolute bg-white p-4 flex flex-col flex-nowrap gap-2 right-0 top-12 z-10 border border-primary">
-              <li className="cursor-pointer" onClick={() => setSortOption('latest')}>
-                최신순
-              </li>
-              <li className="cursor-pointer" onClick={() => setSortOption('popular')}>
-                인기순
-              </li>
-              <li className="cursor-pointer" onClick={() => setSortOption('lowPrice')}>
-                낮은가격순
-              </li>
-              <li className="cursor-pointer" onClick={() => setSortOption('highPrice')}>
-                높은가격순
-              </li>
+              {sortState.map((option, index) => (
+                <li
+                  key={index}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setSortOption(option.value);
+                    handleChange(option.value);
+                  }}
+                >
+                  {option.label}
+                </li>
+              ))}
             </ul>
           )}
         </div>
