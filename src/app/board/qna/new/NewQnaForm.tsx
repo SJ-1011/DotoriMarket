@@ -2,11 +2,12 @@
 
 import { createPost } from '@/actions/post';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useState } from 'react';
 import ProductSearchModal from './ProductSearchModal';
 import type { Product } from '@/types/Product';
 import Image from 'next/image';
+import { useLoginStore } from '@/stores/loginStore';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 //문의 종류 배열
 const QNA_TYPES = [
@@ -51,21 +52,27 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
   // console.log(isLoading, state);
   // console.log(`board/${boardType}`);
   //회원쪽 끝나면 작업해봅시다.
-  //  const router = useRouter();
-  // useEffect(() => {
-  //   if(!user){
-  //     // 렌더링 중에 페이지를 이동하면 에러가 발생하므로 렌더링 완료 후 이동한다.
-  //     router.replace(`/login?redirect=${boardType}/new`);
-  //   }
-  // }, [user]);
+  const router = useRouter();
+  const user = useLoginStore(state => state.user);
+  const isLogin = useLoginStore(state => state.isLogin);
+  if (!isLogin || !user) {
+    return <div>로그인이 필요합니다.</div>;
+  }
+  useEffect(() => {
+    if (!user) {
+      // 렌더링 중에 페이지를 이동하면 에러가 발생하므로 렌더링 완료 후 이동한다.
+      router.replace(`/board/${boardType}/new`);
+    }
+  }, [user]);
 
   return (
     <>
       <form action={formAction}>
         {/* 로그인 된 사용자일 경우 서버 액션에 accessToken 전달 */}
-        {/* <input type="hidden" name="accessToken" value={ user?.token?.accessToken ?? ''} /> */}
+        <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
         <input type="hidden" name="type" value={boardType} />
-
+        <input type="hidden" name="author.id" value={user?._id ?? ''} />
+        <input type="hidden" name="author.name" value={user?.name ?? ''} />
         <div className="flex flex-col items-center mb-6">
           <div className="flex gap-2 mb-2">
             {firstRow.map(item => (
