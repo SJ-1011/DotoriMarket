@@ -1,5 +1,5 @@
 import { getProductById } from '@/utils/getProducts';
-import ProductDetailPage from '@/components/product/ProductDetailPage';
+import ProductDetailPage from '@/app/products/[id]/ProductDetailPage';
 
 interface Props {
   params: { id: string };
