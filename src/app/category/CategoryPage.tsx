@@ -19,6 +19,8 @@ interface CategoryPageProps {
   category: string;
   title: string;
   detailArray?: detailArray[];
+  detail?: string;
+  categoryName?: string;
 }
 
 interface detailArray {
@@ -26,7 +28,7 @@ interface detailArray {
   address: string;
 }
 
-export default function CategoryPage({ category, title, detailArray }: CategoryPageProps) {
+export default function CategoryPage({ category, title, detailArray, detail, categoryName }: CategoryPageProps) {
   // 유저 로그인 정보 (찜목록 갱신)
   const user = useLoginStore(state => state.user);
   // 상품 목록
@@ -60,7 +62,9 @@ export default function CategoryPage({ category, title, detailArray }: CategoryP
         }
         // 카테고리 상품 조회
         else {
-          const res = await getProductsCategory(category);
+          let res;
+          if (detail) res = await getProductsCategory(category, detail);
+          else res = await getProductsCategory(category);
           if (res.ok) {
             setProducts(res.item);
           }
@@ -113,33 +117,62 @@ export default function CategoryPage({ category, title, detailArray }: CategoryP
               <Link href="/">홈</Link>
             </li>
             <li>&gt;</li>
-            <li>
-              <Link href={`/category/${category}`}>{title}</Link>
-            </li>
+            {!detail ? (
+              <li>
+                <Link href={`/category/${category}`}>{title}</Link>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <Link href={`/category/${category}`}>{categoryName}</Link>
+                </li>
+                <li>&gt;</li>
+                <li>
+                  <Link href={`/category/${category}/${detail}`}>{title}</Link>
+                </li>
+              </>
+            )}
           </ol>
         </nav>
         <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#A97452] py-2">{title}</h2>
 
         {/* 세부 카테고리 */}
-        {/* TODO 나중에 Props로 입력 받아서 선택된 카테고리에 배경색 입히기 */}
         {detailArray && (
           <aside>
             <div className="w-full overflow-x-auto scrollbar-hide">
               <ul className=" flex flex-row flex-nowrap sm:flex-wrap sm:justify-center items-center gap-2 overflow-x-auto w-max sm:w-full">
                 {detailArray.map((item, index) => {
+                  // 첫번째 줄
                   if (index === 2)
                     return (
                       <Fragment key={index}>
-                        <li className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
-                          <Link href={`/category/${item.address}`}>{item.name}</Link>
-                        </li>
+                        {/* 이름과 타이틀이 겹칠때 */}
+                        {item.name == title ? (
+                          <li className="bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2">
+                            <Link href={`/category/${item.address}`}>{item.name}</Link>
+                          </li>
+                        ) : (
+                          <li className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
+                            <Link href={`/category/${item.address}`}>{item.name}</Link>
+                          </li>
+                        )}
                         <li className="hidden sm:block sm:w-full sm:h-0" />
                       </Fragment>
                     );
+                  // 두번째 줄
                   return (
-                    <li key={index} className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
-                      <Link href={`/category/${item.address}`}>{item.name}</Link>
-                    </li>
+                    <>
+                      {/* 이름과 타이틀이 겹칠때 */}
+                      {item.name == title ? (
+                        <li className="bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2">
+                          <Link href={`/category/${item.address}`}>{item.name}</Link>
+                        </li>
+                      ) : (
+                        <li className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
+                          <Link href={`/category/${item.address}`}>{item.name}</Link>
+                        </li>
+                      )}
+                    </>
                   );
                 })}
               </ul>
