@@ -5,14 +5,14 @@ import ProductGrid from '@/components/common/ProductGrid';
 import ProductCard from '@/components/common/ProductCard';
 import ProductCardSkeleton from '@/components/common/ProductCardSkeleton';
 import { Product } from '@/types/Product';
-import { getProducts } from '@/utils/getProducts';
+import { getProductsCategory } from '@/utils/getProducts';
 
 const ROW_COUNT = 3; // 항상 3행씩 보여주기
 
 export default function NewProductsSection() {
   const [products, setProducts] = useState<Product[]>([]);
   const [visibleCount, setVisibleCount] = useState(0);
-  const [columns, setColumns] = useState(4); // 초기값은 4열 PC 기준
+  const [columns, setColumns] = useState(4);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,10 +32,9 @@ export default function NewProductsSection() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await getProducts();
+        const res = await getProductsCategory('new');
         if (res.ok === 1 && Array.isArray(res.item)) {
-          const newProducts = res.item.filter((product: Product) => product.extra?.isNew);
-          setProducts(newProducts);
+          setProducts(res.item);
         } else {
           console.error('상품 데이터 구조가 예상과 다릅니다:', res);
         }
