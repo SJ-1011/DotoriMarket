@@ -67,21 +67,39 @@ export async function getReplies(_id: number): ApiResPromise<PostReply[]> {
 }
 
 /**
- * 로그인한 사용자의 게시글 목록을 가져옵니다.
+ * 로그인한 사용자의 모든 게시글(qna, notice, community) 목록을 가져옵니다.
  * @returns {Promise<ApiRes<Post[]>>} - 사용자 게시글 목록 응답 객체
  */
 export async function getUserPosts(token: string): ApiResPromise<Post[]> {
   try {
-    const res = await fetch(`${API_URL}/posts/users`, {
-      headers: {
-        'Client-Id': CLIENT_ID,
-        Authorization: `Bearer ${token}`,
-      },
-      cache: 'no-store',
-    });
-    return res.json();
+    const types = ['qna', 'notice', 'community'];
+
+    const requests = types.map(type =>
+      fetch(`${API_URL}/posts/users?type=${type}`, {
+        headers: {
+          'Client-Id': CLIENT_ID,
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }).then(res => res.json()),
+    );
+
+    const results = await Promise.all(requests);
+
+    const allPosts = results
+      .filter(r => r.ok && r.item)
+      .flatMap(r => r.item)
+      .filter(post => post?.type);
+
+    return {
+      ok: 1,
+      item: allPosts,
+    };
   } catch (error) {
     console.error(error);
-    return { ok: 0, message: '일시적인 네트워크 문제로 내가 쓴 글을 불러오지 못했습니다.' };
+    return {
+      ok: 0,
+      message: '일시적인 네트워크 문제로 내가 쓴 글을 불러오지 못했습니다.',
+    };
   }
 }
