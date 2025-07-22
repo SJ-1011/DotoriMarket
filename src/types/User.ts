@@ -1,5 +1,4 @@
 export interface UserExtra {
-  birthday?: string;
   intro?: string;
   address?: UserAddress[];
 }
@@ -40,6 +39,7 @@ export interface User {
   email: string;
   password: string;
   name: string;
+  birthday?: string;
   phone: string;
   address: string;
   type: string;

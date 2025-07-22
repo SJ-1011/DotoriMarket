@@ -40,7 +40,7 @@ export default function MyPosts() {
     <div className="w-full p-2 sm:p-4 mt-4 text-dark-gray">
       <div className="space-y-4">
         <div className="mb-2 sm:mb-4 lg:mb-4 flex justify-between items-center">
-          <h2 className="font-bold text-base sm:text-lg lg:text-xl">관심 상품</h2>
+          <h2 className="font-bold text-base sm:text-lg lg:text-xl">내가 쓴 글</h2>
           <select className="px-1 py-1 rounded text-xs sm:text-sm lg:text-base" value={sortOption} onChange={e => setSortOption(e.target.value)}>
             <option value="all">전체</option>
             <option value="qna">qna</option>
