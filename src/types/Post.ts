@@ -52,5 +52,14 @@ export type PostForm = Partial<Pick<Post, 'type' | 'title' | 'content' | '_id'>>
   tags?: string;
 };
 
+/**
+ * FormData에서 변환된 동적 데이터를 위한 타입
+ * 서버 액션에서 FormData 처리 시 사용
+ */
+export type DynamicFormData = Record<string, FormDataEntryValue> & {
+  extra?: Record<string, FormDataEntryValue>;
+  [key: string]: FormDataEntryValue | Record<string, FormDataEntryValue> | undefined;
+};
+
 //  답글 작성 폼에서 사용하는 타입 (content만 포함)
 export type PostReplyForm = Pick<PostReply, 'content'>;

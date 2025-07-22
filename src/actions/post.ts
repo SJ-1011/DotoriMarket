@@ -1,7 +1,7 @@
 'use server';
 
 import { ApiRes, ApiResPromise } from '@/types';
-import { Post, PostReply } from '@/types/Post';
+import { DynamicFormData, Post, PostReply } from '@/types/Post';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { uploadFile } from './file';
@@ -20,13 +20,16 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  */
 export async function createPost(state: ApiRes<Post> | null, formData: FormData): ApiResPromise<Post> {
   // FormData를 일반 Object로 변환
-  const body = Object.fromEntries(formData.entries()) as Record<string, any>;
+  const body: DynamicFormData = Object.fromEntries(formData.entries());
+
   body.extra = {};
   Object.keys(body).forEach(key => {
     if (key.startsWith('extra.')) {
       const subKey = key.split('.')[1];
-      body.extra[subKey] = body[key];
-      delete body[key];
+      if (body.extra && subKey) {
+        body.extra[subKey] = body[key] as FormDataEntryValue;
+        delete body[key];
+      }
     }
   });
   //이미지 있으면  Post 타입의 image 속성에 경로 할당
