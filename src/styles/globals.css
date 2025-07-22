@@ -28,6 +28,20 @@
   border: 0;
 }
 
+/* 크롬, 사파리 등 Webkit 브라우저 스크롤바 숨기기 */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+/* IE, Edge */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+
 /* globals.css */
 .scrollbar-hide {
   scrollbar-width: none !important; /* Firefox */
@@ -35,4 +49,5 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none !important; /* Chrome, Safari, Edge */
+
 }
