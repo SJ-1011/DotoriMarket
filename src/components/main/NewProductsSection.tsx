@@ -48,7 +48,6 @@ export default function NewProductsSection() {
 
         if (accessToken) {
           const resLiked = await getLikedProducts(accessToken);
-          // 카테고리페이지와 동일한 방식으로 처리
           const liked = Object.values(resLiked)
             .filter((v): v is { _id: number; product: Product } => typeof v === 'object' && v !== null && 'product' in v && '_id' in v)
             .map(v => ({
