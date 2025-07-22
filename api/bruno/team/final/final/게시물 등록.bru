@@ -7,14 +7,18 @@ meta {
 post {
   url: {{url}}/posts
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 body:json {
   {
-      "type": "community",
-      "title": "여행 후기 입니다.",
-      "content": "주말에 다녀온 여행지 입니다. 날씨가 맑아서 좋았어요.",
-      "image": "/files/00-sample/sample-bugatti.png"
+      "type": "qna",
+      "product_id": 1,
+    "title": "왜 익명이 안돼요 33333 ?",
+    "content": "주말에 여행가기 전까지 오면 좋겠네요."
   }
 }
