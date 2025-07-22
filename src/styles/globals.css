@@ -42,12 +42,12 @@
 .hide-scrollbar {
   -ms-overflow-style: none;
 
-/* globals.css */
-.scrollbar-hide {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE 10+ */
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, Edge */
-
+  /* globals.css */
+  .scrollbar-hide {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE 10+ */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Edge */
+  }
 }
