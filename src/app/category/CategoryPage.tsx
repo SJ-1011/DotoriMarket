@@ -145,30 +145,30 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
                   // 첫번째 줄
                   if (index === 2)
                     return (
-                      <Fragment key={index}>
+                      <>
                         {/* 이름과 타이틀이 겹칠때 */}
                         {item.name == title ? (
-                          <li className="bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2">
+                          <li key={index} className="bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2">
                             <Link href={`/category/${item.address}`}>{item.name}</Link>
                           </li>
                         ) : (
-                          <li className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
+                          <li key={index} className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
                             <Link href={`/category/${item.address}`}>{item.name}</Link>
                           </li>
                         )}
-                        <li className="hidden sm:block sm:w-full sm:h-0" />
-                      </Fragment>
+                        <li key={'empty'} className="hidden sm:block sm:w-full sm:h-0" />
+                      </>
                     );
                   // 두번째 줄
                   return (
                     <>
                       {/* 이름과 타이틀이 겹칠때 */}
                       {item.name == title ? (
-                        <li className="bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2">
+                        <li key={index} className="bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2">
                           <Link href={`/category/${item.address}`}>{item.name}</Link>
                         </li>
                       ) : (
-                        <li className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
+                        <li key={index} className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
                           <Link href={`/category/${item.address}`}>{item.name}</Link>
                         </li>
                       )}
