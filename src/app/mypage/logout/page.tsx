@@ -3,14 +3,7 @@ import { useLoginStore } from '@/stores/loginStore';
 
 //로그아웃 페이지(굳이 페이지로 안해도 될 것 같지만 일단 만들겠습니다)
 export default function Logout() {
-  // 로그아웃 함수와 현재 상태들을 모두 가져오기
   const { logout, user, isLogin } = useLoginStore();
-
-  // 또는 개별적으로 구독하는 방법
-  // const logout = useLoginStore(state => state.logout);
-  // const user = useLoginStore(state => state.user);
-  // const isLogin = useLoginStore(state => state.isLogin);
-
   return (
     <div>
       <h2>로그아웃 페이지 입니다.</h2>
