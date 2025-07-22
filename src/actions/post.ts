@@ -56,7 +56,7 @@ export async function createPost(state: ApiRes<Post> | null, formData: FormData)
       headers: {
         'Content-Type': 'application/json',
         'Client-Id': CLIENT_ID,
-        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }), //accessToken존재하면 헤더에 포함하고 아니면 안함
       },
       body: JSON.stringify(body),
     });
