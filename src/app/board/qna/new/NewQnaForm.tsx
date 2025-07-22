@@ -2,8 +2,7 @@
 
 import { createPost } from '@/actions/post';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useState } from 'react';
 import ProductSearchModal from './ProductSearchModal';
 import type { Product } from '@/types/Product';
 import Image from 'next/image';
@@ -19,6 +18,7 @@ const QNA_TYPES = [
   { type: '재입고 문의', value: 'restock' },
   { type: '기타 문의', value: 'etc' },
 ];
+console.log(`로그인 스토어 정보 : ${useLoginStore.name}`);
 
 export default function NewQnaForm({ boardType }: { boardType: string }) {
   const [state, formAction, isLoading] = useActionState(createPost, null);
@@ -48,23 +48,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
     }
   };
 
-  //테스트용
-  // console.log(isLoading, state);
-  // console.log(`board/${boardType}`);
-  //회원쪽 끝나면 작업해봅시다.
-  const router = useRouter();
   const user = useLoginStore(state => state.user);
-  const isLogin = useLoginStore(state => state.isLogin);
-  useEffect(() => {
-    if (!isLogin || !user) {
-      router.replace(`/login`); // 또는 원하는 위치
-    }
-  }, [isLogin, user, router]);
-
-  // 로그인 안된 경우 fallback UI만 보여주고 훅은 모두 실행시킴
-  if (!isLogin || !user) {
-    return <div>로그인 상태가 아닙니다. 로그인 페이지로 이동 중입니다...</div>;
-  }
 
   return (
     <>
@@ -72,8 +56,6 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
         {/* 로그인 된 사용자일 경우 서버 액션에 accessToken 전달 */}
         <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
         <input type="hidden" name="type" value={boardType} />
-        <input type="hidden" name="author.id" value={user?._id ?? ''} />
-        <input type="hidden" name="author.name" value={user?.name ?? ''} />
         <div className="flex flex-col items-center mb-6">
           <div className="flex gap-2 mb-2">
             {firstRow.map(item => (
