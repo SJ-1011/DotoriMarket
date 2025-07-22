@@ -18,7 +18,7 @@ export default function NewProductsSection() {
   const accessToken = user?.token?.accessToken;
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [likedProducts, setLikedProducts] = useState<LikedProduct[] | null>(null);
+  const [likedProducts, setLikedProducts] = useState<LikedProduct[]>([]); // 초기값 빈 배열로 통일
   const [visibleCount, setVisibleCount] = useState(0);
   const [columns, setColumns] = useState(4);
   const [loading, setLoading] = useState(true);
@@ -35,11 +35,15 @@ export default function NewProductsSection() {
   }, []);
 
   useEffect(() => {
+    console.log('=== useEffect: accessToken changed ===');
+    console.log('accessToken:', accessToken);
+
     async function fetchData() {
       setLoading(true);
 
       try {
         const resProducts = await getProductsCategory('new');
+        console.log('getProductsCategory("new") 응답:', resProducts);
         if (resProducts.ok === 1 && Array.isArray(resProducts.item)) {
           setProducts(resProducts.item);
         } else {
@@ -48,6 +52,8 @@ export default function NewProductsSection() {
 
         if (accessToken) {
           const resLiked = await getLikedProducts(accessToken);
+          console.log('getLikedProducts 응답:', resLiked);
+
           const liked = Object.values(resLiked)
             .filter((v): v is { _id: number; product: Product } => typeof v === 'object' && v !== null && 'product' in v && '_id' in v)
             .map(v => ({
@@ -55,10 +61,11 @@ export default function NewProductsSection() {
               bookmarkId: v._id,
             }));
 
+          console.log('가공된 likedProducts:', liked);
           setLikedProducts(liked);
-          console.log('북마크 상품', liked);
         } else {
-          setLikedProducts(null);
+          console.log('accessToken 없음으로 likedProducts 초기화');
+          setLikedProducts([]);
         }
       } catch (error) {
         console.error('데이터 로드 실패:', error);
@@ -71,6 +78,7 @@ export default function NewProductsSection() {
   }, [accessToken]);
 
   useEffect(() => {
+    console.log('columns 변경:', columns);
     setVisibleCount(columns * ROW_COUNT);
   }, [columns]);
 
@@ -91,6 +99,9 @@ export default function NewProductsSection() {
       </section>
     );
   }
+
+  console.log('렌더링 시 likedProducts 상태:', likedProducts);
+  console.log('렌더링 시 products 상태:', products);
 
   return (
     <section className="my-8">
