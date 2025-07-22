@@ -82,7 +82,7 @@ export default function NewProductsSection() {
 
       {!isAllLoaded && (
         <div className="mt-4 flex justify-center">
-          <button onClick={handleLoadMore} className="px-16 py-4 my-4 text-sm font-semibold bg-white border border-gray-300 rounded hover:bg-gray-100">
+          <button onClick={handleLoadMore} className="px-10 py-3 mb-8 mt-4 text-sm font-medium border border-gray-300 rounded-sm ">
             상품 더 불러오기
           </button>
         </div>
