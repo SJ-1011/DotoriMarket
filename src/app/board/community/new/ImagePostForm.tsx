@@ -10,7 +10,7 @@ export default function ImagePostForm({ boardType }: { boardType: string }) {
   const [imagePath, setImagePath] = useState('');
   const [imageName, setImageName] = useState('');
   const [state, formAction, isLoading] = useActionState(createPost, null);
-
+  console.log(state); //일단 추가해서 unused해결
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
     if (!fileRef.current?.files?.[0]) return;
