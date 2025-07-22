@@ -11,8 +11,8 @@ interface Product {
 
 const mockProducts: Product[] = Array.from({ length: 10 }, (_, i) => ({
   id: i,
-  image: `/images/product${(i % 5) + 1}.jpg`,
-  name: `상품 ${i + 1}`,
+  image: `/images/product${(i % 5) + 1}.png`,
+  name: `리뷰 ${i + 1}`,
 }));
 
 export default function ProductGrid() {
@@ -20,7 +20,6 @@ export default function ProductGrid() {
   const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // 드래그 상태 및 변수
   const isTouching = useRef(false);
   const isMouseDown = useRef(false);
   const lastX = useRef(0);
@@ -63,7 +62,6 @@ export default function ProductGrid() {
     isMouseDown.current = false;
   };
 
-  // 화살표 버튼 클릭 시 스크롤 이동 함수
   const scrollByAmount = (amount: number) => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({
@@ -74,17 +72,17 @@ export default function ProductGrid() {
   };
 
   return (
-    <section className="my-8 px-4 relative">
-      {/* 제목 + 전체보기 버튼 (항상 보임) */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">추천 상품</h2>
+    <section className="my-8 px-4">
+      {/* 제목 + 전체보기 버튼 */}
+      <div className="flex justify-end mb-4">
         <button onClick={() => setShowAll(!showAll)} className="text-sm text-gray-600" type="button">
           {showAll ? '간략 보기' : '전체 보기'}
         </button>
       </div>
 
+      {/* 간략 보기 모드 (가로 스크롤) */}
       {!showAll && (
-        <>
+        <div className="relative">
           {/* 좌우 화살표 버튼 */}
           <button onClick={() => scrollByAmount(-200)} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10" aria-label="왼쪽으로 스크롤" type="button">
             ◀
@@ -93,14 +91,14 @@ export default function ProductGrid() {
             ▶
           </button>
 
-          {/* 드래그 가능한 가로 스크롤 영역 */}
+          {/* 드래그 가능*/}
           <div
             ref={scrollRef}
-            className="flex gap-4 overflow-x-auto whitespace-nowrap select-none hide-scrollbar"
+            className="flex gap-4 overflow-x-auto whitespace-nowrap select-none hide-scrollbar py-2"
             style={{
               cursor: isDragging ? 'grabbing' : 'grab',
-              scrollbarWidth: 'none', // Firefox
-              msOverflowStyle: 'none', // IE, Edge
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
             }}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -116,10 +114,10 @@ export default function ProductGrid() {
               </div>
             ))}
           </div>
-        </>
+        </div>
       )}
 
-      {/* 전체보기 모드: 1024px 미만 3열, 이상 4열 */}
+      {/* 전체 보기 모드 */}
       {showAll && (
         <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
           {mockProducts.map(product => (
