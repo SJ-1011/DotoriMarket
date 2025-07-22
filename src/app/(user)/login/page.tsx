@@ -97,7 +97,7 @@ export default function Login() {
     <>
       <main className="bg-background py-10">
         <section className="sm:bg-white sm:rounded-2xl lg:rounded-3xl text-xs sm:text-sm lg:text-base w-full sm:w-[30rem] lg:w-[40rem] h-full mx-auto px-10 sm:p-10 sm:pb-80 lg:pb-96">
-          <Image src="/login-logo.png" alt="도토리섬 로그인" width={100} height={100}></Image>
+          <Image src="/login-logo.webp" alt="도토리섬 로그인" width={100} height={100}></Image>
           <h2 className="text-xl lg:text-2xl font-bold my-4">로그인</h2>
           {/* 로그인 폼 */}
           <form onSubmit={handleSubmit} className="flex flex-col flex-nowrap gap-4">
