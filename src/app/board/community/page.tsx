@@ -54,7 +54,7 @@ export default async function CommunityBoardPage() {
               </div>
             </div>
             <div className="mt-4 flex justify-end mb-4">
-              <Link href="/board/qna/new">
+              <Link href="/board/community/new">
                 {' '}
                 {/* 이동할 경로를 href 속성에 지정합니다. */}
                 <button type="button" className="px-4 py-2 w-20 sm:w-24 lg:w-28 rounded-xl bg-[#A97452] text-white text-xs sm:text-sm lg:text-base hover:bg-[#966343] transition-colors">

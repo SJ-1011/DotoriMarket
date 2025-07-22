@@ -13,7 +13,7 @@ interface ProductSearchModalProps {
 
 export default function ProductSearchModal({ isOpen, onClose, onSelectProduct }: ProductSearchModalProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [products, setProducts] = useState<Product[]>([]);
+  // const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false); //검색어를 입력 안한 초기 상태에 팝업 로딩 지연을 위해 검색어 입력했을때만 뜨게 하기 위해 추가
@@ -27,15 +27,15 @@ export default function ProductSearchModal({ isOpen, onClose, onSelectProduct }:
     }
   }, [isOpen]);
 
-  // 검색어에 따른 필터링
-  useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredProducts(products);
-    } else {
-      const filtered = products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
-      setFilteredProducts(filtered);
-    }
-  }, [searchTerm, products]);
+  // // 검색어에 따른 필터링
+  // useEffect(() => {
+  //   if (searchTerm.trim() === '') {
+  //     setFilteredProducts(products);
+  //   } else {
+  //     const filtered = products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  //     setFilteredProducts(filtered);
+  //   }
+  // }, [searchTerm, products]);
 
   //검색 버튼 누르면 제출할 form에 쓰일 메서드
   const handleSearch = async (e: React.FormEvent) => {
