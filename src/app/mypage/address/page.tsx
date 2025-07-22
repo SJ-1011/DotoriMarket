@@ -199,7 +199,9 @@ export default function Address() {
               <div className="hidden sm:table-cell px-2 py-1 text-sm lg:text-base text-center align-middle">{addr.mobile}</div>
 
               {/* 주소 */}
-              <div className="sm:table-cell px-2 py-1 text-sm lg:text-base align-middle">{addr.value}</div>
+              <div className="sm:table-cell px-2 py-1 text-sm lg:text-base align-middle">
+                {addr.value} {addr.detailAddress ? ` ${addr.detailAddress}` : ''}
+              </div>
 
               {/* 관리 버튼 (데스크탑) */}
               <div className="hidden sm:flex sm:flex-col px-2 py-1 text-center space-y-1 lg:space-y-2">

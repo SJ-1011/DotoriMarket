@@ -49,7 +49,7 @@ export async function addAddress(userId: number, accessToken: string, newAddress
     };
 
     if (newAddressWithId.isDefault) {
-      payload.address = newAddressWithId.value;
+      payload.address = `${newAddressWithId.value} ${newAddressWithId.detailAddress}`;
     }
 
     const { data: result } = await authAPI.patch(`/users/${userId}`, payload);
