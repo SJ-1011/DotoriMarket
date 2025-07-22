@@ -61,7 +61,7 @@ export async function getLikedProducts(accessToken: string): ApiResPromise<Produ
  * 상품 목록을 조회합니다.
  * @returns {Promise<ApiRes<Product[]>>} 상품 목록 API 응답
  */
-export async function getProductsCategory(category: string): ApiResPromise<Product[]> {
+export async function getProductsCategory(category: string, details?: string): ApiResPromise<Product[]> {
   let query;
   switch (category) {
     case 'new':
@@ -71,16 +71,19 @@ export async function getProductsCategory(category: string): ApiResPromise<Produ
       query = { 'extra.isBest': true };
       break;
     case 'character':
-      query = { 'extra.category.0': 'PC01' };
+      if (details) query = { 'extra.category.1': `PC01${details}` };
+      else query = { 'extra.category.0': 'PC01' };
       break;
     case 'miniature':
       query = { 'extra.category.0': 'PC02' };
       break;
     case 'stationery':
-      query = { 'extra.category.0': 'PC03' };
+      if (details) query = { 'extra.category.1': `PC03${details}` };
+      else query = { 'extra.category.0': 'PC03' };
       break;
     case 'living-accessories':
-      query = { 'extra.category.0': 'PC04' };
+      if (details) query = { 'extra.category.1': `PC04${details}` };
+      else query = { 'extra.category.0': 'PC04' };
       break;
   }
   try {

@@ -71,7 +71,7 @@ export default function DesktopHeader() {
 
   return (
     <>
-      <header className="max-w-[30rem] lg:max-w-[75rem] mx-auto mt-12">
+      <header className="max-w-[55rem] lg:max-w-[75rem] mx-auto mt-12">
         <nav aria-label="유저 상단 메뉴">
           <ul className="flex flex-row flex-nowrap gap-4 justify-end mr-8">
             <li>
@@ -99,15 +99,15 @@ export default function DesktopHeader() {
             </li>
           </ul>
         </nav>
-        <h1 className="flex justify-center my-16">
+        <h1 className="flex justify-center my-8">
           <Link href="/">
             <Image src="/logo.png" alt="도토리섬 메인으로 이동" width={120} height={120}></Image>
           </Link>
         </h1>
-        <form onSubmit={handleSearch} className="flex flex-row flex-nowrap justify-between items-center border rounded-full border-primary w-md lg:w-lg mx-auto py-2 lg:py-4 px-4 lg:px-8 my-6 lg:my-8 text-sm lg:text-base">
-          <input type="search" placeholder="상품을 검색해보세요!" value={query} onChange={event => setQuery(event.target.value)} />
+        <form onSubmit={handleSearch} className="flex flex-row flex-nowrap justify-between items-center border rounded-full border-primary w-md lg:w-lg mx-auto py-2 lg:py-3 px-4 lg:px-8 my-6 lg:my-8 text-sm lg:text-base">
+          <input type="search" placeholder="상품을 검색해보세요!" className="w-[90%]" value={query} onChange={event => setQuery(event.target.value)} />
           <button type="submit" className="cursor-pointer">
-            <SearchIcon className="w-6 h-6 lg:w-8 lg:h-8" />
+            <SearchIcon className="w-6 h-6" />
           </button>
         </form>
         <nav aria-label="카테고리 메뉴">
@@ -120,27 +120,18 @@ export default function DesktopHeader() {
                 }}
               />
             </li>
-            <li>
-              <Link href="/category/new">신상품</Link>
-            </li>
-            <li>
-              <Link href="/category/popular">인기상품</Link>
-            </li>
-            <li>
-              <Link href="/category/character">캐릭터</Link>
-            </li>
-            <li>
-              <Link href="/category/miniature">미니어처</Link>
-            </li>
-            <li>
-              <Link href="/category/stationery">문구</Link>
-            </li>
-            <li>
-              <Link href="/category/living-accessories">리빙&소품</Link>
-            </li>
-            <li>
-              <Link href="/board">COMMUNITY</Link>
-            </li>
+            {Object.entries(categoryAddress).map(([title, address]) => (
+              <li key={title}>
+                <Link
+                  href={address === 'board' ? `/${address}` : `/category/${address}`}
+                  onClick={() => {
+                    setIsCategoryOpen(false);
+                  }}
+                >
+                  {title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
       </header>
@@ -159,6 +150,15 @@ export default function DesktopHeader() {
               {categoryData.map((item, i) => {
                 const val = categoryAddress[detailOpen as CategoryName];
 
+                if (['character', 'stationery', 'living-accessories'].includes(val)) {
+                  return (
+                    <li key={i}>
+                      <Link href={`/category/${val}/0${i + 1}`} onClick={() => setIsCategoryOpen(false)}>
+                        {item} &gt;
+                      </Link>
+                    </li>
+                  );
+                }
                 return (
                   <li key={i}>
                     <Link href={`/category/${val}`} onClick={() => setIsCategoryOpen(false)}>
