@@ -41,7 +41,7 @@
 /* IE, Edge */
 .hide-scrollbar {
   -ms-overflow-style: none;
-
+}
 /* globals.css */
 .scrollbar-hide {
   scrollbar-width: none !important; /* Firefox */
@@ -49,5 +49,4 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none !important; /* Chrome, Safari, Edge */
-
 }
