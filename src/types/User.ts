@@ -1,5 +1,6 @@
 export interface UserExtra {
   birthday?: string;
+  intro?: string;
   address?: UserAddress[];
 }
 
