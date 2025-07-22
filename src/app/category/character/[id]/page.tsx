@@ -1,7 +1,8 @@
 import { CHARACTER_CATEGORIES } from '@/constants/categories';
 import CategoryPage from '../../CategoryPage';
+import { CategoryProps } from '@/types/category';
 
-export default async function CharacterPage({ params }: { params: { id: string } }) {
+export default async function CharacterPage({ params }: CategoryProps) {
   const detailArray = CHARACTER_CATEGORIES.map((name, index) => ({
     name,
     address: `/character/${(index + 1).toString().padStart(2, '0')}`,

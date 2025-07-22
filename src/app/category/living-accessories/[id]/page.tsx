@@ -1,7 +1,8 @@
 import { LIVING_CATEGORIES } from '@/constants/categories';
 import CategoryPage from '../../CategoryPage';
+import { CategoryProps } from '@/types/category';
 
-export default async function LivingAccessoriesPage({ params }: { params: { id: string } }) {
+export default async function LivingAccessoriesPage({ params }: CategoryProps) {
   const detailArray = LIVING_CATEGORIES.map((name, index) => ({
     name,
     address: `/living-accessories/${(index + 1).toString().padStart(2, '0')}`,

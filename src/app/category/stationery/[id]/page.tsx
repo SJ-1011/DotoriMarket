@@ -1,7 +1,8 @@
 import { STATIONERY_CATEGORIES } from '@/constants/categories';
 import CategoryPage from '../../CategoryPage';
+import { CategoryProps } from '@/types/category';
 
-export default async function StationeryPage({ params }: { params: { id: string } }) {
+export default async function StationeryPage({ params }: CategoryProps) {
   const detailArray = STATIONERY_CATEGORIES.map((name, index) => ({
     name,
     address: `/stationery/${(index + 1).toString().padStart(2, '0')}`,
