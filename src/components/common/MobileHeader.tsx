@@ -57,7 +57,7 @@ export default function MobileHeader() {
     <>
       <header className="sticky top-0 left-0 z-20 text-sm bg-white">
         <nav>
-          <div aria-label="상단 메뉴" className="flex flex-row flex-nowrap p-4 justify-between gap-8 items-center">
+          <div aria-label="상단 메뉴" className="flex flex-row flex-nowrap px-4 py-2 justify-between gap-8 items-center">
             <div className="flex flex-row flex-nowrap gap-6">
               <button type="button" aria-label="메뉴 열기" onClick={() => setIsOpenMenu(true)}>
                 <BarIcon className="w-6 h-6 cursor-pointer" />
@@ -68,7 +68,7 @@ export default function MobileHeader() {
             </div>
             <h1>
               <Link href="/">
-                <Image aria-label="메인 로고" src="/logo.png" alt="도토리섬 메인으로 이동" width={80} height={80}></Image>
+                <Image aria-label="메인 로고" src="/logo.png" alt="도토리섬 메인으로 이동" width={60} height={60}></Image>
               </Link>
             </h1>
             <div className="flex flex-row flex-nowrap gap-6">
@@ -136,7 +136,7 @@ export default function MobileHeader() {
                         <>
                           {CHARACTER_CATEGORIES.map((item, i) => (
                             <li key={i}>
-                              <Link href="/category/character" onClick={() => setIsOpenMenu(false)}>
+                              <Link href={`/category/character/0${i + 1}`} onClick={() => setIsOpenMenu(false)}>
                                 {item}
                               </Link>
                             </li>
@@ -147,7 +147,7 @@ export default function MobileHeader() {
                         <>
                           {STATIONERY_CATEGORIES.map((item, i) => (
                             <li key={i}>
-                              <Link href="/category/stationery" onClick={() => setIsOpenMenu(false)}>
+                              <Link href={`/category/stationery/0${i + 1}`} onClick={() => setIsOpenMenu(false)}>
                                 {item}
                               </Link>
                             </li>
@@ -158,7 +158,7 @@ export default function MobileHeader() {
                         <>
                           {LIVING_CATEGORIES.map((item, i) => (
                             <li key={i}>
-                              <Link href="/category/living-accessories" onClick={() => setIsOpenMenu(false)}>
+                              <Link href={`/category/living-accessories/0${i + 1}`} onClick={() => setIsOpenMenu(false)}>
                                 {item}
                               </Link>
                             </li>
