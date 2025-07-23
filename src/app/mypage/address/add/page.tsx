@@ -29,9 +29,9 @@ interface FormState {
   postcode: string;
   address: string;
   detailAddress: string;
-  mobile1: string; // 앞자리 (010)
-  mobile2: string; // 중간번호
-  mobile3: string; // 끝번호
+  mobile1: string; 
+  mobile2: string; 
+  mobile3: string; 
   isDefault: boolean;
 }
 
@@ -86,7 +86,7 @@ export default function AddAddress() {
       return;
     }
 
-    const mobile = `${data.mobile1}${data.mobile2}${data.mobile3}`; // 휴대폰 세 파트 합치기
+    const mobile = `${data.mobile1}${data.mobile2}${data.mobile3}`; 
 
     const newAddress: Omit<UserAddress, 'id'> = {
       name: data.deliveryName,
