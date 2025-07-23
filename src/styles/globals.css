@@ -28,6 +28,20 @@
   border: 0;
 }
 
+@media (min-width: 1240px) {
+  .dot-bg-wrapper {
+    position: relative;
+    background-image: url('/back-dotori.png'), url('/back-dotori.png');
+    background-repeat: repeat-y, repeat-y;
+    background-position:
+      90px 100px,
+      calc(100% - 90px) 100px;
+    background-size:
+      235px auto,
+      235px auto;
+  }
+}
+
 /* 크롬, 사파리 등 Webkit 브라우저 스크롤바 숨기기 */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;

@@ -9,7 +9,7 @@ export default function ProductTabSection({ product, activeTab, setActiveTab }: 
 
   return (
     <>
-      <nav className="flex my-12 mb-4 bg-primary-light overflow-hidden" style={{ height: '44px' }}>
+      <nav className="flex mt-12 bg-primary-light overflow-hidden" style={{ height: '44px' }}>
         {tabs.map(tab => {
           const isActive = activeTab === tab;
           return (
