@@ -184,7 +184,7 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
 
             <div className="border-t border-primary " />
 
-            <div className="flex items-center justify-between py-4 p-2">
+            <div className="flex items-center justify-between py-4 p-2 gap-2">
               <span className="text-sm truncate">{product.name}</span>
               <div className="flex items-center gap-4">
                 {/* 수량 조절 버튼 */}
