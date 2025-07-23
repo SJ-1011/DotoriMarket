@@ -19,7 +19,7 @@ export default function ProductCard({ product, bookmarkId: initialBookmarkId }: 
   const remaining = useRemainingStock(product.quantity, product.buyQuantity);
 
   return (
-    <Link href={`/product/${product._id}`}>
+    <Link href={`/products/${product._id}`}>
       <div className="relative w-full aspect-square">
         <Image src={`${API_URL}/${product.mainImages[0]?.path}`} alt={product.name} fill className="object-cover rounded-md" sizes="(max-width: 640px) 100vw, 238px" />
         <button
