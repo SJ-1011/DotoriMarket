@@ -5,7 +5,7 @@ import { Product } from '@/types/Product';
 import { getLikedProducts, getProducts, getProductsCategory } from '@/utils/getProducts';
 import ProductItemCard from '@/components/common/ProductItemCard';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import Loading from '@/app/loading';
 import Image from 'next/image';
@@ -42,6 +42,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
   // 데스크탑 정렬 상태 열림/닫힘
   const [isOpen, setIsOpen] = useState(false);
 
+  // 정렬 핸들러
   const handleChange = (input: React.ChangeEvent<HTMLSelectElement> | string) => {
     let value;
     if (typeof input === 'string') value = input;
@@ -184,37 +185,16 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             <div className="w-full overflow-x-auto scrollbar-hide">
               <ul className=" flex flex-row flex-nowrap sm:flex-wrap sm:justify-center items-center gap-2 overflow-x-auto w-max sm:w-full">
                 {detailArray.map((item, index) => {
-                  // 첫번째 줄
-                  if (index === 2)
-                    return (
-                      <>
-                        {/* 이름과 타이틀이 겹칠때 */}
-                        {item.name == title ? (
-                          <li key={index} className="bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2">
-                            <Link href={`/category/${item.address}`}>{item.name}</Link>
-                          </li>
-                        ) : (
-                          <li key={index} className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
-                            <Link href={`/category/${item.address}`}>{item.name}</Link>
-                          </li>
-                        )}
-                        <li key={'empty'} className="hidden sm:block sm:w-full sm:h-0" />
-                      </>
-                    );
-                  // 두번째 줄
+                  const isSelected = item.name === title;
+                  const className = isSelected ? 'bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2' : 'border border-primary rounded-lg sm:rounded-2xl px-4 py-2';
+
                   return (
-                    <>
-                      {/* 이름과 타이틀이 겹칠때 */}
-                      {item.name == title ? (
-                        <li key={index} className="bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2">
-                          <Link href={`/category/${item.address}`}>{item.name}</Link>
-                        </li>
-                      ) : (
-                        <li key={index} className="border border-primary rounded-lg sm:rounded-2xl px-4 py-2">
-                          <Link href={`/category/${item.address}`}>{item.name}</Link>
-                        </li>
-                      )}
-                    </>
+                    <Fragment key={index}>
+                      <li className={className}>
+                        <Link href={`/category/${item.address}`}>{item.name}</Link>
+                      </li>
+                      {index === 2 && <li className="hidden sm:block sm:w-full sm:h-0" />}
+                    </Fragment>
                   );
                 })}
               </ul>
