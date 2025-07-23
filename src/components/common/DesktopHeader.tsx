@@ -10,9 +10,11 @@ import { useEffect, useState } from 'react';
 import SearchIcon from '../icon/SearchIcon';
 import { CHARACTER_CATEGORIES, LIVING_CATEGORIES, STATIONERY_CATEGORIES } from '@/constants/categories';
 import { useLoginStore } from '@/stores/loginStore';
+import { useRouter } from 'next/navigation';
 
 export default function DesktopHeader() {
   const { isLogin } = useLoginStore();
+  const router = useRouter();
 
   // 햄버거 바 클릭 시 카테고리가 열려있는지 useState로 상태 관리
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -29,6 +31,9 @@ export default function DesktopHeader() {
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log('검색어', query);
+
+    if (!query.trim()) return;
+    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
   };
 
   const categoryAddress = {
