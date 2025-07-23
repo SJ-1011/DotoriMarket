@@ -72,7 +72,7 @@ export default function MobileHeader() {
               </Link>
             </h1>
             <div className="flex flex-row flex-nowrap gap-6">
-              <Link href="/">
+              <Link href="/search">
                 <SearchIcon className="w-6 h-6" aria-label="상품 검색" />
               </Link>
               <Link href="/">
