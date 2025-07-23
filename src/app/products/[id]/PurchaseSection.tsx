@@ -210,7 +210,7 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
 
             {/* TODO 구매 버튼 */}
             <div className="space-y-3">
-              <button className={`w-full bg-primary text-white py-4 rounded-md font-medium hover:bg-primary-dark transition disabled:opacity-50 ${isSoldOut ? 'pointer-events-none opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-primary-dark'}`} disabled={isSoldOut}>
+              <button className={`w-full py-4 rounded-md font-medium transition disabled:opacity-50 ${isSoldOut ? 'bg-gray-300 cursor-not-allowed pointer-events-none text-black' : 'bg-primary text-white hover:bg-primary-dark cursor-pointer'}`} disabled={isSoldOut}>
                 {isSoldOut ? '품절' : '바로 구매하기'}
               </button>
 
