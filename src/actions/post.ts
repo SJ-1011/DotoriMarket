@@ -21,7 +21,7 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 export async function createPost(state: ApiRes<Post> | null, formData: FormData): ApiResPromise<Post> {
   // FormData를 일반 Object로 변환
   const body: DynamicFormData = Object.fromEntries(formData.entries());
-
+  const accessToken = typeof body.accessToken === 'string' ? body.accessToken : '';
   body.extra = {};
   Object.keys(body).forEach(key => {
     if (key.startsWith('extra.')) {
@@ -56,6 +56,7 @@ export async function createPost(state: ApiRes<Post> | null, formData: FormData)
       headers: {
         'Content-Type': 'application/json',
         'Client-Id': CLIENT_ID,
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }), //accessToken존재하면 헤더에 포함하고 아니면 안함
       },
       body: JSON.stringify(body),
     });
