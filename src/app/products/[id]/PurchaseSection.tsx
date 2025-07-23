@@ -10,9 +10,10 @@ import { useRemainingStock } from '@/hooks/useRemainingStock';
 import { useLoginStore } from '@/stores/loginStore';
 import Favorite from '@/components/icon/FavoriteIcon';
 import FavoriteBorder from '@/components/icon/FavoriteBorderIcon';
+import ShareIcon from '@/components/icon/ShareIcon';
 
 interface PurchaseSectionProps {
-  product: Product;
+  product: Product & { bookmarkId?: number };
 }
 
 // 카테고리별 서브카테고리 매핑
@@ -24,7 +25,7 @@ const CATEGORY_MAPPINGS = {
 
 const CATEGORY_CODE_LENGTH = 4;
 
-// 서브카테고리 정보를 가져오는 헬퍼 함수
+// 서브카테고리 정보를 가져오는 함수
 function getSubCategoryInfo(categoryCode: string, smallCategoryCode: string, bigCategory: { label: string; href: string }) {
   const categories = CATEGORY_MAPPINGS[categoryCode as keyof typeof CATEGORY_MAPPINGS];
 
@@ -79,130 +80,156 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
   const user = useLoginStore(state => state.user);
   const accessToken = user?.token?.accessToken;
 
-  // 초기 북마크 아이디 (예: product.bookmarkId가 있을 경우)
+  // 초기 북마크 아이디
   const initialBookmarkId = product.bookmarkId;
 
-  // 좋아요 토글 훅 사용
+  // 좋아요 토글 훅
   const { isLiked, toggle } = useToggleBookmark(initialBookmarkId, Number(product._id), accessToken);
 
-  // 재고 계산 훅 사용
+  // 남은 재고 계산 훅
   const remainingStock = useRemainingStock(product.quantity, product.buyQuantity);
 
-  // 수량 관련 훅
+  // 수량 선택 훅
   const { quantity, increaseQuantity, decreaseQuantity } = useQuantityHandlers();
 
+  // 품절 여부
   const isSoldOut = remainingStock <= 0;
+
+  // 총 가격 계산
   const totalPrice = product.price * quantity;
 
   // Breadcrumb 아이템 생성
   const breadcrumbItems = getBreadcrumbItems(product);
 
+  // 배송비 포함 가격 계산
+  const freeShippingThreshold = 30000;
+  const shippingFeeToUse = totalPrice >= freeShippingThreshold ? 0 : product.shippingFees;
+  const finalPrice = totalPrice + shippingFeeToUse;
+
+  // 공유하기 함수
+  const [copied, setCopied] = useState(false);
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.name,
+          text: `이 상품을 공유합니다: ${product.name}`,
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.error('공유 실패:', error);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch {
+        alert('주소 복사에 실패했습니다. 수동으로 복사해 주세요.');
+      }
+    }
+  };
+
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* 왼쪽 - 상품 이미지 및 Breadcrumb */}
-        <div className="lg:w-1/2 relative">
-          {/* 1024px 이상에서 왼쪽 위 Breadcrumb */}
-          <div className="hidden lg:block absolute top-0 left-0 p-4 z-10 bg-white bg-opacity-70 rounded-br-md">
-            <Breadcrumb items={breadcrumbItems} />
+    <>
+      {/* Breadcrumb */}
+      <div className="w-full p-4">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
+
+      <div className="max-w-6xl mx-auto p-4">
+        <div className="flex flex-col sm:flex-row gap-8">
+          <div className="sm:w-1/2 relative">
+            {/* 상품 이미지 */}
+            {product.mainImages?.length > 0 && (
+              <div className="relative">
+                <div className="relative w-full pb-[100%]">
+                  <Image src={getFullImageUrl(product.mainImages[0].path)} alt={product.name} fill className="object-contain" unoptimized />
+                </div>
+              </div>
+            )}
+            {/* 배송 정보 */}
+            <div className="text-sm text-gray-500 mt-2">
+              <p>
+                배송비: {product.shippingFees.toLocaleString()}원 <span className="text-sm text-gray-500">(3만원 이상 무료)</span>
+              </p>
+            </div>
           </div>
 
-          {/* 상품 이미지 */}
-          {product.mainImages?.length > 0 && (
-            <div className="bg-gray-50 rounded-lg p-8">
-              <div className="relative w-full pb-[100%]">
-                <Image src={getFullImageUrl(product.mainImages[0].path)} alt={product.name} fill className="object-contain" unoptimized />
-                {/* 좋아요 버튼 */}
-                <button
-                  type="button"
-                  className="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow hover:scale-110 active:scale-95 transition-transform cursor-pointer
-                w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center"
-                  onClick={toggle}
-                >
-                  {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 sm:w-3 sm:h-3 text-red' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 sm:w-3 sm:h-3 text-gray' }} />}
-                </button>
+          {/* 오른쪽 - 상품 정보 */}
+          <div className="sm:w-1/2 space-y-2">
+            <div className="border-t-2 border-primary" />
+
+            {/* 제품명 */}
+            <h1 className="text-lg font-bold p-2">{product.name}</h1>
+
+            <div className="border-t border-primary mb-4" />
+
+            <div className="p-2 mb-4">
+              {/* 가격 */}
+              <div className="flex items-baseline gap-2">
+                <span className="text-sm text-gray-500">판매가</span>
+                <span className="text-lg font-bold">{product.price.toLocaleString()}원</span>
+              </div>
+
+              {/* TODO 평점 */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">사용후기</span>
+                <div className="flex items-center">
+                  <span className="text-red-500 mb-2">★</span>
+                  <span className="text-sm ml-1">5.0 리뷰 3개</span>
+                </div>
               </div>
             </div>
-          )}
 
-          {/* 1024px 미만에서 이미지 아래 왼쪽에 Breadcrumb */}
-          <div className="lg:hidden mt-4">
-            <Breadcrumb items={breadcrumbItems} />
-          </div>
-        </div>
+            <div className="border-t border-primary " />
 
-        {/* 오른쪽 - 상품 정보 */}
-        <div className="lg:w-1/2 space-y-6">
-          {/* 제품명 */}
-          <h1 className="text-2xl font-bold text-gray-900">{product.name}</h1>
-
-          {/* 가격 */}
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm text-gray-500">판매가</span>
-            <span className="text-2xl font-bold text-red-500">{product.price.toLocaleString()}원</span>
-          </div>
-
-          {/* 평점 */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">사용후기</span>
-            <div className="flex items-center">
-              <span className="text-red-500">★</span>
-              <span className="text-sm ml-1">5.0 리뷰 3개</span>
-            </div>
-          </div>
-
-          {/* 옵션 선택 */}
-          <div className="border-t border-b py-4 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">옵션 선택</span>
-              <button className="text-sm text-gray-400">[필수] 옵션을 선택해주세요 ▼</button>
-            </div>
-
-            {/* 수량 선택 */}
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sm">{product.name}</span>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center border">
-                  <button onClick={decreaseQuantity} className="px-3 py-1 text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity <= 1}>
+            <div className="flex items-center justify-between py-4 p-2">
+              <span className="text-sm truncate">{product.name}</span>
+              <div className="flex items-center gap-4">
+                {/* 수량 조절 버튼 */}
+                <div className="flex items-center border rounded-md overflow-hidden">
+                  <button onClick={decreaseQuantity} className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity <= 1}>
                     -
                   </button>
-                  <span className="px-3 py-1 min-w-[40px] text-center">{quantity}</span>
-                  <button onClick={increaseQuantity} className="px-3 py-1 text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity >= remainingStock}>
+                  <span className="w-8 text-center text-sm">{quantity}</span>
+                  <button onClick={increaseQuantity} className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity >= remainingStock}>
                     +
                   </button>
                 </div>
-                <span className="text-sm font-medium ml-4">{totalPrice.toLocaleString()}원</span>
+                {/* 총 상품금액 */}
+                <span className="text-sm font-semibold min-w-[60px] text-right">{totalPrice.toLocaleString()}원</span>
+              </div>
+            </div>
+            <div className="border-t border-primary mb-4" />
+
+            {/* 총 결제금액 */}
+            <div className="text-sm font-medium text-gray-700 my-6 text-right">
+              total price <span className="text-lg font-bold">{finalPrice.toLocaleString()}원</span> ({quantity}개)
+            </div>
+
+            {/* TODO 구매 버튼 */}
+            <div className="space-y-3">
+              <button className={`w-full bg-primary text-white py-4 rounded-md font-medium hover:bg-primary-dark transition disabled:opacity-50 ${isSoldOut ? 'pointer-events-none opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-primary-dark'}`} disabled={isSoldOut}>
+                {isSoldOut ? '품절' : '바로 구매하기'}
+              </button>
+
+              <div className="flex gap-3">
+                {/* TODO 장바구니 */}
+                <button className="cursor-pointer flex-1 border border-primary text-primary py-3 rounded-md font-medium">장바구니</button>
+                {/* 관심상품 등록 버튼 */}
+                <button type="button" onClick={toggle} className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition" aria-label={isLiked ? '북마크 취소' : '북마크 추가'}>
+                  {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 text-red-500' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 text-gray-400' }} />}
+                </button>
+                <button className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition relative" aria-label="공유하기" onClick={handleShare}>
+                  <ShareIcon className="w-5 h-5 text-gray-500" />
+                  {copied && <span className="fixed bottom-16 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-3 py-1 z-50">링크가 복사되었습니다.</span>}{' '}
+                </button>
               </div>
             </div>
           </div>
-
-          {/* 총 가격 */}
-          <div className="text-right py-2">
-            <span className="text-sm text-gray-500 mr-2">total price</span>
-            <span className="text-2xl font-bold">{totalPrice.toLocaleString()}원</span>
-            <span className="text-sm text-gray-500 ml-1">({quantity}개)</span>
-          </div>
-
-          {/* 구매 버튼 */}
-          <div className="space-y-3">
-            <button className="w-full bg-orange-400 text-white py-4 rounded-md font-medium hover:bg-orange-500 transition disabled:opacity-50" disabled={isSoldOut}>
-              {isSoldOut ? '품절' : '바로 구매하기'}
-            </button>
-
-            <div className="flex gap-3">
-              <button className="flex-1 border border-orange-400 text-orange-400 py-3 rounded-md font-medium hover:bg-orange-50 transition">장바구니</button>
-              <button className="w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition">♡</button>
-              <button className="w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition">↗</button>
-            </div>
-          </div>
-
-          {/* 배송 정보 */}
-          <div className="text-sm text-gray-500 space-y-1">
-            <p>배송비: {product.shippingFees.toLocaleString()}원</p>
-            <p>남은 수량: {remainingStock}개</p>
-          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

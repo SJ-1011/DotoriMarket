@@ -1,8 +1,8 @@
 import type { Product } from '@/types/Product';
-import ProductInfo from './ProductInfo';
+import ProductInfo from './Info';
 import ShoppingGuide from './ShoppingGuide';
-import ProductReviews from './ProductReviews';
-import ProductQuestions from './ProductQuestions';
+import ProductReviews from './Reviews';
+import ProductQuestions from './Questions';
 
 export default function ProductTabSection({ product, activeTab, setActiveTab }: { product: Product; activeTab: string; setActiveTab: (tab: string) => void }) {
   const tabs = ['상품정보', '쇼핑가이드', '상품후기', '상품문의'];

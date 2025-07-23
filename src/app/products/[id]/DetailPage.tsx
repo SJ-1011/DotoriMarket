@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import type { Product } from '@/types/Product';
 import PurchaseSection from './PurchaseSection';
-import ProductTabSection from './ProductTabSection';
+import ProductTabSection from './TabSection';
 
 export default function ProductDetailPage({ product }: { product: Product }) {
   const [activeTab, setActiveTab] = useState('상품정보');
