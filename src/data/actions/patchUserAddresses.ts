@@ -1,5 +1,4 @@
 import type { UserAddress } from '@/types/User';
-import { PatchUserAddressesRes } from '@/types/UserAddressRes';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
@@ -10,7 +9,7 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  * @param updatedAddresses 수정된 주소 배열
  * @returns { ok, item, message }
  */
-export async function patchUserAddresses(userId: number, accessToken: string, updatedAddresses: UserAddress[]): Promise<PatchUserAddressesRes> {
+export async function patchUserAddresses(userId: number, accessToken: string, updatedAddresses: UserAddress[]): Promise<{ ok: number; item?: UserAddress[]; message?: string }> {
   try {
     const userRes = await fetch(`${API_URL}/users/${userId}`, {
       headers: {
@@ -38,7 +37,8 @@ export async function patchUserAddresses(userId: number, accessToken: string, up
       body: JSON.stringify({ extra: newExtra }),
     });
 
-    const data: PatchUserAddressesRes = await res.json();
+    const data = await res.json();
+    console.log(data)
     return data;
   } catch (error) {
     console.error('patchUserAddresses 에러:', error);
