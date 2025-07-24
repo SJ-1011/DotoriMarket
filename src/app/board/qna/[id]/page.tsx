@@ -46,7 +46,7 @@ export default function QNADetailWrapper() {
     fetchData();
   }, [id]);
 
-  if (loading || !post) return <Loading></Loading>;
+  if (loading || !post) return <Loading />;
 
   if (isMobile) {
     return <MobileQNADetail id={id} post={post} posts={posts} />;

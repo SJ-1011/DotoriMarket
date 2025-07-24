@@ -4,45 +4,31 @@ import ProductGrid from '@/components/common/ProductGrid';
 import Loading from '../loading';
 import ProductItemCard from '@/components/common/ProductItemCard';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLoginStore } from '@/stores/loginStore';
-import { Product } from '@/types/Product';
+import { LikedProduct, Product } from '@/types/Product';
 import { getLikedProducts, getSearchProducts } from '@/utils/getProducts';
 import SearchIcon from '@/components/icon/SearchIcon';
 import FilterIcon from '@/components/icon/FilterIcon';
 
-interface LikedProduct extends Product {
-  bookmarkId: number;
-}
-
 export default function SearchPage() {
-  // 유저 로그인 정보 (찜목록 갱신)
   const user = useLoginStore(state => state.user);
-  // 상품 목록
   const [products, setProducts] = useState<Product[] | null>(null);
-  // 로딩 상태
   const [loading, setLoading] = useState(true);
-  // 찜목록
   const [likedProducts, setLikedProducts] = useState<LikedProduct[]>([]);
-  // 정렬 상태
   const [sortOption, setSortOption] = useState('latest');
-  // 데스크탑 정렬 상태 열림/닫힘
   const [isOpen, setIsOpen] = useState(false);
-
   const [query, setQuery] = useState<string | null>(null);
   const [newQuery, setNewQuery] = useState<string | null>(query);
+  const popoverRef = useRef<HTMLUListElement>(null);
 
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('검색어', query);
-    console.log(query, newQuery);
     setQuery(newQuery);
-    console.log(query, newQuery);
-
     if (newQuery) {
       if (!newQuery.trim()) return;
       router.push(`/search?q=${encodeURIComponent(newQuery.trim())}`);
@@ -61,7 +47,6 @@ export default function SearchPage() {
       value = input.target.value;
     }
     setSortOption(value);
-    console.log('선택된 정렬 기준:', value);
   };
 
   // 상품 가져오기
@@ -73,13 +58,13 @@ export default function SearchPage() {
           const res = await getSearchProducts(query);
           if (res.ok) {
             setProducts(res.item);
+            setSortOption('latest');
           }
         } else throw '검색어가 존재하지 않습니다.';
       } catch {
         console.log('실패');
       }
     };
-
     fetchProducts();
   }, [query]);
 
@@ -99,7 +84,6 @@ export default function SearchPage() {
             ...v.product,
             bookmarkId: v._id,
           }));
-
         setLikedProducts(products);
       } catch (err) {
         console.error(err);
@@ -107,15 +91,24 @@ export default function SearchPage() {
         setLoading(false);
       }
     };
-
     fetchLiked();
   }, [user]);
+
+  // 클릭 외부 감지로 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // 정렬
   useEffect(() => {
     if (!products) return;
     const copy = [...products];
-
     switch (sortOption) {
       case 'latest':
         setProducts(copy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
@@ -138,7 +131,6 @@ export default function SearchPage() {
       default:
         setProducts(copy);
     }
-
     setIsOpen(false);
   }, [sortOption]);
 
@@ -183,8 +175,7 @@ export default function SearchPage() {
             <FilterIcon svgProps={{ className: 'w-8 h-8' }} />
           </button>
           {isOpen && (
-            // TODO 여기에 이벤트 걸어서 정렬 로직 만들기
-            <ul className="absolute bg-white p-4 flex flex-col flex-nowrap gap-2 right-0 top-12 z-10 border border-primary">
+            <ul ref={popoverRef} className="absolute bg-white p-4 flex flex-col flex-nowrap gap-2 right-0 top-12 z-10 border border-primary">
               {sortState.map((option, index) => (
                 <li
                   key={index}

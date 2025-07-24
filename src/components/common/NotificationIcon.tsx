@@ -17,35 +17,26 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
+  // 알림 종류
   const menu = {
     payment: '결제 알림',
     qna: '문의글 알림',
     community: '커뮤니티 알림',
   } as const;
 
+  // 모두 읽음 버튼
   const handleRead = async () => {
     if (user) {
       try {
         const res = await patchNotification(user);
-
         setNotifications([]);
-
         console.log(res.ok);
       } catch {
         console.log('데이터 읽음 처리 실패');
       }
     }
   };
-  useEffect(() => {
-    if (notifications) {
-      console.log('알림 목록:', notifications);
-    }
-  }, [notifications]);
-  useEffect(() => {
-    if (user) {
-      console.log('유저 정보:', user);
-    }
-  }, [user]);
+
   // 클릭 외부 감지로 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -56,15 +47,15 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // 알림 불러오기
   useEffect(() => {
     if (!user?.token?.accessToken) {
       return;
     }
-
     const fetchNotification = async () => {
       try {
         const res = await getUserNotifications(user.token.accessToken);
-
         if (res.ok) {
           const data: Notification[] | null = [];
           res.item.map(note => {
@@ -76,16 +67,13 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
         console.error(err);
       }
     };
-
-    console.log(notifications);
     fetchNotification();
-
     // 10초마다 polling
     const intervalId = setInterval(fetchNotification, 10000);
-
     return () => clearInterval(intervalId); // cleanup
   }, [user]);
 
+  // 모바일 버전
   if (isMobile) {
     return (
       <>
@@ -93,15 +81,13 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
           <BellIcon pathProps={{ fill: '#A97452' }} svgProps={{ className: 'w-6 h-6 cursor-pointer' }} aria-label="알림" />
           {notifications && notifications?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
         </button>
-
         {open && (
           <div className="fixed inset-0 bg-white flex flex-col z-50">
             {/* 상단 헤더 */}
             <div className="flex justify-between items-center p-4 border-b border-primary">
               <p className="font-bold text-lg">알림</p>
-              <CloseIcon svgProps={{ onClick: () => setOpen(false), className: 'cursor-pointer' }} />
+              <CloseIcon svgProps={{ onClick: () => setOpen(false), className: 'cursor-pointer', 'aria-label': '알림 화면 닫기' }} />
             </div>
-
             {/* 알림 목록 (스크롤 영역) */}
             <div className="flex-1 overflow-y-auto bg-soft-gray p-4 pb-24">
               <ul className="flex flex-col gap-4">
@@ -119,7 +105,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                         return (
                           <li key={index} className="flex items-center gap-3 p-4 bg-white rounded-2xl w-full">
                             <div className="min-w-18 min-h-18">
-                              <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt="상품 이미지" width={72} height={72} className="rounded-full" />
+                              <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product} 상품 이미지`} width={72} height={72} className="rounded-full" />
                             </div>
                             <div className="w-full">
                               <p className="font-bold">{menu[item.type]}</p>
@@ -145,17 +131,16 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
       </>
     );
   }
+  // 데스크탑 버전
   return (
     <li className="relative">
       <button type="button" className="cursor-pointer relative" aria-label="알림" onClick={() => setOpen(prev => !prev)}>
         <BellIcon svgProps={{ className: 'w-6 h-6' }} />
         {notifications && notifications?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
       </button>
-
       {/* 말풍선 */}
       {open && (
         <div ref={popoverRef} className="absolute top-full -left-[23rem] mt-2 z-50">
-          {/* 말풍선 꼬다리 */}
           <div className="flex justify-end">
             <TriangleIcon
               polygonProps={{ fill: 'white' }}
@@ -168,9 +153,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
               }}
             />
           </div>
-
           {/* 알림 내용 */}
-          {/* TODO 알림 내용을 누르면 관련 페이지로 이동...? */}
           <div className="bg-white text-black rounded shadow-md w-[400px]" style={{ boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
             <p className="p-4 font-bold text-lg">알림</p>
             <ul className="bg-soft-gray p-4 flex flex-col flex-nowrap gap-4 min-h-[400px] max-h-[600px] overflow-y-auto">
@@ -188,7 +171,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                       return (
                         <li key={index} className="flex flex-row flex-nowrap items-center gap-3 p-4 bg-white rounded-2xl w-full">
                           <div className="min-w-18 min-h-18">
-                            <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt="상품 이미지" width={72} height={72} className="rounded-full" />
+                            <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product} 상품 이미지`} width={72} height={72} className="rounded-full" />
                           </div>
                           <div className="w-full">
                             <p className="font-bold">{menu[item.type]}</p>
