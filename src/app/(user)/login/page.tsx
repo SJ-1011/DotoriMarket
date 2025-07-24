@@ -2,71 +2,31 @@
 
 import KakaotalkIcon from '@/components/icon/KakaotalkIcon';
 import NaverIcon from '@/components/icon/NaverIcon';
-import { LoginResponse } from '@/types';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
+import { postUsersLogin } from '@/data/actions/login';
 
 export default function Login() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/';
   const loginStore = useLoginStore();
   const [errorMsg, setErrorMsg] = useState('');
-  // 이메일 유효성 검사
-  const isValidEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  // 비밀번호 유효성 검사 8~15자리만 검사
-  const isValidPassword = (password: string) => {
-    return password.length >= 8 && password.length <= 15;
-  };
-
-  // TODO 회원이랑 일치하는 로그인 정보가 있는지 확인하기
 
   // 서버에 로그인 정보 전달!!
-  // TODO 로그인 이후 작업 zustand?
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    // 폼 데이터를 이벤트에서 가져오기
     const formData = new FormData(event.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    console.log(email, password);
-
-    // Form을 작성하면 유효성부터 검사하기
-    if (!isValidEmail(email) || !isValidPassword(password)) {
-      setErrorMsg('아이디 혹은 비밀번호를 확인해주세요.');
-      return;
-    } else {
-      setErrorMsg('');
-    }
-    // TODO 회원이랑 일치하는 로그인 정보가 있는지 확인하기
-    // 확인하고 로그인 하기
     const handleLogin = async () => {
-      try {
-        const res = await axios.post<LoginResponse>(
-          `${API_URL}/users/login`,
-          {
-            email,
-            password,
-          },
-          {
-            headers: {
-              'Client-Id': CLIENT_ID,
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-
-        const userData = res.data.item;
+      const res = await postUsersLogin(email, password);
+      if (res.ok) {
+        const userData = res.item;
         loginStore.login({
           _id: userData._id,
           birthday: userData.birthday,
@@ -81,33 +41,38 @@ export default function Login() {
           type: userData.type,
           updatedAt: userData.updatedAt,
         });
-
-        alert(`${res.data.item.name}님, 환영합니다!`);
+        alert(`${userData.name}님, 환영합니다!`);
         setErrorMsg('');
-        router.push('/');
-      } catch {
-        setErrorMsg('아이디 혹은 비밀번호를 확인해주세요.');
+        router.push(redirectUrl);
+      } else {
+        alert(`${res.message}`);
+        setErrorMsg(res.message);
       }
     };
 
     handleLogin();
   };
 
+  // 상단으로 올라가기
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <>
       <main className="bg-background py-10">
-        <section className="sm:bg-white sm:rounded-2xl lg:rounded-3xl text-xs sm:text-sm lg:text-base w-full sm:w-[30rem] lg:w-[40rem] h-full mx-auto px-10 sm:p-10 sm:pb-80 lg:pb-96">
+        <section className="relative sm:bg-white sm:rounded-2xl lg:rounded-3xl text-xs sm:text-sm lg:text-base w-full sm:w-[30rem] lg:w-[40rem] h-full mx-auto px-10 sm:p-10 sm:pb-80 lg:pb-96">
           <Image src="/login-logo.webp" alt="도토리섬 로그인" width={100} height={100}></Image>
           <h2 className="text-xl lg:text-2xl font-bold my-4">로그인</h2>
           {/* 로그인 폼 */}
           <form onSubmit={handleSubmit} className="flex flex-col flex-nowrap gap-4">
             <div className="flex flex-col flex-nowrap gap-2">
               <label htmlFor="email">이메일</label>
-              <input type="email" id="email" name="email" placeholder="이메일을 입력해주세요." className="p-4 border border-black rounded-xl bg-white" />
+              <input type="email" id="email" name="email" placeholder="이메일을 입력해주세요." className="p-4 border border-primary rounded-xl bg-white" />
             </div>
             <div className="flex flex-col flex-nowrap gap-2">
               <label htmlFor="password">비밀번호</label>
-              <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요." className="p-4 border border-black rounded-xl bg-white" />
+              <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요." className="p-4 border border-primary rounded-xl bg-white" />
             </div>
             <span className="text-red">{errorMsg}</span>
             <button type="submit" className="p-4 w-full bg-secondary-green text-white rounded-xl mt-4 cursor-pointer">
@@ -132,6 +97,14 @@ export default function Login() {
           <Link href="/signup" className="p-4 block text-center w-full border-2 border-secondary-green text-secondary-green rounded-xl mt-8 lg:mt-12 cursor-pointer">
             회원 가입
           </Link>
+
+          <aside className="hidden sm:block">
+            <div className="absolute bottom-0 right-0 cursor-pointer flex flex-col flex-nowrap items-center" onClick={scrollToTop}>
+              <div className="sm:w-32 sm:h-32 lg:w-48 lg:h-48">
+                <Image src="/kitty-color.png" title="페이지 상단으로 이동" alt="헬로키티" width={600} height={600}></Image>
+              </div>
+            </div>
+          </aside>
         </section>
       </main>
     </>

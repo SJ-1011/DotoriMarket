@@ -13,6 +13,7 @@ import NameField from './NameField';
 import BirthdayField from './BirthdayField';
 import PhoneField from './PhoneField';
 import ProfileImageField from './ProfileImageField';
+import Image from 'next/image';
 
 // 폼 입력값 타입 정의
 export interface SignupFormValues {
@@ -193,26 +194,40 @@ export default function SignupForm() {
     }
   };
 
+  // 상단으로 올라가기
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
-        {formMessage && <p className="mb-4 text-center text-sm text-red-500">{formMessage}</p>}
+    <>
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit, onError)} noValidate className="flex flex-col flex-nowrap gap-4">
+          {formMessage && <p className="mb-4 text-center text-sm text-red-500">{formMessage}</p>}
 
-        <EmailField onCheck={handleCheckEmail} message={emailCheckMessage} />
-        <PasswordField />
-        <PasswordConfirmField />
-        <NameField />
-        <BirthdayField />
-        <PhoneField />
-        <ProfileImageField />
-        <AgreementSection agreements={agreements} setAgreements={setAgreements} showError={showAgreementError} />
+          <EmailField onCheck={handleCheckEmail} message={emailCheckMessage} />
+          <PasswordField />
+          <PasswordConfirmField />
+          <NameField />
+          <BirthdayField />
+          <PhoneField />
+          <ProfileImageField />
+          <AgreementSection agreements={agreements} setAgreements={setAgreements} showError={showAgreementError} />
 
-        <div className="mt-10 flex justify-center items-center">
-          <button type="submit" disabled={isSubmitting} className="bg-primary w-full py-4 text-white font-semibold rounded-md cursor-pointer disabled:opacity-70">
-            가입하기
-          </button>
+          <div className="flex justify-center items-center">
+            <button type="submit" disabled={isSubmitting} className="p-4 w-full bg-secondary-green text-white rounded-xl mt-4 cursor-pointer">
+              가입하기
+            </button>
+          </div>
+        </form>
+      </FormProvider>
+      <aside className="hidden sm:block">
+        <div className="absolute bottom-0 right-0 cursor-pointer flex flex-col flex-nowrap items-center" onClick={scrollToTop}>
+          <div className="sm:w-32 sm:h-32 lg:w-48 lg:h-48">
+            <Image src="/kitty-color.png" title="페이지 상단으로 이동" alt="헬로키티" width={600} height={600}></Image>
+          </div>
         </div>
-      </form>
-    </FormProvider>
+      </aside>
+    </>
   );
 }

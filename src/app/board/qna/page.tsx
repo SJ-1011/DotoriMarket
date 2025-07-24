@@ -63,10 +63,10 @@ export default async function QnaBoardPage() {
         <table className="w-full text-center">
           <thead>
             <tr className="text-[#A97452] border-b border-[#965b29]">
-              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base w-14 sm:w-24 lg:w-32" style={{ width: 60 }}>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base w-14 sm:w-24 lg:w-32" style={{ width: 100 }}>
                 번호
               </th>
-              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base" style={{ width: 100 }}>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base" style={{ width: 200 }}>
                 상품정보
               </th>
               <th className="py-2 font-bold text-xs sm:text-sm lg:text-base-xl w-14 sm:w-24 lg:w-32">제목</th>
@@ -92,7 +92,7 @@ export default async function QnaBoardPage() {
                     {post._id}
                   </td>
                   <td className="py-2 flex items-center justify-center h-[40px] sm:h-[60px] truncate max-w-[200px] mx-auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {post.extra?.imagePath ? <Image src={`${API_URL}/${post.extra.imagePath}`} alt="상품정보" width={30} height={30} className="object-cover rounded sm:w-[50px] sm:h-[50px]" unoptimized /> : null}
+                    {post.extra?.imagePath ? <Image src={`${API_URL}/${post.extra.imagePath}`} alt="상품정보" width={30} height={30} className="object-cover sm:w-[50px] sm:h-[50px]" unoptimized /> : null}
                   </td>
                   <td className="py-2 text-center px-2 text-xs sm:text-sm lg:text-base h-[40px] sm:h-[60px] truncate max-w-[200px] mx-auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     <Link href={`/notice/${post._id}`} className="hover:underline">

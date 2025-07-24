@@ -9,16 +9,14 @@ export default function PasswordField() {
   } = useFormContext<SignupFormValues>();
 
   return (
-    <div className="mb-8">
-      <label htmlFor="password" className="block font-semibold mb-2">
-        비밀번호
-      </label>
+    <div className="flex flex-col flex-nowrap gap-2">
+      <label htmlFor="password">비밀번호</label>
       <input
         id="password"
         type="password"
         autoComplete="new-password"
         placeholder="비밀번호를 입력하세요"
-        className={`w-full px-3 py-2 placeholder:text-sm border rounded focus:outline-none ${errors.password ? 'border-red-500' : 'border-primary-light focus:border-primary-dark'}`}
+        className={`flex-grow p-4 border rounded-xl bg-white ${errors.password ? 'border-red-500' : 'border-primary '}`}
         {...register('password', {
           required: '비밀번호를 입력해주세요.',
           minLength: { value: 8, message: '비밀번호는 최소 8자 이상이어야 합니다.' },

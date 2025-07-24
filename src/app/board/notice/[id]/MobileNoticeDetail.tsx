@@ -57,6 +57,11 @@ export default function MobileNoticeDetail({ post, posts, id }: MobileProps) {
             {!asidePosts[1] && <span>이전 글이 없습니다.</span>}
             {asidePosts[1] && <Link href={`/board/notice/${asidePosts[1]._id}`}>{asidePosts[1].title}</Link>}
           </li>
+          <li className="self-end mr-4 mt-8">
+            <Link href="/board/notice" className="w-fit py-2 px-8 bg-primary-dark text-white">
+              목록
+            </Link>
+          </li>
         </ul>
       </aside>
     </article>
