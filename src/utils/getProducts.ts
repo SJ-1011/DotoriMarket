@@ -122,3 +122,22 @@ export async function getProductById(id: string | number): ApiResPromise<Product
     };
   }
 }
+
+/**
+ * 검색 상품 목록을 조회합니다.
+ * @returns {Promise<ApiRes<Product[]>>} 상품 목록 API 응답
+ */
+export async function getSearchProducts(query: string): ApiResPromise<Product[]> {
+  try {
+    const res = await fetch(`${API_URL}/products?showSoldOut=true&keyword=${query}`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+      },
+      cache: 'no-store',
+    });
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    return { ok: 0, message: '일시적인 네트워크 문제로 상품 목록을 불러오지 못했습니다.' };
+  }
+}
