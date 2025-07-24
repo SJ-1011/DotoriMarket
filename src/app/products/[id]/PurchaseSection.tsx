@@ -7,10 +7,12 @@ import Breadcrumb from '@/components/common/Breadcrumb';
 import { CATEGORY_MAP, CHARACTER_CATEGORIES, STATIONERY_CATEGORIES, LIVING_CATEGORIES } from '@/constants/categories';
 import { useToggleBookmark } from '@/hooks/useToggleBookmark';
 import { useRemainingStock } from '@/hooks/useRemainingStock';
+import useQuantityHandlers from '@/hooks/useQuantityHandlers';
 import { useLoginStore } from '@/stores/loginStore';
 import Favorite from '@/components/icon/FavoriteIcon';
 import FavoriteBorder from '@/components/icon/FavoriteBorderIcon';
 import ShareIcon from '@/components/icon/ShareIcon';
+import { useRouter } from 'next/navigation';
 
 interface PurchaseSectionProps {
   product: Product & { bookmarkId?: number };
@@ -63,16 +65,6 @@ const getFullImageUrl = (imagePath: string): string => {
     return imagePath;
   }
   return `https://fesp-api.koyeb.app/market/${imagePath}`;
-};
-
-// 수량 변경 훅
-const useQuantityHandlers = (initialQuantity: number = 1) => {
-  const [quantity, setQuantity] = useState(initialQuantity);
-
-  const increaseQuantity = () => setQuantity(prev => prev + 1);
-  const decreaseQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
-
-  return { quantity, increaseQuantity, decreaseQuantity };
 };
 
 export default function PurchaseSection({ product }: PurchaseSectionProps) {
@@ -128,6 +120,37 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
         alert('주소 복사에 실패했습니다. 수동으로 복사해 주세요.');
       }
     }
+  };
+
+  // 구매하기 버튼 이동
+  const router = useRouter();
+  const handleClick = () => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      router.push('/login'); // 로그인 페이지로 이동
+      return;
+    }
+
+    if (!isSoldOut) {
+      alert('구매 페이지로 이동합니다.');
+      router.push(`/order?productId=${product._id}&qty=${quantity}`);
+    }
+  };
+
+  // 장바구니 버튼
+  const handleAddToCart = () => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      router.push('/login');
+      return;
+    }
+
+    if (isSoldOut) {
+      alert('품절된 상품은 장바구니에 담을 수 없습니다.');
+      return;
+    }
+
+    router.push(`/cart?productId=${product._id}&qty=${quantity}`);
   };
 
   return (
@@ -208,15 +231,17 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
               total price <span className="text-lg font-bold">{finalPrice.toLocaleString()}원</span> ({quantity}개)
             </div>
 
-            {/* TODO 구매 버튼 */}
+            {/* 구매 버튼 */}
             <div className="space-y-3">
-              <button className={`w-full py-4 rounded-md font-medium transition disabled:opacity-50 ${isSoldOut ? 'bg-gray-300 cursor-not-allowed pointer-events-none text-black' : 'bg-primary text-white hover:bg-primary-dark cursor-pointer'}`} disabled={isSoldOut}>
+              <button onClick={handleClick} disabled={isSoldOut} className={`w-full py-4 rounded-md font-medium transition disabled:opacity-50 ${isSoldOut ? 'bg-gray-300 cursor-not-allowed pointer-events-none text-black' : 'bg-primary text-white hover:bg-primary-dark cursor-pointer'}`}>
                 {isSoldOut ? '품절' : '바로 구매하기'}
               </button>
 
               <div className="flex gap-3">
-                {/* TODO 장바구니 */}
-                <button className="cursor-pointer flex-1 border border-primary text-primary py-3 rounded-md font-medium">장바구니</button>
+                {/* 장바구니 */}
+                <button onClick={handleAddToCart} className="cursor-pointer flex-1 border border-primary text-primary py-3 rounded-md font-medium">
+                  장바구니
+                </button>
                 {/* 관심상품 등록 버튼 */}
                 <button type="button" onClick={toggle} className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition" aria-label={isLiked ? '북마크 취소' : '북마크 추가'}>
                   {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 text-red-500' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 text-gray-400' }} />}
