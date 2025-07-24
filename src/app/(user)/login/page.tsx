@@ -68,11 +68,11 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="flex flex-col flex-nowrap gap-4">
             <div className="flex flex-col flex-nowrap gap-2">
               <label htmlFor="email">이메일</label>
-              <input type="email" id="email" name="email" placeholder="이메일을 입력해주세요." className="p-4 border border-black rounded-xl bg-white" />
+              <input type="email" id="email" name="email" placeholder="이메일을 입력해주세요." className="p-4 border border-primary rounded-xl bg-white" />
             </div>
             <div className="flex flex-col flex-nowrap gap-2">
               <label htmlFor="password">비밀번호</label>
-              <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요." className="p-4 border border-black rounded-xl bg-white" />
+              <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요." className="p-4 border border-primary rounded-xl bg-white" />
             </div>
             <span className="text-red">{errorMsg}</span>
             <button type="submit" className="p-4 w-full bg-secondary-green text-white rounded-xl mt-4 cursor-pointer">
