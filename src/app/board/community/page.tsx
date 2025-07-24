@@ -4,9 +4,12 @@ import FilterIcon from '@/components/icon/FilterIcon';
 import SearchIcon from '@/components/icon/SearchIcon';
 import { Post } from '@/types/Post';
 import { getPosts } from '@/utils/getPosts';
-import Link from 'next/link';
-import Image from 'next/image';
-
+// import Link from 'next/link';
+// import Image from 'next/image';
+import CommunityWriteButton from './CommunityWriteButton';
+// import FavoriteBorderIcon from '@/components/icon/FavoriteBorderIcon';
+// import CommunityPostCard from './CommunityPostCard';
+import CommunityBoardClientWrapper from './CommunityBoardClientWrapper';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
 export default async function CommunityBoardPage() {
@@ -54,13 +57,7 @@ export default async function CommunityBoardPage() {
               </div>
             </div>
             <div className="mt-4 flex justify-end mb-4">
-              <Link href="/board/community/new">
-                {' '}
-                {/* 이동할 경로를 href 속성에 지정합니다. */}
-                <button type="button" className="px-4 py-2 w-20 sm:w-24 lg:w-28 rounded-xl bg-[#A97452] text-white text-xs sm:text-sm lg:text-base hover:bg-[#966343] transition-colors">
-                  글쓰기
-                </button>
-              </Link>
+              <CommunityWriteButton />
             </div>
             {/* 🔻 필터 아이콘 버튼 */}
             <button type="button" className="mt-2 text-[#A97452] hover:bg-[#f8f0e9] p-2 rounded-full self-end" title="필터">
@@ -74,15 +71,7 @@ export default async function CommunityBoardPage() {
         {/* 이미지 그리드 */}
         <div className="my-8">
           <h3 className="text-lg font-bold mb-4 text-[#A97452]"></h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {imagePosts.map(post => (
-              <Link href={`/board/community/${post._id}`} key={post._id} className="relative aspect-square rounded-lg overflow-hidden border border-[#E5CBB7] bg-[#F9F6F2] hover:shadow-lg transition-shadow group">
-                <Image src={`${post.image}`} alt={post.title} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw" className="transition-transform group-hover:scale-105" />
-                <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-xs sm:text-sm px-2 py-1 truncate">{post.title}</div>
-              </Link>
-            ))}
-            {imagePosts.length === 0 && <div className="col-span-full text-center text-gray-400 py-8">게시글이 없습니다.</div>}
-          </div>
+          <CommunityBoardClientWrapper posts={imagePosts} apiUrl={API_URL!} clientId={CLIENT_ID!} />
         </div>
         {/* 페이지네이션 일단 더미로 넣어놓음 */}
         <div className="flex justify-center mt-7 gap-1 sm:gap-2 lg:gap-4 ">

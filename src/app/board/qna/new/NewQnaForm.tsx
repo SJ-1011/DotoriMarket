@@ -1,12 +1,12 @@
 'use client';
 
-import { createPost } from '@/actions/post';
 import Link from 'next/link';
 import { useActionState, useState } from 'react';
 import ProductSearchModal from './ProductSearchModal';
 import type { Product } from '@/types/Product';
 import Image from 'next/image';
 import { useLoginStore } from '@/stores/loginStore';
+import { createPost } from '@/data/actions/post';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 //문의 종류 배열
 const QNA_TYPES = [
