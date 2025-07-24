@@ -21,7 +21,7 @@ export default function ProductTabSection({ product, activeTab, setActiveTab }: 
       </nav>
 
       <div>
-        {activeTab === '상품 정보' && <ProductInfo content={product.content} />}
+        {activeTab === '상품 정보' && <ProductInfo product={product} />}
         {activeTab === '쇼핑 가이드' && <ShoppingGuide />}
         {activeTab === '상품 후기' && <ProductReviews productId={product._id} />}
         {activeTab === '상품 문의' && <ProductQuestions productId={product._id} />}
