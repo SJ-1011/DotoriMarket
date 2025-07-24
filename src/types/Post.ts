@@ -36,6 +36,8 @@ export interface Post {
   replies?: PostReply[];
   extra?: {
     qnatype: string;
+    productId: string;
+    imagePath: string;
   };
   image: string;
 }
