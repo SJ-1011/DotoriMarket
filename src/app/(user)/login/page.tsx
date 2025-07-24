@@ -3,7 +3,7 @@
 import KakaotalkIcon from '@/components/icon/KakaotalkIcon';
 import NaverIcon from '@/components/icon/NaverIcon';
 import { LoginResponse } from '@/types';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,6 +15,8 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
 export default function Login() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/';
   const loginStore = useLoginStore();
   const [errorMsg, setErrorMsg] = useState('');
   // 이메일 유효성 검사
@@ -84,7 +86,7 @@ export default function Login() {
 
         alert(`${res.data.item.name}님, 환영합니다!`);
         setErrorMsg('');
-        router.push('/');
+        router.push(redirectUrl);
       } catch {
         setErrorMsg('아이디 혹은 비밀번호를 확인해주세요.');
       }
