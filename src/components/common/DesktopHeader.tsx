@@ -13,26 +13,17 @@ import { useRouter } from 'next/navigation';
 import NotificationIcon from './NotificationIcon';
 
 export default function DesktopHeader() {
-  const { isLogin } = useLoginStore();
   const router = useRouter();
-
-  // 햄버거 바 클릭 시 카테고리가 열려있는지 useState로 상태 관리
+  const { isLogin, user } = useLoginStore();
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-
-  // 햄버거 바가 클릭 된 상태에서 현재 클릭된 세부 메뉴가 무엇인지 상태 관리
   const [detailOpen, setDetailOpen] = useState('신상품');
-
-  // 카테고리 내부의 세부 내용들 상태 관리
   const [categoryData, setCategoryData] = useState<string[]>(['신상품 보러가기']);
-
-  // 검색창 로직
   const [query, setQuery] = useState('');
   const popoverRef = useRef<HTMLDivElement>(null);
 
+  // 검색 query를 url로 제출
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('검색어', query);
-
     if (!query.trim()) return;
     router.push(`/search?q=${encodeURIComponent(query.trim())}`);
   };
@@ -59,6 +50,8 @@ export default function DesktopHeader() {
   } as const;
 
   type CategoryName = keyof typeof categoryAddress;
+
+  const boardAddress = ['notice', 'community', 'qna'];
 
   useEffect(() => {
     switch (detailOpen) {
@@ -91,6 +84,7 @@ export default function DesktopHeader() {
       <header className="max-w-[55rem] lg:max-w-[75rem] mx-auto mt-12 bg-white">
         <nav aria-label="유저 상단 메뉴">
           <ul className="flex flex-row flex-nowrap gap-4 justify-end mr-8">
+            {isLogin && <li>{user?.name}님 환영합니다!</li>}
             <li>
               <Link href="/" aria-label="장바구니">
                 <CartIcon svgProps={{ className: 'w-6 h-6' }} />
@@ -112,14 +106,14 @@ export default function DesktopHeader() {
           </ul>
         </nav>
 
-        <h1 className="flex justify-center my-8">
+        <h1 className="flex justify-center my-8 lg:my-12">
           <Link href="/">
             <Image src="/logo.png" alt="도토리섬 메인으로 이동" width={120} height={120}></Image>
           </Link>
         </h1>
         <form onSubmit={handleSearch} className="flex flex-row flex-nowrap justify-between items-center border rounded-full border-primary w-md lg:w-lg mx-auto py-2 lg:py-3 px-4 lg:px-8 my-6 lg:my-8 text-sm lg:text-base">
-          <input type="search" placeholder="상품을 검색해보세요!" className="w-[90%]" value={query} onChange={event => setQuery(event.target.value)} />
-          <button type="submit" className="cursor-pointer">
+          <input type="search" aria-label="상품 검색창" placeholder="상품을 검색해보세요!" className="w-[90%]" value={query} onChange={event => setQuery(event.target.value)} />
+          <button type="submit" className="cursor-pointer" aria-label="상품 검색 버튼">
             <SearchIcon className="w-6 h-6" />
           </button>
         </form>
@@ -131,6 +125,7 @@ export default function DesktopHeader() {
                 onClick={() => {
                   setIsCategoryOpen(!isCategoryOpen);
                 }}
+                aria-label="메뉴 토글 버튼"
               />
             </li>
             {Object.entries(categoryAddress).map(([title, address]) => (
@@ -167,6 +162,14 @@ export default function DesktopHeader() {
                   return (
                     <li key={i}>
                       <Link href={`/category/${val}/0${i + 1}`} onClick={() => setIsCategoryOpen(false)}>
+                        {item} &gt;
+                      </Link>
+                    </li>
+                  );
+                } else if (val === 'board') {
+                  return (
+                    <li key={i}>
+                      <Link href={`/${val}/${boardAddress[i]}`} onClick={() => setIsCategoryOpen(false)}>
                         {item} &gt;
                       </Link>
                     </li>

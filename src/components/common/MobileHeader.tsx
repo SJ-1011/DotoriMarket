@@ -16,11 +16,7 @@ import NotificationIcon from './NotificationIcon';
 export default function MobileHeader() {
   const { isLogin, logout } = useLoginStore();
   const router = useRouter();
-
-  // 메뉴창 상태 관리
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-
-  // 활성화된 메뉴 상태 관리
   const [selectMenu, setSelectMenu] = useState<'category' | 'board' | 'myInfo'>('category');
 
   // 메뉴 종류
@@ -51,6 +47,15 @@ export default function MobileHeader() {
     장바구니: 'mypage',
     '관심 상품': 'mypage',
     '회원 정보 수정': 'mypage/edit-info',
+    공지사항: 'board/notice',
+    자유게시판: 'board/community',
+    문의게시판: 'board/qna',
+  };
+
+  const CATEGORY_MAP: Record<string, { basePath: string; items: string[] }> = {
+    캐릭터: { basePath: 'character', items: CHARACTER_CATEGORIES },
+    문구: { basePath: 'stationery', items: STATIONERY_CATEGORIES },
+    '리빙&소품': { basePath: 'living-accessories', items: LIVING_CATEGORIES },
   };
 
   return (
@@ -126,37 +131,12 @@ export default function MobileHeader() {
                         {item} <ArrowIcon pathProps={{ fill: '#7A543C' }} svgProps={openCategory === item ? { className: 'scale-y-[-1]' } : { className: '' }} />
                       </li>
                       <ul className={`${openCategory === item ? 'flex flex-col flex-nowrap pl-4 gap-2' : 'hidden'}`}>
-                        {/* TODO 각각에 맞는 페이지로 라우팅하기
-                              각 카테고리 별 페이지를 매치시키는 배열 하나 생성하기
-                          */}
-                        {item === '캐릭터' && (
+                        {CATEGORY_MAP[item] && (
                           <>
-                            {CHARACTER_CATEGORIES.map((item, i) => (
+                            {CATEGORY_MAP[item].items.map((subItem, i) => (
                               <li key={i}>
-                                <Link href={`/category/character/0${i + 1}`} onClick={() => setIsOpenMenu(false)}>
-                                  {item}
-                                </Link>
-                              </li>
-                            ))}
-                          </>
-                        )}
-                        {item === '문구' && (
-                          <>
-                            {STATIONERY_CATEGORIES.map((item, i) => (
-                              <li key={i}>
-                                <Link href={`/category/stationery/0${i + 1}`} onClick={() => setIsOpenMenu(false)}>
-                                  {item}
-                                </Link>
-                              </li>
-                            ))}
-                          </>
-                        )}
-                        {item === '리빙&소품' && (
-                          <>
-                            {LIVING_CATEGORIES.map((item, i) => (
-                              <li key={i}>
-                                <Link href={`/category/living-accessories/0${i + 1}`} onClick={() => setIsOpenMenu(false)}>
-                                  {item}
+                                <Link href={`/category/${CATEGORY_MAP[item].basePath}/0${i + 1}`} onClick={() => setIsOpenMenu(false)}>
+                                  {subItem}
                                 </Link>
                               </li>
                             ))}

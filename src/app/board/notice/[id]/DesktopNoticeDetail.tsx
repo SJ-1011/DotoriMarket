@@ -11,12 +11,12 @@ interface DesktopProps {
 export default function DesktopNoticeDetail({ post, posts, id }: DesktopProps) {
   const asidePosts: (Post | null)[] = [null, null];
 
+  // 하단에 있는 다음글/이전글
   for (let i = 0; i < posts.length; i++) {
     if (posts[i]._id == id) {
       if (i != 0) {
         asidePosts[0] = posts[i - 1];
       }
-
       if (i != posts.length - 1) {
         asidePosts[1] = posts[i + 1];
       }
