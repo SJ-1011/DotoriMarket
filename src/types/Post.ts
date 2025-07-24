@@ -37,6 +37,7 @@ export interface Post {
   extra?: {
     qnatype: string;
     productId: string;
+    productName: string;
     imagePath: string;
   };
   image: string;

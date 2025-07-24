@@ -1,14 +1,17 @@
 import TriangleIcon from '@/components/icon/TriangleIcon';
-import { Post } from '@/types/Post';
+import { Post, PostReply } from '@/types/Post';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface DesktopProps {
   post: Post;
   posts: Post[];
   id: string;
+  reply?: PostReply[];
 }
 
-export default function DesktopQNADetail({ post, posts, id }: DesktopProps) {
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProps) {
   const asidePosts: (Post | null)[] = [null, null];
 
   // 하단에 있는 다음글/이전글
@@ -63,7 +66,7 @@ export default function DesktopQNADetail({ post, posts, id }: DesktopProps) {
         <tbody>
           <tr className="border-b border-light-gray">
             <th className="py-4 bg-secondary">제목</th>
-            <td className="p-4">
+            <td className="p-4" colSpan={5}>
               <h3>{post.title}</h3>
             </td>
           </tr>
@@ -71,7 +74,7 @@ export default function DesktopQNADetail({ post, posts, id }: DesktopProps) {
             <th className="py-4 bg-secondary">작성자</th>
             <td className="p-4">{post.user.name}</td>
             <th className="py-4 bg-secondary">답변 여부</th>
-            <td className="p-4">{post.replies ? '답변 완료' : '답변 대기'}</td>
+            <td className="p-4">{reply && reply.length > 0 ? '답변 완료' : '답변 대기'}</td>
             <th className="py-4 bg-secondary">날짜</th>
             <td className="p-4">{post.createdAt}</td>
           </tr>
@@ -79,17 +82,33 @@ export default function DesktopQNADetail({ post, posts, id }: DesktopProps) {
             <th className="py-4 bg-secondary">문의 종류</th>
             <td className="p-4">{QNA_TYPES.find(item => item.value === post.extra?.qnatype)?.type}</td>
             <th className="py-4 bg-secondary">상품명</th>
-            <td className="p-4">{post.product.name}</td>
+            <td className="p-4" colSpan={3}>
+              {post.extra?.productName ? post.extra.productName : '.'}
+            </td>
           </tr>
         </tbody>
       </table>
 
       <section className="p-8 whitespace-pre-line text-sm lg:text-base">
-        <div className="mb-12">{post.content}</div>
-        {post.replies && (
+        <div className="mb-12 flex flex-col flex-nowrap gap-4">
+          {post.extra?.productName && (
+            <div className="flex flex-row flex-nowrap w-full p-8 border border-primary items-center gap-8">
+              <Image src={`${API_URL}/${post.extra?.imagePath}`} alt={`${post.extra?.productName} 상품 이미지`} width={100} height={100} />
+              <div className="flex flex-col flex-nowrap">
+                <p className="text-base font-bold">문의 상품</p>
+                <p>{post.extra?.productName}</p>
+                <Link href={`/`} className="bg-primary text-white p-2 w-fit mt-4">
+                  상품 보러가기
+                </Link>
+              </div>
+            </div>
+          )}
+          {post.content}
+        </div>
+        {reply && reply.length > 0 && (
           <div className="bg-secondary text-left p-8 flex flex-col flex-nowrap">
-            <span className="font-bold">{post.replies[0].user.name}</span>
-            <p>{post.replies[0].content}</p>
+            <span className="font-bold">{reply[0].user.name}</span>
+            <p>{reply[0].content}</p>
           </div>
         )}
       </section>
@@ -104,6 +123,11 @@ export default function DesktopQNADetail({ post, posts, id }: DesktopProps) {
             <TriangleIcon svgProps={{ className: 'scale-y-[-1] w-4 h-4' }} polygonProps={{ fill: '#757575' }} />
             {!asidePosts[1] && <span>이전 글이 없습니다.</span>}
             {asidePosts[1] && <Link href={`/board/qna/${asidePosts[1]._id}`}>{asidePosts[1].title}</Link>}
+          </li>
+          <li className="self-end mt-8">
+            <Link href="/board/qna" className="w-fit py-2 px-8 bg-primary-dark text-white">
+              목록
+            </Link>
           </li>
         </ul>
       </aside>
