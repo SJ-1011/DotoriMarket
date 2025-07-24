@@ -91,6 +91,8 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
         <input type="hidden" name="extra.qnatype" value={selectedType} />
         {/* 선택된 상품 정보 전달 */}
         {selectedProduct && <input type="hidden" name="extra.productId" value={selectedProduct._id} />}
+        {selectedProduct && <input type="hidden" name="extra.productName" value={selectedProduct.name} />}
+        {selectedProduct && <input type="hidden" name="extra.imagePath" value={selectedProduct.mainImages[0].path} />}
 
         {/* 선택된 유형에 따라 선택 버튼 노출 */}
         {selectLabel && (
