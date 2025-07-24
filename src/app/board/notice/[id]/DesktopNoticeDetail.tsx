@@ -49,7 +49,7 @@ export default function DesktopNoticeDetail({ post, posts, id }: DesktopProps) {
         <tbody>
           <tr className="border-b border-light-gray">
             <th className="py-4 bg-secondary">제목</th>
-            <td className="p-4">
+            <td className="p-4" colSpan={3}>
               <h3>{post.title}</h3>
             </td>
           </tr>
@@ -74,6 +74,11 @@ export default function DesktopNoticeDetail({ post, posts, id }: DesktopProps) {
             <TriangleIcon svgProps={{ className: 'scale-y-[-1] w-4 h-4' }} polygonProps={{ fill: '#757575' }} />
             {!asidePosts[1] && <span>이전 글이 없습니다.</span>}
             {asidePosts[1] && <Link href={`/board/notice/${asidePosts[1]._id}`}>{asidePosts[1].title}</Link>}
+          </li>
+          <li className="self-end mt-8">
+            <Link href="/board/notice" className="w-fit py-2 px-8 bg-primary-dark text-white">
+              목록
+            </Link>
           </li>
         </ul>
       </aside>
