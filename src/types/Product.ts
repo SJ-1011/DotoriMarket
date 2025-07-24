@@ -30,3 +30,7 @@ export interface Product {
   updatedAt: string;
   extra?: ProductExtra;
 }
+
+export interface LikedProduct extends Product {
+  bookmarkId: number;
+}
