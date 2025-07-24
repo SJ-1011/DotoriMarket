@@ -1,19 +1,15 @@
 'use client';
 
 import ProductGrid from '@/components/common/ProductGrid';
-import { Product } from '@/types/Product';
+import { LikedProduct, Product } from '@/types/Product';
 import { getLikedProducts, getProducts, getProductsCategory } from '@/utils/getProducts';
 import ProductItemCard from '@/components/common/ProductItemCard';
 import Link from 'next/link';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import Loading from '@/app/loading';
 import Image from 'next/image';
 import FilterIcon from '@/components/icon/FilterIcon';
-
-interface LikedProduct extends Product {
-  bookmarkId: number;
-}
 
 interface CategoryPageProps {
   category: string;
@@ -27,20 +23,23 @@ interface detailArray {
   name: string;
   address: string;
 }
-
+/**
+ * 카테고리 레이아웃과 카테고리 별 상품을 반환합니다.
+ * @param {string} category - 카테고리 영문명 (상품 조회시 사용)
+ * @param {string} title - 카테고리 한글명 (UI에 사용)
+ * @param {name: string, address: string} detailArray[] - 세부 카테고리 이름과 주소 목록 / ex. '스튜디오 지브리, /character/01'
+ * @param {string} detail - 세부 카테고리 이름 ex. 스튜디오 지브리면 01
+ * @param {string} categoryName - 카테고리 한글명 (UI에 사용)
+ * @returns {Promise<ApiRes<PostReply[]>>} - 댓글 목록 응답 객체
+ */
 export default function CategoryPage({ category, title, detailArray, detail, categoryName }: CategoryPageProps) {
-  // 유저 로그인 정보 (찜목록 갱신)
   const user = useLoginStore(state => state.user);
-  // 상품 목록
   const [products, setProducts] = useState<Product[] | null>(null);
-  // 로딩 상태
   const [loading, setLoading] = useState(true);
-  // 찜목록
   const [likedProducts, setLikedProducts] = useState<LikedProduct[]>([]);
-  // 정렬 상태
   const [sortOption, setSortOption] = useState('latest');
-  // 데스크탑 정렬 상태 열림/닫힘
   const [isOpen, setIsOpen] = useState(false);
+  const popoverRef = useRef<HTMLUListElement>(null);
 
   // 정렬 핸들러
   const handleChange = (input: React.ChangeEvent<HTMLSelectElement> | string) => {
@@ -50,14 +49,12 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
       value = input.target.value;
     }
     setSortOption(value);
-    console.log('선택된 정렬 기준:', value);
   };
 
   // 정렬
   useEffect(() => {
     if (!products) return;
     const copy = [...products];
-
     switch (sortOption) {
       case 'latest':
         setProducts(copy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
@@ -80,9 +77,19 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
       default:
         setProducts(copy);
     }
-
     setIsOpen(false);
   }, [sortOption]);
+
+  // 클릭 외부 감지로 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // 상품 가져오기
   useEffect(() => {
@@ -108,7 +115,6 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
         console.log('실패');
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -128,16 +134,13 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             ...v.product,
             bookmarkId: v._id,
           }));
-
         setLikedProducts(products);
-        console.log('북마크 상품', likedProducts);
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchLiked();
   }, [user]);
 
@@ -153,7 +156,6 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
     <main className="flex flex-col-reverse sm:flex-row px-4 sm:max-w-[664px] lg:max-w-[1000px] mx-auto py-4 sm:py-12">
       <section className="w-full text-xs sm:text-sm lg:text-base">
         {/* 페이지 제목 */}
-        {/* TODO Props로 세부 카테고리일 경우 하위 카테고리 추가 */}
         <nav aria-label="Breadcrumb">
           <ol className="text-xs lg:text-sm text-gray-400 flex flex-row flex-nowrap gap-2">
             <li>
@@ -178,7 +180,6 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
           </ol>
         </nav>
         <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#A97452] py-2">{title}</h2>
-
         {/* 세부 카테고리 */}
         {detailArray && (
           <aside>
@@ -187,7 +188,6 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
                 {detailArray.map((item, index) => {
                   const isSelected = item.name === title;
                   const className = isSelected ? 'bg-primary text-white rounded-lg sm:rounded-2xl px-4 py-2' : 'border border-primary rounded-lg sm:rounded-2xl px-4 py-2';
-
                   return (
                     <Fragment key={index}>
                       <li className={className}>
@@ -201,7 +201,6 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             </div>
           </aside>
         )}
-
         <div className="flex flex-row flex-nowrap justify-between items-center py-4 relative">
           <p>TOTAL {products ? products.length : 0} ITEMS</p>
           <select value={sortOption} onChange={handleChange} className="sm:hidden">
@@ -215,8 +214,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             <FilterIcon svgProps={{ className: 'w-8 h-8' }} />
           </button>
           {isOpen && (
-            // TODO 여기에 이벤트 걸어서 정렬 로직 만들기
-            <ul className="absolute bg-white p-4 flex flex-col flex-nowrap gap-2 right-0 top-12 z-10 border border-primary">
+            <ul ref={popoverRef} className="absolute bg-white p-4 flex flex-col flex-nowrap gap-2 right-0 top-12 z-10 border border-primary">
               {sortState.map((option, index) => (
                 <li
                   key={index}

@@ -4,21 +4,16 @@ import ProductGrid from '@/components/common/ProductGrid';
 import ProductItemCard from '@/components/common/ProductItemCard';
 import SearchIcon from '@/components/icon/SearchIcon';
 import { useLoginStore } from '@/stores/loginStore';
-import { Product } from '@/types/Product';
+import { LikedProduct, Product } from '@/types/Product';
 import { getLikedProducts, getProductsCategory } from '@/utils/getProducts';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-interface LikedProduct extends Product {
-  bookmarkId: number;
-}
 export default function SearchLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const [products, setProducts] = useState<Product[] | null>(null);
-  // 유저 로그인 정보 (찜목록 갱신)
   const user = useLoginStore(state => state.user);
-  // 찜목록
   const [likedProducts, setLikedProducts] = useState<LikedProduct[]>([]);
 
   const router = useRouter();
@@ -42,7 +37,6 @@ export default function SearchLayout({ children }: Readonly<{ children: React.Re
         console.log('실패');
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -60,13 +54,11 @@ export default function SearchLayout({ children }: Readonly<{ children: React.Re
             ...v.product,
             bookmarkId: v._id,
           }));
-
         setLikedProducts(products);
       } catch (err) {
         console.error(err);
       }
     };
-
     fetchLiked();
   }, [user]);
 

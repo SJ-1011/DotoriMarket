@@ -7,6 +7,8 @@ import { Post } from '@/types/Post';
 import { getPosts } from '@/utils/getPosts';
 import Link from 'next/link';
 import QnaWriteButton from './QnaWriteButton';
+import Image from 'next/image';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default async function QnaBoardPage() {
   const res = await getPosts('qna');
@@ -61,14 +63,17 @@ export default async function QnaBoardPage() {
         <table className="w-full text-center">
           <thead>
             <tr className="text-[#A97452] border-b border-[#965b29]">
-              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base w-14 sm:w-24 lg:w-32 " style={{ width: 60 }}>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base w-14 sm:w-24 lg:w-32" style={{ width: 100 }}>
                 번호
               </th>
-              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base-xl w-14 sm:w-24 lg:w-32  ">제목</th>
-              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base w-14 sm:w-24 lg:w-32 " style={{ width: 150 }}>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base" style={{ width: 200 }}>
+                상품정보
+              </th>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base-xl w-14 sm:w-24 lg:w-32">제목</th>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base" style={{ width: 150 }}>
                 작성자
               </th>
-              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base w-14 sm:w-24 lg:w-32 " style={{ width: 120 }}>
+              <th className="py-2 font-bold text-xs sm:text-sm lg:text-base" style={{ width: 120 }}>
                 작성일
               </th>
             </tr>
@@ -76,21 +81,30 @@ export default async function QnaBoardPage() {
           <tbody>
             {posts.length === 0 ? (
               <tr>
-                <td colSpan={4} className="py-8 text-xs sm:text-sm lg:text-base text-gray-400">
+                <td colSpan={5} className="py-8 text-xs sm:text-sm lg:text-base text-gray-400">
                   게시글이 없습니다.
                 </td>
               </tr>
             ) : (
               posts.map(post => (
-                <tr key={post._id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-2 text-xs sm:text-sm lg:text-base">{post._id}</td>
-                  <td className="py-2 text-center px-2 text-xs sm:text-sm lg:text-base">
+                <tr key={post._id} className="border-b border-gray-100 hover:bg-gray-50 h-[40px] sm:h-[60px]">
+                  <td className="py-2 text-xs sm:text-sm lg:text-base h-[40px] sm:h-[60px]  truncate max-w-[200px] mx-auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {post._id}
+                  </td>
+                  <td className="py-2 flex items-center justify-center h-[40px] sm:h-[60px] truncate max-w-[200px] mx-auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {post.extra?.imagePath ? <Image src={`${API_URL}/${post.extra.imagePath}`} alt="상품정보" width={30} height={30} className="object-cover sm:w-[50px] sm:h-[50px]" unoptimized /> : null}
+                  </td>
+                  <td className="py-2 text-center px-2 text-xs sm:text-sm lg:text-base h-[40px] sm:h-[60px] truncate max-w-[200px] mx-auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     <Link href={`/notice/${post._id}`} className="hover:underline">
                       {post.title}
                     </Link>
                   </td>
-                  <td className="py-2 text-xs sm:text-sm lg:text-base">{post.user.name}</td>
-                  <td className="py-2 text-xs sm:text-sm lg:text-base">{post.createdAt?.substring(0, 10)}</td>
+                  <td className="py-2 text-xs sm:text-sm lg:text-base h-[40px] sm:h-[60px] truncate max-w-[200px] mx-auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {post.user.name}
+                  </td>
+                  <td className="py-2 text-xs sm:text-sm lg:text-base h-[40px] sm:h-[60px] truncate max-w-[200px] mx-auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {post.createdAt?.substring(0, 10)}
+                  </td>
                 </tr>
               ))
             )}

@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import { Post } from '@/types/Post';
 import { getPost, getPosts } from '@/utils/getPosts';
 import DesktopNoticeDetail from './DesktopNoticeDetail';
-// import MobileNoticeDetail from './MobileNoticeDetail';
 import { notFound } from 'next/navigation';
 import Loading from '@/app/loading';
 import MobileNoticeDetail from './MobileNoticeDetail';
@@ -47,7 +46,7 @@ export default function NoticeDetailWrapper() {
     fetchData();
   }, [id]);
 
-  if (loading || !post) return <Loading></Loading>;
+  if (loading || !post) return <Loading />;
 
   if (isMobile) {
     return <MobileNoticeDetail id={id} post={post} posts={posts} />;

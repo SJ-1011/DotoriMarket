@@ -15,16 +15,14 @@ export default function EmailField({ onCheck, message }: EmailFieldProps) {
   } = useFormContext<SignupFormValues>();
 
   return (
-    <div className="mb-8">
-      <label htmlFor="email" className="block font-semibold mb-2">
-        이메일
-      </label>
+    <div className="flex flex-col flex-nowrap gap-2">
+      <label htmlFor="email">이메일</label>
       <div className="flex items-center gap-2">
         <input
           id="email"
           type="email"
           placeholder="이메일을 입력하세요"
-          className={`flex-grow px-3 py-2 placeholder:text-sm border rounded focus:outline-none ${errors.email ? 'border-red-500' : 'border-primary-light focus:border-primary-dark'}`}
+          className={`flex-grow p-4 border rounded-xl bg-white ${errors.email ? 'border-red-500' : 'border-primary '}`}
           {...register('email', {
             required: '이메일을 입력해주세요.',
             pattern: {
@@ -33,7 +31,7 @@ export default function EmailField({ onCheck, message }: EmailFieldProps) {
             },
           })}
         />
-        <button type="button" onClick={onCheck} className="bg-primary-light text-sm text-white px-4 py-2 rounded">
+        <button type="button" onClick={onCheck} className="bg-primary text-sm text-white px-4 py-3 rounded-xl cursor-pointer">
           중복 확인
         </button>
       </div>

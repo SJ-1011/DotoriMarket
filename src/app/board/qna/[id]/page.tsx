@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Post } from '@/types/Post';
-import { getPost, getPosts } from '@/utils/getPosts';
+import { Post, PostReply } from '@/types/Post';
+import { getPost, getPosts, getReplies } from '@/utils/getPosts';
 import DesktopQNADetail from './DesktopQNADetail';
 import { notFound } from 'next/navigation';
 import Loading from '@/app/loading';
@@ -17,6 +17,7 @@ export default function QNADetailWrapper() {
   const [post, setPost] = useState<Post | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reply, setReply] = useState<PostReply[]>([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -46,11 +47,24 @@ export default function QNADetailWrapper() {
     fetchData();
   }, [id]);
 
-  if (loading || !post) return <Loading></Loading>;
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getReplies(Number(id));
+      if (!res.ok) {
+        notFound();
+        return;
+      }
+      setReply(res.item);
+      setLoading(false);
+    };
+    fetchData();
+  }, [id]);
+
+  if (loading || !post) return <Loading />;
 
   if (isMobile) {
-    return <MobileQNADetail id={id} post={post} posts={posts} />;
+    return <MobileQNADetail id={id} post={post} posts={posts} reply={reply} />;
   }
 
-  return <DesktopQNADetail id={id} post={post} posts={posts} />;
+  return <DesktopQNADetail id={id} post={post} posts={posts} reply={reply} />;
 }
