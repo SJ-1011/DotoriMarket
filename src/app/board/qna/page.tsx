@@ -85,7 +85,7 @@ export default async function QnaBoardPage() {
                 <tr key={post._id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="py-2 text-xs sm:text-sm lg:text-base">{post._id}</td>
                   <td className="py-2 text-center px-2 text-xs sm:text-sm lg:text-base">
-                    <Link href={`/notice/${post._id}`} className="hover:underline">
+                    <Link href={`/board/qna/${post._id}`} className="hover:underline">
                       {post.title}
                     </Link>
                   </td>
