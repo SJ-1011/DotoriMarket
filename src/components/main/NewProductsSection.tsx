@@ -1,27 +1,32 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import ProductGrid from '@/components/common/ProductGrid';
-import ProductCard from '@/components/common/ProductCard';
+import ProductItemCard from '@/components/common/ProductItemCard';
 import ProductCardSkeleton from '@/components/common/ProductCardSkeleton';
 import { Product } from '@/types/Product';
-import { getProducts } from '@/utils/getProducts';
+import { getProductsCategory, getLikedProducts } from '@/utils/getProducts';
+import { useLoginStore } from '@/stores/loginStore';
 
-const ROW_COUNT = 3; // 항상 3행씩 보여주기
+const ROW_COUNT = 3;
+
+interface LikedProduct extends Product {
+  bookmarkId: number;
+}
 
 export default function NewProductsSection() {
+  const user = useLoginStore(state => state.user);
+  const accessToken = user?.token?.accessToken;
+
   const [products, setProducts] = useState<Product[]>([]);
+  const [likedProducts, setLikedProducts] = useState<LikedProduct[]>([]);
   const [visibleCount, setVisibleCount] = useState(0);
-  const [columns, setColumns] = useState(4); // 초기값은 4열 PC 기준
+  const [columns, setColumns] = useState(4);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const updateColumns = () => {
-      if (window.innerWidth < 1024) {
-        setColumns(3);
-      } else {
-        setColumns(4);
-      }
+      if (window.innerWidth < 1024) setColumns(3);
+      else setColumns(4);
     };
 
     updateColumns();
@@ -30,27 +35,63 @@ export default function NewProductsSection() {
   }, []);
 
   useEffect(() => {
-    async function fetchProducts() {
+    async function fetchData() {
+      setLoading(true);
+
       try {
-        const res = await getProducts();
-        if (res.ok === 1 && Array.isArray(res.item)) {
-          const newProducts = res.item.filter((product: Product) => product.extra?.isNew);
-          setProducts(newProducts);
+        const resProducts = await getProductsCategory('new');
+        if (resProducts.ok === 1 && Array.isArray(resProducts.item)) {
+          setProducts(resProducts.item);
         } else {
-          console.error('상품 데이터 구조가 예상과 다릅니다:', res);
+          console.error('상품 데이터 이상:', resProducts);
+        }
+
+        if (accessToken) {
+          const resLiked = await getLikedProducts(accessToken);
+          const liked = Object.values(resLiked)
+            .filter((v): v is { _id: number; product: Product } => typeof v === 'object' && v !== null && 'product' in v && '_id' in v)
+            .map(v => ({
+              ...v.product,
+              bookmarkId: v._id,
+            }));
+
+          setLikedProducts(liked);
+        } else {
+          setLikedProducts([]);
         }
       } catch (error) {
-        console.error('신상품 데이터 로드 실패', error);
+        console.error('데이터 로드 실패:', error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchProducts();
-  }, []);
+    fetchData();
+  }, [accessToken]);
+
+  // 북마크 상태 변경 감지 → likedProducts 다시 불러오기
+  useEffect(() => {
+    const handleBookmarkChange = async () => {
+      if (!accessToken) return;
+      try {
+        const resLiked = await getLikedProducts(accessToken);
+        const liked = Object.values(resLiked)
+          .filter((v): v is { _id: number; product: Product } => typeof v === 'object' && v !== null && 'product' in v && '_id' in v)
+          .map(v => ({
+            ...v.product,
+            bookmarkId: v._id,
+          }));
+        setLikedProducts(liked);
+      } catch (error) {
+        console.error('liked products 재로드 실패:', error);
+      }
+    };
+
+    window.addEventListener('bookmarkChanged', handleBookmarkChange);
+    return () => window.removeEventListener('bookmarkChanged', handleBookmarkChange);
+  }, [accessToken]);
 
   useEffect(() => {
-    // 열 수가 바뀌면 다시 보이는 개수도 업데이트
     setVisibleCount(columns * ROW_COUNT);
   }, [columns]);
 
@@ -63,26 +104,24 @@ export default function NewProductsSection() {
   if (loading) {
     return (
       <section className="my-8">
-        <ProductGrid>
+        <div className={`grid grid-cols-${columns} gap-4`}>
           {Array.from({ length: columns * ROW_COUNT }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
-        </ProductGrid>
+        </div>
       </section>
     );
   }
 
   return (
     <section className="my-8">
-      <ProductGrid>
-        {products.slice(0, visibleCount).map((product: Product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
-      </ProductGrid>
+      <div className={`grid grid-cols-${columns} gap-4`}>
+        <ProductItemCard products={products.slice(0, visibleCount)} likedProducts={likedProducts} />
+      </div>
 
       {!isAllLoaded && (
         <div className="mt-4 flex justify-center">
-          <button onClick={handleLoadMore} className="px-10 py-3 mb-8 mt-4 text-sm font-medium border border-gray-300 rounded-sm ">
+          <button onClick={handleLoadMore} className="px-10 py-3 mb-8 mt-4 text-sm font-medium border cursor-pointer border-gray-300 rounded-sm">
             상품 더보기
           </button>
         </div>
