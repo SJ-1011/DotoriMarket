@@ -1,5 +1,4 @@
 import type { UserAddress } from '@/types/User';
-import { PatchUserAddressesRes } from '@/types/UserAddressRes';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
@@ -10,8 +9,24 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  * @param updatedAddresses 수정된 주소 배열
  * @returns { ok, item, message }
  */
-export async function patchUserAddresses(userId: number, accessToken: string, updatedAddresses: UserAddress[]): Promise<PatchUserAddressesRes> {
+export async function patchUserAddresses(userId: number, accessToken: string, updatedAddresses: UserAddress[]): Promise<{ ok: number; item?: UserAddress[]; message?: string }> {
   try {
+    const userRes = await fetch(`${API_URL}/users/${userId}`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then(res => res.json());
+
+    if (userRes.ok !== 1 || !userRes.item) {
+      throw new Error('기존 유저 데이터를 불러오지 못했습니다.');
+    }
+
+    const newExtra = {
+      ...userRes.item.extra,
+      address: updatedAddresses,
+    };
+
     const res = await fetch(`${API_URL}/users/${userId}`, {
       method: 'PATCH',
       headers: {
@@ -19,12 +34,11 @@ export async function patchUserAddresses(userId: number, accessToken: string, up
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({
-        extra: { address: updatedAddresses },
-      }),
+      body: JSON.stringify({ extra: newExtra }),
     });
 
-    const data: PatchUserAddressesRes = await res.json();
+    const data = await res.json();
+    console.log(data)
     return data;
   } catch (error) {
     console.error('patchUserAddresses 에러:', error);

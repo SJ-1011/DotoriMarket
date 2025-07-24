@@ -32,21 +32,14 @@ export async function addAddress(userId: number, accessToken: string, newAddress
       ...newAddress,
     };
 
-    const updatedAddresses = newAddressWithId.isDefault
-      ? [
-          ...currentAddresses.map(addr => ({
-            ...addr,
-            isDefault: false,
-          })),
-          newAddressWithId,
-        ]
-      : [...currentAddresses, newAddressWithId];
+    const updatedAddresses = newAddressWithId.isDefault ? currentAddresses.map(addr => ({ ...addr, isDefault: false })).concat(newAddressWithId) : [...currentAddresses, newAddressWithId];
 
-    const payload: AddAddressPayload = {
-      extra: {
-        address: updatedAddresses,
-      },
+    const updatedExtra = {
+      ...user.item.extra,
+      address: updatedAddresses,
     };
+
+    const payload: AddAddressPayload = { extra: updatedExtra };
 
     if (newAddressWithId.isDefault) {
       payload.address = `${newAddressWithId.value} ${newAddressWithId.detailAddress}`;
