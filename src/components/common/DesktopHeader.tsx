@@ -1,16 +1,16 @@
 'use client';
 
 import BarIcon from '@/components/icon/BarIcon';
-import BellIcon from '@/components/icon/BellIcon';
 import CartIcon from '@/components/icon/CartIcon';
 import MypageIcon from '@/components/icon/MypageIcon';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SearchIcon from '../icon/SearchIcon';
 import { CHARACTER_CATEGORIES, LIVING_CATEGORIES, STATIONERY_CATEGORIES } from '@/constants/categories';
 import { useLoginStore } from '@/stores/loginStore';
 import { useRouter } from 'next/navigation';
+import NotificationIcon from './NotificationIcon';
 
 export default function DesktopHeader() {
   const { isLogin } = useLoginStore();
@@ -27,6 +27,7 @@ export default function DesktopHeader() {
 
   // 검색창 로직
   const [query, setQuery] = useState('');
+  const popoverRef = useRef<HTMLDivElement>(null);
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,6 +36,17 @@ export default function DesktopHeader() {
     if (!query.trim()) return;
     router.push(`/search?q=${encodeURIComponent(query.trim())}`);
   };
+
+  // 클릭 외부 감지로 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setIsCategoryOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const categoryAddress = {
     신상품: 'new',
@@ -76,7 +88,7 @@ export default function DesktopHeader() {
 
   return (
     <>
-      <header className="max-w-[55rem] lg:max-w-[75rem] mx-auto mt-12">
+      <header className="max-w-[55rem] lg:max-w-[75rem] mx-auto mt-12 bg-white">
         <nav aria-label="유저 상단 메뉴">
           <ul className="flex flex-row flex-nowrap gap-4 justify-end mr-8">
             <li>
@@ -85,7 +97,6 @@ export default function DesktopHeader() {
               </Link>
             </li>
             <li>
-              {/* TODO 로그인이 안된 상태면 로그인 페이지로 이동 */}
               {isLogin && (
                 <Link href="/mypage" aria-label="마이페이지">
                   <MypageIcon svgProps={{ className: 'w-6 h-6' }} />
@@ -97,13 +108,10 @@ export default function DesktopHeader() {
                 </Link>
               )}
             </li>
-            <li>
-              <Link href="/" aria-label="알림">
-                <BellIcon svgProps={{ className: 'w-6 h-6' }} />
-              </Link>
-            </li>
+            <NotificationIcon />
           </ul>
         </nav>
+
         <h1 className="flex justify-center my-8">
           <Link href="/">
             <Image src="/logo.png" alt="도토리섬 메인으로 이동" width={120} height={120}></Image>
@@ -143,7 +151,7 @@ export default function DesktopHeader() {
       <div className="relative">
         <hr className="mt-6 border-primary" />
         {isCategoryOpen && (
-          <nav aria-label="세부 카테고리 메뉴" className="absolute z-[50] left-1/2 -translate-x-1/2 top-full w-[30rem] lg:w-[40rem] text-sm lg:text-base mx-auto bg-[#E5CBB7] flex flex-row border-b border-x border-primary">
+          <nav ref={popoverRef} aria-label="세부 카테고리 메뉴" className="absolute z-[50] left-1/2 -translate-x-1/2 top-full w-[30rem] lg:w-[40rem] text-sm lg:text-base mx-auto bg-[#E5CBB7] flex flex-row border-b border-x border-primary">
             <ul className="flex flex-col flex-nowrap text-center">
               {['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품', 'COMMUNITY'].map(category => (
                 <li key={category} className={`p-4 cursor-pointer ${detailOpen === category ? 'bg-background' : ''}`} onClick={() => setDetailOpen(category)}>
