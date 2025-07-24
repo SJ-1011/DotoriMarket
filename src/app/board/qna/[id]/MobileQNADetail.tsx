@@ -11,12 +11,12 @@ interface MobileProps {
 export default function MobileQNADetail({ post, posts, id }: MobileProps) {
   const asidePosts: (Post | null)[] = [null, null];
 
+  // 하단에 있는 다음글/이전글
   for (let i = 0; i < posts.length; i++) {
     if (posts[i]._id == id) {
       if (i != 0) {
         asidePosts[0] = posts[i - 1];
       }
-
       if (i != posts.length - 1) {
         asidePosts[1] = posts[i + 1];
       }
@@ -34,8 +34,6 @@ export default function MobileQNADetail({ post, posts, id }: MobileProps) {
     { type: '재입고 문의', value: 'restock' },
     { type: '기타 문의', value: 'etc' },
   ];
-
-  console.log(posts);
 
   return (
     <article className="bg-white pt-6 pb-12 min-h-[80vh] text-xs">

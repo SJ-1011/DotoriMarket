@@ -11,12 +11,12 @@ interface DesktopProps {
 export default function DesktopQNADetail({ post, posts, id }: DesktopProps) {
   const asidePosts: (Post | null)[] = [null, null];
 
+  // 하단에 있는 다음글/이전글
   for (let i = 0; i < posts.length; i++) {
     if (posts[i]._id == id) {
       if (i != 0) {
         asidePosts[0] = posts[i - 1];
       }
-
       if (i != posts.length - 1) {
         asidePosts[1] = posts[i + 1];
       }
@@ -34,9 +34,6 @@ export default function DesktopQNADetail({ post, posts, id }: DesktopProps) {
     { type: '재입고 문의', value: 'restock' },
     { type: '기타 문의', value: 'etc' },
   ];
-
-  console.log('product', post.product);
-  console.log('replies', post.replies);
 
   return (
     <article className="bg-white px-8 pt-6 pb-12 min-h-[80vh]">
@@ -88,7 +85,7 @@ export default function DesktopQNADetail({ post, posts, id }: DesktopProps) {
       </table>
 
       <section className="p-8 whitespace-pre-line text-sm lg:text-base">
-        <div className="mb-12 p-8">{post.content}</div>
+        <div className="mb-12">{post.content}</div>
         {post.replies && (
           <div className="bg-secondary text-left p-8 flex flex-col flex-nowrap">
             <span className="font-bold">{post.replies[0].user.name}</span>
