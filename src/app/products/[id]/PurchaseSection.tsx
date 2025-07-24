@@ -167,7 +167,7 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
             {product.mainImages?.length > 0 && (
               <div className="relative">
                 <div className="relative w-full pb-[100%]">
-                  <Image src={getFullImageUrl(product.mainImages[0].path)} alt={product.name} fill className="object-contain" unoptimized />
+                  <Image src={getFullImageUrl(product.mainImages[0].path)} alt={product.name} fill className="object-contain w-full h-full" unoptimized />
                 </div>
               </div>
             )}
@@ -211,7 +211,7 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
               <span className="text-sm truncate">{product.name}</span>
               <div className="flex items-center gap-4">
                 {/* 수량 조절 버튼 */}
-                <div className="flex items-center border rounded-md overflow-hidden">
+                <div className="flex items-center border overflow-hidden">
                   <button onClick={decreaseQuantity} className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity <= 1}>
                     -
                   </button>

@@ -41,8 +41,8 @@ export default function ProductInfo({ product }: { product: Product }) {
           {product.mainImages.map((image, index) => {
             const imgSrc = `${API_URL}/${image.path.replace(/^\/+/, '')}`;
             return (
-              <div key={index} style={{ width: '300px', position: 'relative' }}>
-                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={300} height={230} style={{ objectFit: 'contain' }} unoptimized />
+              <div key={index} className="relative w-[550px] h-[450px]">
+                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} fill style={{ objectFit: 'contain' }} unoptimized />
               </div>
             );
           })}
@@ -62,8 +62,8 @@ export default function ProductInfo({ product }: { product: Product }) {
           {product.mainImages.map((image, index) => {
             const imgSrc = `${API_URL}/${image.path.replace(/^\/+/, '')}`;
             return (
-              <div key={index} style={{ width: '300px', position: 'relative' }}>
-                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={300} height={230} style={{ objectFit: 'contain' }} unoptimized />
+              <div key={index} className="relative w-[550px] h-[450px]">
+                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} fill style={{ objectFit: 'contain' }} unoptimized />
               </div>
             );
           })}
