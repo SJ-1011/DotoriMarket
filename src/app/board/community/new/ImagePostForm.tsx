@@ -1,9 +1,10 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { uploadFile } from '@/actions/file';
+import { uploadFile } from '@/data/actions/file';
 import { useActionState } from 'react';
-import { createPost } from '@/actions/post';
+import { useLoginStore } from '@/stores/loginStore';
+import { createPost } from '@/data/actions/post';
 
 export default function ImagePostForm({ boardType }: { boardType: string }) {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -27,9 +28,10 @@ export default function ImagePostForm({ boardType }: { boardType: string }) {
       alert('이미지 업로드 실패');
     }
   }
-
+  const user = useLoginStore(state => state.user);
   return (
     <form action={formAction}>
+      <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
       <input type="hidden" name="type" value={boardType} />
       <div className="my-4">
         <label>제목</label>
