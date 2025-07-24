@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { addBookmark } from '@/data/actions/addBookmark';
 import { deleteBookmark } from '@/data/actions/deleteBookmark';
+import { usePathname, useRouter } from 'next/navigation';
 
 export function useToggleBookmark(initialBookmarkId: number | undefined, productId: number, accessToken?: string) {
   const [isLiked, setIsLiked] = useState(!!initialBookmarkId);
   const [bookmarkId, setBookmarkId] = useState<number | undefined>(initialBookmarkId);
   const isToggling = useRef(false); // 토글 중복 방지용 플래그
-
+  const router = useRouter();
+  const pathname = usePathname();
   useEffect(() => {
     setIsLiked(!!initialBookmarkId);
     setBookmarkId(initialBookmarkId);
@@ -19,6 +21,7 @@ export function useToggleBookmark(initialBookmarkId: number | undefined, product
     if (isToggling.current) return;
     if (!accessToken) {
       alert('로그인이 필요합니다.');
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
