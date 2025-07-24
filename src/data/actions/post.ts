@@ -4,7 +4,7 @@ import { ApiRes, ApiResPromise } from '@/types';
 import { DynamicFormData, Post, PostReply } from '@/types/Post';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { uploadFile } from './file';
+import { uploadFile } from '@/data/actions/file';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 

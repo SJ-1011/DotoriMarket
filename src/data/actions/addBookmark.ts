@@ -12,7 +12,7 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  * @description
  * 서버에 북마크를 추가합니다.
  */
-export async function addBookmark(targetId: number, type: 'product' | 'user' | 'post' = 'product', accessToken: string): ApiResPromise<{ _id: number }> {
+export async function addBookmark(targetId: number, type: 'product' | 'user' | 'post', accessToken: string): ApiResPromise<{ _id: number }> {
   try {
     const res = await fetch(`${API_URL}/bookmarks/${type}`, {
       method: 'POST',
