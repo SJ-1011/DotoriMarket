@@ -12,6 +12,8 @@ export default function ProductDetailPage({ product }: { product: Product }) {
     <DotBackgroundWrapper>
       <div className="max-w-[800px] mx-auto px-4 pt-4 bg-white">
         <PurchaseSection product={product} />
+      </div>
+      <div className="w-full max-w-[800px] mx-auto">
         <ProductTabSection activeTab={activeTab} setActiveTab={setActiveTab} product={product} />
       </div>
     </DotBackgroundWrapper>
