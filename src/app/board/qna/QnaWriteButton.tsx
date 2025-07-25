@@ -1,6 +1,6 @@
 'use client';
 import { useLoginStore } from '@/stores/loginStore';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 // import Link from 'next/link';
 //테스트 후 필요하면 hydration
 // import useHasHydrated from '@/hooks/useHasHydrated'; // 또는 위 함수 직접 포함
@@ -9,14 +9,13 @@ import { usePathname, useRouter } from 'next/navigation';
 export default function QnaWriteButton() {
   // const hasHydrated = useHasHydrated();
   const isLogin = useLoginStore(state => state.isLogin);
-  const router = useRouter();
-  const pathname = usePathname(); // 현재 경로 가져오기
-
+  const router = useRouter(); // 현재 경로 가져오기
+  const writePageUrl = '/board/qna/new';
   const handleClick = () => {
     if (isLogin) {
-      router.push('/qna/new');
+      router.push(writePageUrl);
     } else {
-      router.push(`/login?redirect=${pathname}`); // 로그인 후 다시 돌아오게
+      router.push(`/login?redirect=${encodeURIComponent(writePageUrl)}`); // 로그인 후 다시 돌아오게
     }
   };
   //필요하면 hydration
