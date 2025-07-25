@@ -229,7 +229,7 @@ export default function CartPage() {
                     </td>
                     <td className="text-left border-r border-gray-200">
                       <div className="flex items-center gap-4 py-4 lg:py-6 cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
-                        <Image src={getImageUrl(product.product.image.path)} alt={product.product.name} width={80} height={80} className="rounded-md" />
+                        <Image src={getImageUrl(product.product.image.path)}  unoptimized={true} alt={product.product.name} width={80} height={80} className="rounded-md" />
                         <div>
                           <div className="font-semibold">{product.product.name}</div>
                           <div className="text-gray-500 text-sm">{product.product.price.toLocaleString()}원</div>
