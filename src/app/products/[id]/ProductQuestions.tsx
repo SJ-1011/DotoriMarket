@@ -76,12 +76,12 @@ export default function ProductQuestions({ productId, productName }: ProductQues
       <h2 className="text-lg font-bold mb-2">상품 문의</h2>
 
       {loading ? (
-        <div className="text-gray-500 min-h-[430px] flex items-center text-sm justify-center">문의 로딩 중...</div>
+        <div className="text-gray-500 min-h-[430px] flex items-center justify-center">문의 로딩 중...</div>
       ) : (
         <>
           <div className="mb-6 min-h-[430px]">
             {filteredQuestions.length === 0 ? (
-              <div className="text-gray-500 text-sm mb-6">등록된 문의가 없습니다.</div>
+              <div className="text-gray-500 mb-6">등록된 문의가 없습니다.</div>
             ) : (
               <div className="mb-6">
                 {/* 문의 목록 렌더링 */}
