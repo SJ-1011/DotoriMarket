@@ -10,6 +10,7 @@ import { deleteBookmark } from '@/data/actions/deleteBookmark';
 import Favorite from '@/components/icon/FavoriteIcon';
 import FavoriteBorder from '@/components/icon/FavoriteBorderIcon';
 import ImageModal from './ImageModal';
+import MypageIcon from '@/components/icon/MypageIcon';
 
 interface Props {
   post: Post;
@@ -95,7 +96,12 @@ export default function CommunityPostCard({ post, apiUrl, clientId, bookmarkId: 
           {/* 작성자 프로필 */}
           <div className="flex items-center mb-2">
             <div className="relative w-6 h-6 rounded-full overflow-hidden mr-2">
-              <Image src={`${apiUrl}/${post.user.image?.path}`} alt={post.user.name} fill style={{ objectFit: 'cover' }} />
+              {post.user.image?.path ? (
+                <Image src={`${apiUrl}/${post.user.image.path}`} alt={post.user?.name ?? '기본 프로필'} fill style={{ objectFit: 'cover' }} />
+              ) : (
+                // 기본 SVG 또는 아이콘 컴포넌트
+                <MypageIcon svgProps={{ className: 'w-5 h-5' }} />
+              )}
             </div>
             <span className="font-semibold text-xs text-gray-800">{post.user.name}</span>
           </div>

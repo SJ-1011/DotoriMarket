@@ -166,7 +166,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
         </div>
 
         <div className="my-4">
-          <label className="block text-lg content-center" htmlFor="content">
+          <label className="block mb-2 font-bold text-xs sm:text-sm lg:text-base-xl content-center " htmlFor="content">
             내용
           </label>
           <textarea id="content" rows={15} placeholder="내용을 입력하세요." className="w-full p-4 text-sm border rounded-lg border-gray-300 focus:outline-none focus:border-[#A97452] focus:border-1 focus:ring-2 focus:ring-[#A97452]  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" name="content"></textarea>
