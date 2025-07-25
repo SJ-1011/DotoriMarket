@@ -96,6 +96,17 @@ export default function CartPage() {
     }
   };
 
+  // 구매하기 버튼 클릭 시 실행
+  const handlePurchase = () => {
+    if (selectedItems.length === 0) {
+      alert('구매할 상품을 선택해주세요.');
+      return;
+    }
+
+    const query = selectedItems.join(',');
+    router.push(`/order?ids=${query}`);
+  };
+
   useEffect(() => {
     if (!user?.token?.accessToken) return;
 
@@ -297,7 +308,7 @@ export default function CartPage() {
 
             {/* 구매 버튼 */}
             <div className="mt-8 sm:static fixed bottom-0 left-0 right-0 p-4 z-2 sm:border-none sm:p-0">
-              <button className="w-full bg-primary text-white py-4 rounded-md text-center">
+              <button onClick={handlePurchase} className="w-full bg-primary text-white py-4 rounded-md text-center">
                 <span className="font-bold text-base">{total.toLocaleString()}원 구매하기</span>
               </button>
             </div>
