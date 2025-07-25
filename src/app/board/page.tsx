@@ -10,7 +10,7 @@ export default function BoardMainPage() {
       <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#A97452] mb-8">전체 게시판</h1>
 
       {/* 게시판 카드들 */}
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-3 ">
         {/* 자유 게시판 */}
         <BoardCard title="자유게시판" description="소장품을 자랑하는 공간입니다." href="/board/community" />
 
