@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useEffect } from 'react';
 import ProductSearchModal from './ProductSearchModal';
 import type { Product } from '@/types/Product';
 import Image from 'next/image';
 import { useLoginStore } from '@/stores/loginStore';
 import { createPost } from '@/data/actions/post';
+import { useSearchParams } from 'next/navigation';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 //문의 종류 배열
 const QNA_TYPES = [
@@ -18,7 +19,6 @@ const QNA_TYPES = [
   { type: '재입고 문의', value: 'restock' },
   { type: '기타 문의', value: 'etc' },
 ];
-console.log(`로그인 스토어 정보 : ${useLoginStore.name}`);
 
 export default function NewQnaForm({ boardType }: { boardType: string }) {
   const [state, formAction, isLoading] = useActionState(createPost, null);
@@ -26,6 +26,34 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+  const searchParams = useSearchParams();
+  const productIdFromQuery = searchParams.get('productId');
+  console.log('NewQnaForm - productIdFromQuery:', productIdFromQuery);
+
+  useEffect(() => {
+    if (productIdFromQuery) {
+      async function fetchProduct() {
+        try {
+          const res = await fetch(`${API_URL}/products/${productIdFromQuery}`, {
+            headers: {
+              'client-id': process.env.NEXT_PUBLIC_CLIENT_ID || '',
+            },
+          });
+          console.log('API 호출 응답 상태:', res.status);
+          if (res.ok) {
+            const data = await res.json();
+            setSelectedProduct(data.item);
+          } else {
+            const errorText = await res.text();
+            console.error('API 호출 실패:', res.status, errorText);
+          }
+        } catch (error) {
+          console.error('상품 정보 불러오기 실패', error);
+        }
+      }
+      fetchProduct();
+    }
+  }, [productIdFromQuery]);
   // 버튼 1줄, 2줄로 나누기
   const firstRow = QNA_TYPES.slice(0, 3);
   const secondRow = QNA_TYPES.slice(3);
