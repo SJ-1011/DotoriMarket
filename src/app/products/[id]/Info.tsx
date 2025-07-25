@@ -41,8 +41,8 @@ export default function ProductInfo({ product }: { product: Product }) {
           {product.mainImages.map((image, index) => {
             const imgSrc = `${API_URL}/${image.path.replace(/^\/+/, '')}`;
             return (
-              <div key={index} style={{ width: '300px', position: 'relative' }}>
-                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={300} height={230} style={{ objectFit: 'contain' }} unoptimized />
+              <div key={index} className="w-full max-w-[500px]">
+                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={500} height={345} style={{ objectFit: 'contain' }} unoptimized sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
               </div>
             );
           })}
@@ -62,8 +62,8 @@ export default function ProductInfo({ product }: { product: Product }) {
           {product.mainImages.map((image, index) => {
             const imgSrc = `${API_URL}/${image.path.replace(/^\/+/, '')}`;
             return (
-              <div key={index} style={{ width: '300px', position: 'relative' }}>
-                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={300} height={230} style={{ objectFit: 'contain' }} unoptimized />
+              <div key={index} className="w-full max-w-[500px]">
+                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={500} height={345} style={{ objectFit: 'contain' }} unoptimized sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
               </div>
             );
           })}
