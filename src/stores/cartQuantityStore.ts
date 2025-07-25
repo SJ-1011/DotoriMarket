@@ -2,6 +2,8 @@ import { create } from 'zustand';
 
 interface QuantityState {
   quantities: Record<number, number>; // -> 상품 Id + 상품 수량  -> { id:number , quantity: number}
+  shippingFee: number; // 배송비
+  setShippingFee: (fee: number) => void; // 배송비 설정
   setQuantity: (id: number, qty: number) => void; // -> 상품 수량 변경
   getQuantity: (id: number) => number; // -> 상품 Id로 수량 조회 하기
   getTotal: (priceMap: Record<number, number>) => number; // -> 상품 Id로 가격 조회 및 총 금액 계산
@@ -12,6 +14,9 @@ interface QuantityState {
 
 export const useCartQuantityStore = create<QuantityState>((set, get) => ({
   quantities: {},
+  shippingFee: 0, // ✅ 기본 배송비
+
+  setShippingFee: (fee: number) => set({ shippingFee: fee }),
 
   setQuantity: (id, qty) =>
     set(state => ({
@@ -21,13 +26,15 @@ export const useCartQuantityStore = create<QuantityState>((set, get) => ({
       },
     })),
 
-  getQuantity: id => get().quantities[id] ?? 1, // -> 상품 수량 없으면 1로 초기값 설정
+  getQuantity: id => get().quantities[id] ?? 1,
 
   getTotal: priceMap => {
-    const q = get().quantities;
-    return Object.entries(q).reduce((sum, [id, qty]) => {
+    const quantities = get().quantities;
+    const shippingFee = get().shippingFee;
+    const subtotal = Object.entries(quantities).reduce((sum, [id, qty]) => {
       return sum + (priceMap[Number(id)] ?? 0) * qty;
     }, 0);
+    return subtotal + shippingFee;
   },
 
   resetQuantities: initial => set({ quantities: initial }),

@@ -21,16 +21,15 @@ export default function CartPage() {
   const { user } = useLoginStore();
   const getImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
   const cartStore = useCartQuantityStore();
-  const shippingCost = cartData?.cost?.shippingFees || 0;
   const router = useRouter();
-
   const priceTable = useMemo(() => {
     if (!cartData?.item?.length) return {};
-    return Object.fromEntries(cartData.item.map(product => [product._id, product.product.price]));
-  }, [cartData]);
 
-  const orderTotal = cartStore.getTotal(priceTable);
-  const totalWithShipping = orderTotal + shippingCost;
+    return Object.fromEntries(cartData.item.filter(product => product.product.quantity > 0).map(product => [product._id, product.product.price]));
+  }, [cartData]);
+  const total = cartStore.getTotal(priceTable);
+  const shippingFee = cartStore.shippingFee;
+  const productOnlyTotal = total - shippingFee;
 
   const increaseQty = (id: number, stock: number) => {
     const currentQty = cartStore.getQuantity(id);
@@ -103,17 +102,19 @@ export default function CartPage() {
     const fetchAndSyncCart = async () => {
       const data = await getCarts(user.token.accessToken);
       setCartData(data);
-      console.log(data);
+
+      // 수량 초기화
       const initialQuantities = Object.fromEntries(data.item.map(product => [product._id, product.quantity]));
       cartStore.resetQuantities(initialQuantities);
+
+      // 배송비 저장
+      cartStore.setShippingFee(data.cost.shippingFees);
     };
 
     fetchAndSyncCart();
   }, [user?.token?.accessToken]);
 
   useEffect(() => {
-    console.log('수량 상태:', cartStore.quantities);
-    console.log('가격 맵:', priceTable);
     if (!cartData || !user?.token?.accessToken) return;
 
     cartData.item.forEach(product => {
@@ -177,18 +178,23 @@ export default function CartPage() {
                       </div>
                     </td>
                     <td className="border-r border-gray-200">
-                      <div className="flex items-center border divide-x border-gray justify-center w-fit mx-auto">
-                        <button onClick={() => decreaseQty(product._id)} className="px-3 py-1 text-base cursor-pointer">
-                          -
-                        </button>
-                        <span className="px-3 py-1 text-base">{cartStore.getQuantity(product._id)}</span>
-                        <button onClick={() => increaseQty(product._id, product.product.quantity)} className="px-3 py-1 text-base cursor-pointer">
-                          +
-                        </button>
-                      </div>
+                      {product.product.quantity === 0 ? (
+                        <div className="text-red-500 font-semibold text-center">품절</div>
+                      ) : (
+                        <div className="flex items-center border divide-x border-gray justify-center w-fit mx-auto">
+                          <button onClick={() => decreaseQty(product._id)} className="px-3 py-1 text-base cursor-pointer">
+                            -
+                          </button>
+                          <span className="px-3 py-1 text-base">{cartStore.getQuantity(product._id)}</span>
+                          <button onClick={() => increaseQty(product._id, product.product.quantity)} className="px-3 py-1 text-base cursor-pointer">
+                            +
+                          </button>
+                        </div>
+                      )}
                     </td>
+
                     <td className="border-r border-gray-200">{(product.product.price * cartStore.getQuantity(product._id)).toLocaleString()}원</td>
-                    <td className="border-r border-gray-200">{shippingCost.toLocaleString()}원</td>
+                    <td className="border-r border-gray-200">{shippingFee.toLocaleString()}원</td>
                     <td>
                       <button onClick={() => handleDeleteItem(product._id)} className="text-sm text-gray hover:text-red cursor-pointer">
                         삭제
@@ -198,48 +204,73 @@ export default function CartPage() {
                 ))}
               </tbody>
             </table>
-
-            {/* 선택상품 삭제 버튼 - 데스크탑 전용 */}
-            <div className="hidden sm:flex justify-between items-center mt-8">
-              <button onClick={handleDeleteSelected} className="border border-black px-4 py-2 text-sm hover:bg-black hover:text-white transition-colors cursor-pointer">
+            {/* 선택상품 삭제 버튼 */}
+            <div className="flex justify-between items-center py-2 sm:mt-4 lg:mt-8 ">
+              <button onClick={handleDeleteSelected} className="border border-black px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base hover:bg-black hover:text-white transition-colors cursor-pointer">
                 선택상품 삭제
               </button>
 
-              <span className="text-xs text-gray-600">장바구니는 최대 10개의 상품을 담을 수 있습니다.</span>
+              <span className="hidden sm:block text-xs sm:text-sm text-gray-600">장바구니는 최대 10개의 상품을 담을 수 있습니다.</span>
             </div>
 
             {/* 모바일 카드형 */}
             <div className="flex flex-col sm:hidden">
               {cartData.item.map(product => (
                 <div key={product._id} className="py-4 border-t border-dark-gray first:border-t-0 last:border-b last:border-dark-gray">
-                  <div className="flex justify-between items-start gap-4">
-                    <button className="cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
-                      <Image src={getImageUrl(product.product.image.path)} alt={product.product.name} width={80} height={80} className="rounded-sm" />
-                    </button>
-                    <div className="flex flex-col flex-1 justify-between">
-                      <div className="flex justify-between items-center">
-                        <button className="cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
-                          <div className="font-semibold text-sm">{product.product.name}</div>
-                        </button>
-                        <button onClick={() => handleDeleteItem(product._id)} className="text-xs border border-gray px-2 py-1 text-gray hover:text-red hover:border-red cursor-pointer">
-                          삭제
-                        </button>
+                  <div className="mb-2">
+                    <input type="checkbox" checked={selectedItems.includes(product._id)} onChange={() => toggleItem(product._id)} className="accent-black" />
+                  </div>
+
+                  {product.product.quantity === 0 ? (
+                    <div className="flex items-start gap-4">
+                      <Image src={getImageUrl(product.product.image.path)} alt={product.product.name} width={80} height={80} className="rounded-sm cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)} />
+                      <div className="flex flex-col flex-1 justify-between">
+                        <div className="flex justify-between items-start">
+                          <div className="font-semibold text-sm cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
+                            {product.product.name}
+                          </div>
+                          <button onClick={() => handleDeleteItem(product._id)} className="text-xs border border-gray px-2 py-1 text-gray hover:text-red hover:border-red cursor-pointer">
+                            삭제
+                          </button>
+                        </div>
+                        <div className="text-red text-xs mt-1">품절된 상품입니다</div>
                       </div>
-                      <div className="text-gray text-xs mt-1">{product.product.price.toLocaleString()}원</div>
                     </div>
-                  </div>
-                  <div className="flex justify-between items-center mt-4">
-                    <div className="flex border divide-x border-gray overflow-hidden text-sm">
-                      <button onClick={() => decreaseQty(product._id)} className="px-3 py-1 cursor-pointer">
-                        -
-                      </button>
-                      <span className="px-4 py-1">{cartStore.getQuantity(product._id)}</span>
-                      <button onClick={() => increaseQty(product._id, product.product.quantity)} className="px-3 py-1 cursor-pointer">
-                        +
-                      </button>
-                    </div>
-                    <div className="font-bold text-base">총 {(product.product.price * cartStore.getQuantity(product._id)).toLocaleString()}원</div>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex items-start">
+                          <button className="cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
+                            <Image src={getImageUrl(product.product.image.path)} alt={product.product.name} width={80} height={80} className="rounded-sm" />
+                          </button>
+                        </div>
+                        <div className="flex flex-col flex-1 justify-between">
+                          <div className="flex justify-between items-center">
+                            <button className="cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
+                              <div className="font-semibold text-sm">{product.product.name}</div>
+                            </button>
+                            <button onClick={() => handleDeleteItem(product._id)} className="text-xs border border-gray px-2 py-1 text-gray hover:text-red hover:border-red cursor-pointer">
+                              삭제
+                            </button>
+                          </div>
+                          <div className="text-gray text-xs mt-1">{product.product.price.toLocaleString()}원</div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center mt-4">
+                        <div className="flex border divide-x border-gray overflow-hidden text-sm">
+                          <button onClick={() => decreaseQty(product._id)} className="px-3 py-1 cursor-pointer">
+                            -
+                          </button>
+                          <span className="px-4 py-1">{cartStore.getQuantity(product._id)}</span>
+                          <button onClick={() => increaseQty(product._id, product.product.quantity)} className="px-3 py-1 cursor-pointer">
+                            +
+                          </button>
+                        </div>
+                        <div className="font-bold text-base">총 {(product.product.price * cartStore.getQuantity(product._id)).toLocaleString()}원</div>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
@@ -256,9 +287,9 @@ export default function CartPage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="sm:py-6 lg:py-8">{orderTotal.toLocaleString()}원</td>
-                    <td className="sm:py-6 lg:py-8">{shippingCost.toLocaleString()}원</td>
-                    <td className="text-red sm:py-6 lg:py-8">{totalWithShipping.toLocaleString()}원</td>
+                    <td className="sm:py-6 lg:py-8">{productOnlyTotal.toLocaleString()}원</td>
+                    <td className="sm:py-6 lg:py-8">{shippingFee.toLocaleString()}원</td>
+                    <td className="text-red sm:py-6 lg:py-8">{total.toLocaleString()}원</td>
                   </tr>
                 </tbody>
               </table>
@@ -267,7 +298,7 @@ export default function CartPage() {
             {/* 구매 버튼 */}
             <div className="mt-8 sm:static fixed bottom-0 left-0 right-0 p-4 z-2 sm:border-none sm:p-0">
               <button className="w-full bg-primary text-white py-4 rounded-md text-center">
-                <span className="font-bold text-base">{totalWithShipping.toLocaleString()}원 구매하기</span>
+                <span className="font-bold text-base">{total.toLocaleString()}원 구매하기</span>
               </button>
             </div>
           </>
