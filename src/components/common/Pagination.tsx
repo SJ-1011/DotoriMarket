@@ -32,9 +32,9 @@ export default function Pagination({ totalPages, currentPage, onPageChange }: Pa
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`relative w-10 h-10 sm:w-12 sm:h-12 rounded-lg transition-colors cursor-pointer 
-            ${isActive ? 'border-2 border-orange-400 bg-orange-200 font-bold' : 'border border-white/30'}
-            hover:!bg-white/10`}
+            className={`relative w-10 h-10 sm:w-12 sm:h-12 rounded-full transition-colors cursor-pointer 
+            ${isActive ? ' bg-orange-200 font-bold' : ''}
+            `}
           >
             <span
               className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black select-none pointer-events-none 
