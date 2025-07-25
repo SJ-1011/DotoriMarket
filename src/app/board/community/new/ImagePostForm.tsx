@@ -34,12 +34,16 @@ export default function ImagePostForm({ boardType }: { boardType: string }) {
       <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
       <input type="hidden" name="type" value={boardType} />
       <div className="my-4">
-        <label>제목</label>
-        <input name="title" type="text" placeholder="제목을 입력하세요" className="border px-2 py-1 w-full" />
+        <label className="block mb-2 font-bold text-xs sm:text-sm lg:text-base-xl content-center " htmlFor="title">
+          제목
+        </label>
+        <input id="title" type="text" placeholder="제목을 입력하세요." className="w-full py-2 px-2 border rounded-md text-xs sm:text-sm lg:text-base-xl dark:bg-gray-700 border-gray-300 focus:outline-none focus:border-[#A97452] focus:border-1  focus:ring-2 focus:ring-[#A97452]" name="title" />
       </div>
       <div className="my-4">
-        <label>내용</label>
-        <textarea name="content" rows={5} placeholder="내용을 입력하세요" className="border px-2 py-1 w-full" />
+        <label className="block mb-2 font-bold text-xs sm:text-sm lg:text-base-xl content-center " htmlFor="content">
+          내용
+        </label>
+        <textarea name="content" rows={5} placeholder="내용을 입력하세요" className="w-full p-4 text-sm border rounded-lg border-gray-300 focus:outline-none focus:border-[#A97452] focus:border-1 focus:ring-2 focus:ring-[#A97452]  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
       </div>
       <div className="my-4">
         <label>이미지 업로드</label>
