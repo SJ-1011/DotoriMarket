@@ -14,7 +14,7 @@ export default function QnaWriteButton() {
 
   const handleClick = () => {
     if (isLogin) {
-      router.push('/qna/new');
+      router.push('/board/qna/new');
     } else {
       router.push(`/login?redirect=${pathname}`); // 로그인 후 다시 돌아오게
     }

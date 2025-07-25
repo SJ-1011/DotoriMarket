@@ -95,7 +95,7 @@ export default async function QnaBoardPage() {
                     {post.extra?.imagePath ? <Image src={`${API_URL}/${post.extra.imagePath}`} alt="상품정보" width={30} height={30} className="object-cover sm:w-[50px] sm:h-[50px]" unoptimized /> : null}
                   </td>
                   <td className="py-2 text-center px-2 text-xs sm:text-sm lg:text-base h-[40px] sm:h-[60px] truncate max-w-[200px] mx-auto" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    <Link href={`/notice/${post._id}`} className="hover:underline">
+                    <Link href={`/board/qna/${post._id}`} className="hover:underline">
                       {post.title}
                     </Link>
                   </td>
