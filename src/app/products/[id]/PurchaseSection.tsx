@@ -12,7 +12,7 @@ import { useLoginStore } from '@/stores/loginStore';
 import Favorite from '@/components/icon/FavoriteIcon';
 import FavoriteBorder from '@/components/icon/FavoriteBorderIcon';
 import ShareIcon from '@/components/icon/ShareIcon';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface PurchaseSectionProps {
   product: Product & { bookmarkId?: number };
@@ -124,10 +124,11 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
 
   // 구매하기 버튼 이동
   const router = useRouter();
+  const pathname = usePathname();
   const handleClick = () => {
     if (!user) {
       alert('로그인이 필요합니다.');
-      router.push('/login'); // 로그인 페이지로 이동
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
@@ -141,7 +142,7 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
   const handleAddToCart = () => {
     if (!user) {
       alert('로그인이 필요합니다.');
-      router.push('/login');
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
