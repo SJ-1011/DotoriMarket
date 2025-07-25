@@ -14,23 +14,35 @@ import { deleteCartItems } from '@/data/actions/deleteCartItems';
 import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
+  // 장바구니 데이터 상태
   const [cartData, setCartData] = useState<CartResponse | null>(null);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
+
+  // 디바운싱과 이전 수량 저장용 ref
   const debounceTimers = useRef<Record<number, NodeJS.Timeout | null>>({});
   const previousQty = useRef<Record<number, number>>({});
+
+  // 주스탄드 및 라우터
   const { user } = useLoginStore();
-  const getImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
   const cartStore = useCartQuantityStore();
   const router = useRouter();
+
+  // 상품 이미지 가져오기
+  const getImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
+
+  // 상품 가격 테이블(장바구니 id) [장바구니 id: 가격]
   const priceTable = useMemo(() => {
     if (!cartData?.item?.length) return {};
 
     return Object.fromEntries(cartData.item.filter(product => product.product.quantity > 0).map(product => [product._id, product.product.price]));
   }, [cartData]);
+
+  // 가격 계산용 총가격, 배송비, 제품가격만
   const total = cartStore.getTotal(priceTable);
   const shippingFee = cartStore.shippingFee;
   const productOnlyTotal = total - shippingFee;
 
+  // 수량 증가 -> 수량변경 api 호출 + 상태 변경 (zustand)
   const increaseQty = (id: number, stock: number) => {
     const currentQty = cartStore.getQuantity(id);
     if (currentQty >= stock) {
@@ -40,31 +52,56 @@ export default function CartPage() {
     cartStore.setQuantity(id, currentQty + 1);
   };
 
+  // 수량 감소 -> 수량변경 api 호출 + 상태 변경 (zustand)
   const decreaseQty = (id: number) => {
     const currentQty = cartStore.getQuantity(id);
     if (currentQty <= 1) return;
     cartStore.setQuantity(id, currentQty - 1);
   };
 
+  // 체크 박스 전체 선택
   const toggleAll = () => {
-    if (selectedItems.length === cartData!.item.length) {
+    const totalItems = cartData!.item;
+    const isAllSelected = selectedItems.length === totalItems.length;
+
+    if (isAllSelected) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(cartData!.item.map(item => item._id));
+      const selectedIds = [];
+      for (const item of totalItems) {
+        selectedIds.push(item._id);
+      }
+      setSelectedItems(selectedIds);
     }
   };
 
+  // 체크 박스 선택
   const toggleItem = (id: number) => {
-    setSelectedItems(prev => (prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]));
+    setSelectedItems(prev => {
+      const isSelected = prev.includes(id);
+
+      if (isSelected) {
+        return prev.filter(itemId => itemId !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
   };
 
+  // 장바구니 id 삭제
   const handleDeleteItem = async (id: number) => {
     const token = user?.token?.accessToken;
     if (!token) return;
 
     try {
       await deleteCartItem(id, token);
-      setCartData(prev => (prev ? { ...prev, item: prev.item.filter(item => item._id !== id) } : null));
+
+      setCartData(prev => {
+        if (!prev) return null;
+        const updatedItems = prev.item.filter(item => item._id !== id);
+        return { ...prev, item: updatedItems };
+      });
+
       cartStore.removeQuantity(id);
       setSelectedItems(prev => prev.filter(itemId => itemId !== id));
     } catch (error) {
@@ -72,7 +109,7 @@ export default function CartPage() {
     }
   };
 
-  // 선택 삭제
+  // 장바구니 선택 삭제
   const handleDeleteSelected = async () => {
     const token = user?.token?.accessToken;
     if (!token || selectedItems.length === 0) return;
@@ -107,6 +144,7 @@ export default function CartPage() {
     router.push(`/order?ids=${query}`);
   };
 
+  // 장바구니 상태 관리
   useEffect(() => {
     if (!user?.token?.accessToken) return;
 
@@ -125,23 +163,33 @@ export default function CartPage() {
     fetchAndSyncCart();
   }, [user?.token?.accessToken]);
 
+  // 디바운싱 처리를 위한 상태 관리
   useEffect(() => {
     if (!cartData || !user?.token?.accessToken) return;
 
+    // 모든 장바구니 상품에 대해 반복
     cartData.item.forEach(product => {
-      const currentQty = cartStore.getQuantity(product._id);
-      if (previousQty.current[product._id] === currentQty) return;
+      const productId = product._id;
+      const currentQty = cartStore.getQuantity(productId);
+      const prevQty = previousQty.current[productId];
 
-      if (debounceTimers.current[product._id]) {
-        clearTimeout(debounceTimers.current[product._id]!);
+      // 이전 수량과 현재 수량이 같다면 변경 없음
+      if (prevQty === currentQty) return;
+
+      // 이전에 설정된 타이머가 있다면 클리어 (디바운싱 처리)
+      if (debounceTimers.current[productId]) {
+        clearTimeout(debounceTimers.current[productId]!);
       }
 
-      debounceTimers.current[product._id] = setTimeout(async () => {
+      // 새 타이머 설정: 0.3초 후 서버에 수량 업데이트
+      debounceTimers.current[productId] = setTimeout(async () => {
         try {
-          await patchCartQuantity(product._id, currentQty, user.token.accessToken);
-          previousQty.current[product._id] = currentQty;
+          await patchCartQuantity(productId, currentQty, user.token.accessToken);
+          // 성공 시 이전 수량 업데이트
+          previousQty.current[productId] = currentQty;
         } catch {
-          cartStore.setQuantity(product._id, previousQty.current[product._id]);
+          // 실패 시 수량 롤백
+          cartStore.setQuantity(productId, prevQty);
         }
       }, 300);
     });
