@@ -75,13 +75,13 @@ export default function ProductQuestions({ productId, productName }: ProductQues
     <section className="max-w-full px-6 py-8 bg-background">
       <h2 className="text-lg font-bold mb-2">상품 문의</h2>
 
-      <div className="mb-6 min-h-[430px] flex items-center justify-center">
+      <div className="mb-6 min-h-[430px] flex flex-col">
         {loading ? (
-          <div className="text-gray-500 text-center">문의 로딩 중...</div>
+          <div className="flex-grow flex items-center justify-center text-gray-500 text-center">문의 로딩 중...</div>
         ) : filteredQuestions.length === 0 ? (
-          <div className="text-gray-500 text-center">등록된 문의가 없습니다.</div>
+          <div className="flex-grow flex items-center justify-center text-gray-500 text-center">등록된 문의가 없습니다.</div>
         ) : (
-          <div className="w-full">
+          <div className="w-full flex flex-col justify-start">
             {/* 문의 목록 렌더링 */}
             {currentQuestions.map(q => {
               const isExpanded = expandedIds.includes(q.id);
