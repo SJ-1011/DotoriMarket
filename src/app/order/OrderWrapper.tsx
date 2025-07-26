@@ -11,11 +11,13 @@ import type { CartItem } from '@/types/Cart';
 import type { OrderForm } from '@/types/Order';
 import { getProductById } from '@/utils/getProducts';
 import { createOrder } from '@/data/actions/createOrder';
+import Loading from '../loading';
 
 export default function OrderWrapper() {
   const { user } = useLoginStore();
   const token = user?.token?.accessToken;
   const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(true);
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const methods = useForm<OrderForm>({
@@ -58,6 +60,7 @@ export default function OrderWrapper() {
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const idsParam = searchParams.get('ids');
         const productId = searchParams.get('productId');
         const qty = Number(searchParams.get('qty') || 1);
@@ -132,11 +135,15 @@ export default function OrderWrapper() {
         }
       } catch (err) {
         console.error('주문 데이터 로딩 실패:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [token, user, searchParams, methods]);
+
+  if (loading) return <Loading />;
 
   return (
     <FormProvider {...methods}>
