@@ -11,6 +11,7 @@ import type { CartItem } from '@/types/Cart';
 import type { OrderForm } from '@/types/Order';
 import { getProductById } from '@/utils/getProducts';
 import { createOrder } from '@/data/actions/createOrder';
+import { deleteCartItems } from '@/data/actions/deleteCartItems';
 import Loading from '../loading';
 
 export default function OrderWrapper() {
@@ -40,20 +41,29 @@ export default function OrderWrapper() {
     total: 0,
   });
 
-  const onSubmit = async (data: OrderForm) => {
-    if (!token) {
-      alert('로그인이 필요합니다.');
-      return;
+const onSubmit = async (data: OrderForm) => {
+  if (!token) {
+    alert('로그인이 필요합니다.');
+    return;
+  }
+
+  const res = await createOrder(data, token);
+  if (res.ok) {
+    console.log('주문 성공', res.item);
+
+    // 장바구니 주문일 경우, 선택된 아이템 삭제
+    const idsParam = searchParams.get('ids');
+    if (idsParam) {
+      const selectedIds = idsParam.split(',').map(Number);
+      await deleteCartItems(selectedIds, token);
     }
 
-    const res = await createOrder(data, token);
-    if (res.ok) {
-      console.log('주문 성공', res.item);
-      // router.push(`/order/complete/${res.item._id}`);
-    } else {
-      alert(res.message || '주문 실패');
-    }
-  };
+    // 주문 완료 페이지로 이동
+    // router.push(`/order/complete/${res.item._id}`);
+  } else {
+    alert(res.message || '주문 실패');
+  }
+};
 
   useEffect(() => {
     if (!token || !user?._id) return;
