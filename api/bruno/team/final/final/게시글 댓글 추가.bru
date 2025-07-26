@@ -1,0 +1,25 @@
+meta {
+  name: 게시글 댓글 추가
+  type: http
+  seq: 17
+}
+
+post {
+  url: {{url}}/posts/54/replies
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "content": "54번 게시글에 두번째 댓글 추가 "
+  }
+}
+
+settings {
+  encodeUrl: true
+}
