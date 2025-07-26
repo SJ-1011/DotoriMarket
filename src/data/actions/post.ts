@@ -62,7 +62,6 @@ export async function createPost(state: ApiRes<Post> | null, formData: FormData)
     });
 
     data = await res.json();
-    console.log(data);
   } catch (error) {
     // 네트워크 오류 처리
     console.error(error);
@@ -88,7 +87,8 @@ export async function createPost(state: ApiRes<Post> | null, formData: FormData)
  * 댓글을 생성하고, 성공 시 해당 게시글의 댓글 목록을 갱신합니다.
  */
 export async function createReply(state: ApiRes<PostReply> | null, formData: FormData): ApiResPromise<PostReply> {
-  const body = Object.fromEntries(formData.entries());
+  const body: DynamicFormData = Object.fromEntries(formData.entries());
+  const accessToken = typeof body.accessToken === 'string' ? body.accessToken : '';
 
   let res: Response;
   let data: ApiRes<PostReply>;
@@ -99,6 +99,7 @@ export async function createReply(state: ApiRes<PostReply> | null, formData: For
       headers: {
         'Content-Type': 'application/json',
         'Client-Id': CLIENT_ID,
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }), //accessToken존재하면 헤더에 포함하고 아니면 안함
       },
       body: JSON.stringify(body),
     });
