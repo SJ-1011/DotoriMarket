@@ -20,6 +20,8 @@ export default function DesktopHeader() {
   const [categoryData, setCategoryData] = useState<string[]>(['신상품 보러가기']);
   const [query, setQuery] = useState('');
   const popoverRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null); //헤더 전체 영역 참조하는 ref
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null); //드롭다운 타임아웃 처리를 위한ㄴ ref
 
   // 검색 query를 url로 제출
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
@@ -31,12 +33,22 @@ export default function DesktopHeader() {
   // 클릭 외부 감지로 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node) && headerRef.current && !headerRef.current.contains(e.target as Node)) {
         setIsCategoryOpen(false);
+        if (hoverTimeoutRef.current) {
+          clearTimeout(hoverTimeoutRef.current);
+          hoverTimeoutRef.current = null;
+        }
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      // 컴포넌트 언마운트 시 타이머 정리
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
   }, []);
 
   const categoryAddress = {
@@ -79,9 +91,43 @@ export default function DesktopHeader() {
     }
   }, [detailOpen]);
 
+  // 카테고리에 hover 했을 때 실행할 핸들러(baricon은 그대로 클릭임)
+  const handleCategoryHover = (category: string) => {
+    // 기존 타이머가 있으면 취소
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setDetailOpen(category);
+    setIsCategoryOpen(true);
+  };
+
+  // 카테고리 leave 핸들러
+  const handleCategoryLeave = () => {
+    // 마우스 떼고 150ms 후에 닫긩
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsCategoryOpen(false);
+    }, 150);
+  };
+
+  // hover 했을때 펼쳐지는 드롭다운 영역 hover 핸들러
+  const handleDropdownHover = () => {
+    // 기존 타이머가 있으면 취소
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  };
+  //hover 했을때 펼쳐지는 드롭다운 영역 leave 핸들러
+  const handleDropdownLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsCategoryOpen(false);
+    }, 150);
+  };
+
   return (
     <>
-      <header className="max-w-[55rem] lg:max-w-[75rem] mx-auto mt-12 bg-white">
+      <header ref={headerRef} className="max-w-[55rem] lg:max-w-[75rem] mx-auto mt-12 bg-white">
         <nav aria-label="유저 상단 메뉴">
           <ul className="flex flex-row flex-nowrap gap-4 justify-end mr-8">
             {isLogin && <li>{user?.name}님 환영합니다!</li>}
@@ -129,12 +175,13 @@ export default function DesktopHeader() {
               />
             </li>
             {Object.entries(categoryAddress).map(([title, address]) => (
-              <li key={title}>
+              <li key={title} onMouseEnter={() => handleCategoryHover(title)} onMouseLeave={handleCategoryLeave} className="relative">
                 <Link
                   href={address === 'board' ? `/${address}` : `/category/${address}`}
                   onClick={() => {
                     setIsCategoryOpen(false);
                   }}
+                  className="block py-2 px-1"
                 >
                   {title}
                 </Link>
@@ -146,10 +193,10 @@ export default function DesktopHeader() {
       <div className="relative">
         <hr className="mt-6 border-primary" />
         {isCategoryOpen && (
-          <nav ref={popoverRef} aria-label="세부 카테고리 메뉴" className="absolute z-[50] left-1/2 -translate-x-1/2 top-full w-[30rem] lg:w-[40rem] text-sm lg:text-base mx-auto bg-[#E5CBB7] flex flex-row border-b border-x border-primary">
+          <nav ref={popoverRef} aria-label="세부 카테고리 메뉴" className="absolute z-[50] left-1/2 -translate-x-1/2 top-full w-[30rem] lg:w-[40rem] text-sm lg:text-base mx-auto bg-[#E5CBB7] flex flex-row border-b border-x border-primary" onMouseEnter={handleDropdownHover} onMouseLeave={handleDropdownLeave}>
             <ul className="flex flex-col flex-nowrap text-center">
               {['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품', 'COMMUNITY'].map(category => (
-                <li key={category} className={`p-4 cursor-pointer ${detailOpen === category ? 'bg-background' : ''}`} onClick={() => setDetailOpen(category)}>
+                <li key={category} className={`p-4 cursor-pointer ${detailOpen === category ? 'bg-background' : ''}`} onClick={() => setDetailOpen(category)} onMouseEnter={() => setDetailOpen(category)}>
                   {category}
                 </li>
               ))}
