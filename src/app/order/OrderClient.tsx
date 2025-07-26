@@ -33,7 +33,7 @@ export default function OrderClient({ cartCost, cartItems, userInfo, onSubmit }:
       <OrderProductList items={cartItems} />
       <OrderCostSummary cartCost={cartCost} />
       <OrderPayment />
-      <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">
+      <button type="submit" className="w-full bg-primary text-white py-2 rounded cursor-pointer">
         주문하기
       </button>
     </form>

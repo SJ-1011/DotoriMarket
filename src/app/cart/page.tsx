@@ -362,7 +362,7 @@ export default function CartPage() {
 
             {/* 구매 버튼 */}
             <div className="mt-8 sm:static fixed bottom-0 left-0 right-0 p-4 z-2 sm:border-none sm:p-0">
-              <button onClick={handlePurchase} className="w-full bg-primary text-white py-4 rounded-md text-center">
+              <button onClick={handlePurchase} className="w-full bg-primary text-white py-4 rounded-md text-center cursor-pointer">
                 <span className="font-bold text-base">{total.toLocaleString()}원 구매하기</span>
               </button>
             </div>
