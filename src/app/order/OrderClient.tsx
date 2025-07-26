@@ -6,6 +6,7 @@ import type { CartItem } from '@/types/Cart';
 import OrderUserInfo from './OrderUserInfo';
 import OrderProductList from './OrderProductList';
 import OrderCostSummary from './OrderCostSummary';
+import OrderPayment from './OrderPayment';
 
 interface Props {
   cartItems: CartItem[];
@@ -36,6 +37,7 @@ export default function OrderClient({ cartCost, cartItems, userInfo }: Props) {
       <OrderUserInfo name={userInfo.name} recipient={userInfo.recipient} phone={userInfo.phone} address={userInfo.address} />
       <OrderProductList items={cartItems} />
       <OrderCostSummary cartCost={cartCost} />
+      <OrderPayment />
       <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">
         주문하기
       </button>
