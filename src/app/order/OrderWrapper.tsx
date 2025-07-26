@@ -10,6 +10,7 @@ import OrderClient from './OrderClient';
 import type { CartItem } from '@/types/Cart';
 import type { OrderForm } from '@/types/Order';
 import { getProductById } from '@/utils/getProducts';
+import { createOrder } from '@/data/actions/createOrder';
 
 export default function OrderWrapper() {
   const { user } = useLoginStore();
@@ -37,6 +38,21 @@ export default function OrderWrapper() {
     total: 0,
   });
 
+  const onSubmit = async (data: OrderForm) => {
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    const res = await createOrder(data, token);
+    if (res.ok) {
+      console.log('주문 성공', res.item);
+      // router.push(`/order/complete/${res.item._id}`);
+    } else {
+      alert(res.message || '주문 실패');
+    }
+  };
+
   useEffect(() => {
     if (!token || !user?._id) return;
 
@@ -51,11 +67,24 @@ export default function OrderWrapper() {
           const cartRes = await getCarts(token);
           const selectedItems = cartRes.item.filter(item => selectedIds.includes(item._id));
 
+          const productsTotal = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+          const shippingFee = cartRes.cost.shippingFees; // 정책에 따라 선택상품에도 동일하게 부과
+          const total = productsTotal + shippingFee;
+
           setCartItems(selectedItems);
-          setCartCost(cartRes.cost);
+          setCartCost({
+            products: productsTotal,
+            shippingFees: shippingFee,
+            discount: { products: 0, shippingFees: 0 },
+            total,
+          });
+
           methods.setValue(
             'products',
-            selectedItems.map(item => ({ _id: item._id, quantity: item.quantity })),
+            selectedItems.map(item => ({
+              _id: item.product._id,
+              quantity: item.quantity,
+            })),
           );
         } else if (productId) {
           // 바로 구매
@@ -111,7 +140,7 @@ export default function OrderWrapper() {
 
   return (
     <FormProvider {...methods}>
-      <OrderClient cartItems={cartItems} cartCost={cartCost} userInfo={userInfo} />
+      <OrderClient cartItems={cartItems} cartCost={cartCost} userInfo={userInfo} onSubmit={onSubmit} />
     </FormProvider>
   );
 }

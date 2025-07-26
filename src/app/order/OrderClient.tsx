@@ -24,13 +24,8 @@ interface Props {
   };
 }
 
-export default function OrderClient({ cartCost, cartItems, userInfo }: Props) {
-  // context에서 받아옴
+export default function OrderClient({ cartCost, cartItems, userInfo, onSubmit }: Props & { onSubmit: (data: OrderForm) => void }) {
   const { handleSubmit } = useFormContext<OrderForm>();
-
-  const onSubmit = (data: OrderForm) => {
-    console.log('최종 API 전송 데이터:', data);
-  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

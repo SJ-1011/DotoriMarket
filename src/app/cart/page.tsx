@@ -50,10 +50,12 @@ export default function CartPage() {
   const { productOnlyTotal, shippingFee, total } = selectedPriceInfo;
 
   // 수량 증가 -> 수량변경 api 호출 + 상태 변경 (zustand)
-  const increaseQty = (id: number, stock: number) => {
+  const increaseQty = (id: number, stock: number, buyQty: number = 0) => {
     const currentQty = cartStore.getQuantity(id);
-    if (currentQty >= stock) {
-      alert(`최대 ${stock}개까지 구매 가능합니다.`);
+    const maxQty = stock - buyQty;
+
+    if (currentQty >= maxQty) {
+      alert(`최대 ${maxQty}개까지 구매 가능합니다.`);
       return;
     }
     cartStore.setQuantity(id, currentQty + 1);
@@ -249,7 +251,7 @@ export default function CartPage() {
                             -
                           </button>
                           <span className="px-3 py-1 text-base">{cartStore.getQuantity(product._id)}</span>
-                          <button onClick={() => increaseQty(product._id, product.product.quantity)} className="px-3 py-1 text-base cursor-pointer">
+                          <button onClick={() => increaseQty(product._id, product.product.quantity, product.product.buyQuantity)} className="px-3 py-1 text-base cursor-pointer">
                             +
                           </button>
                         </div>
@@ -257,7 +259,7 @@ export default function CartPage() {
                     </td>
 
                     <td className="border-r border-gray-200">{(product.product.price * cartStore.getQuantity(product._id)).toLocaleString()}원</td>
-                    <td className="border-r border-gray-200">{shippingFee.toLocaleString()}원</td>
+                    <td className="border-r border-gray-200">{product.product.shippingFees?.toLocaleString() ?? '3000'}원</td>
                     <td>
                       <button onClick={() => handleDeleteItem(product._id)} className="text-sm text-gray hover:text-red cursor-pointer">
                         삭제
@@ -326,7 +328,7 @@ export default function CartPage() {
                             -
                           </button>
                           <span className="px-4 py-1">{cartStore.getQuantity(product._id)}</span>
-                          <button onClick={() => increaseQty(product._id, product.product.quantity)} className="px-3 py-1 cursor-pointer">
+                          <button onClick={() => increaseQty(product._id, product.product.quantity, product.product.buyQuantity)} className="px-3 py-1 cursor-pointer">
                             +
                           </button>
                         </div>
