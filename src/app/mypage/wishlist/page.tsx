@@ -48,24 +48,27 @@ export default function WishList() {
   });
 
   return (
-    <div className="w-full p-2 sm:p-4 mt-4 text-dark-gray">
-      <div className="mb-2 sm:mb-4 lg:mb-4 flex justify-between items-center">
-        <h2 className="font-bold text-base sm:text-lg lg:text-xl">관심 상품</h2>
-        <select className="px-1 py-1 rounded text-xs  sm:text-sm lg:text-base" value={sortOption} onChange={e => setSortOption(e.target.value)}>
-          <option value="priceLow">가격 낮은순</option>
-          <option value="priceHigh">가격 높은순</option>
-          <option value="date">담은 날짜순</option>
-        </select>
+    <section className="text-xs sm:text-sm lg:text-base bg-white min-h-[700px] py-12">
+      <div className="space-y-4 sm:w-[600px] lg:w-[800px] mx-auto">
+        {/* 타이틀 */}
+        <div className="mb-2 px-4 sm:mb-4 lg:mb-4 flex flex-row flex-nowrap items-center justify-between">
+          <h2 className="font-bold text-base sm:text-lg lg:text-xl text-primary">관심 상품</h2>
+          <select className="py-1 rounded text-xs sm:text-sm lg:text-base" value={sortOption} onChange={e => setSortOption(e.target.value)}>
+            <option value="priceLow">가격 낮은순</option>
+            <option value="priceHigh">가격 높은순</option>
+            <option value="date">담은 날짜순</option>
+          </select>
+        </div>
+        {loading ? (
+          <Loading />
+        ) : (
+          <ul className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+            {sortedProducts.map(product => (
+              <ProductCard key={product._id} product={product} bookmarkId={product.bookmarkId} />
+            ))}
+          </ul>
+        )}
       </div>
-      {loading ? (
-        <Loading />
-      ) : (
-        <ul className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {sortedProducts.map(product => (
-            <ProductCard key={product._id} product={product} bookmarkId={product.bookmarkId} />
-          ))}
-        </ul>
-      )}
-    </div>
+    </section>
   );
 }
