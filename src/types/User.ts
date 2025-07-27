@@ -1,6 +1,7 @@
 export interface UserExtra {
   intro?: string;
   address?: UserAddress[];
+  receiveEmail: boolean;
 }
 
 export interface UserImage {
@@ -58,4 +59,32 @@ export interface UserAddress {
   detailAddress?: string;
   mobile: string;
   isDefault: boolean;
+}
+
+export interface EditFormValues {
+  type: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  name: string;
+  birthday: string;
+  phone1: string;
+  phone2: string;
+  phone3: string;
+  attach?: FileList;
+  receiveEmail: boolean;
+  address1: string;
+  address2: string;
+  address3: string;
+}
+
+export interface UserInfo {
+  email: string;
+  name: string;
+  password: string;
+  phone: string;
+  birthday: string;
+  extra: {
+    receiveEmail: boolean;
+  };
 }
