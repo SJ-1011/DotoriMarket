@@ -22,7 +22,9 @@ interface ImageModalProps {
 export default function ImageModal({ isOpen, onClose, imageSrc, imageAlt, postId }: ImageModalProps) {
   const [comments, setComments] = useState<PostReply[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState(false); // 로그인 에러 상태 추가
   const user = useLoginStore(state => state.user);
+  const isLogin = useLoginStore(state => state.isLogin);
   const [state, formAction, isPending] = useActionState(async (prevState: ApiRes<PostReply> | null, formData: FormData) => {
     const res = await createReply(prevState, formData);
     return res;
@@ -45,6 +47,24 @@ export default function ImageModal({ isOpen, onClose, imageSrc, imageAlt, postId
       setComments(prev => [...prev, state.item]);
     }
   }, [state]);
+
+  // 댓글 입력창 클릭 핸들러(비로그인 상태에서 댓글 남기기 방지)
+  const handleInputClick = () => {
+    if (!isLogin) {
+      setLoginError(true);
+      // 3초 후 에러 메시지 자동 제거
+      setTimeout(() => setLoginError(false), 3000);
+    }
+  };
+
+  // 댓글 입력창에 포커스가 들어올 때 로그인 체크하는 핸들러
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!isLogin) {
+      e.target.blur(); // 포커스 제거
+      setLoginError(true);
+      setTimeout(() => setLoginError(false), 3000);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -93,6 +113,12 @@ export default function ImageModal({ isOpen, onClose, imageSrc, imageAlt, postId
               action={formAction}
               className="flex items-center"
               onSubmit={e => {
+                if (!isLogin) {
+                  e.preventDefault();
+                  setLoginError(true);
+                  setTimeout(() => setLoginError(false), 3000);
+                  return;
+                }
                 const input = e.currentTarget.elements.namedItem('content') as HTMLInputElement;
                 if (!input.value.trim()) {
                   e.preventDefault();
@@ -100,22 +126,24 @@ export default function ImageModal({ isOpen, onClose, imageSrc, imageAlt, postId
               }}
               autoComplete="off"
             >
-              <input type="text" name="content" placeholder="댓글을 입력해주세요" className="flex-grow border-0 focus:ring-0 focus:outline-none text-gray-800 bg-transparent" disabled={isPending} spellCheck={false} autoComplete="off" />
+              <input type="text" name="content" placeholder={isLogin ? '댓글을 입력해주세요' : '로그인 후 댓글을 작성할 수 있습니다'} className={`flex-grow border-0 focus:ring-0 focus:outline-none text-gray-800 bg-transparent ${!isLogin ? 'cursor-pointer' : ''}`} disabled={isPending || !isLogin} spellCheck={false} autoComplete="off" onClick={handleInputClick} onFocus={handleInputFocus} readOnly={!isLogin} />
               <input type="hidden" name="_id" value={postId} />
               <input type="hidden" name="type" value="community" />
               <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
-              <button type="submit" className={`ml-2 text-blue-500 font-semibold disabled:opacity-50 hover:text-blue-700`} disabled={isPending}>
+              <button type="submit" className={`ml-2 text-blue-500 font-semibold disabled:opacity-50 hover:text-blue-700`} disabled={isPending || !isLogin}>
                 게시
               </button>
             </form>
-            {/* 에러 출력 */}
+            {/* 로그인 에러 메시지 */}
+            {loginError && <p className="text-red-500 text-sm mt-1">로그인이 필요합니다.</p>}
+            {/* 기존 에러 출력 */}
             {state?.ok === 0 && <p className="text-red-500 text-sm mt-1">{state.message || '댓글 작성 실패'}</p>}
           </div>
         </div>
       </div>
       {/* 닫기 버튼 */}
       <button onClick={onClose} className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors" aria-label="모달 닫기">
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
