@@ -33,7 +33,7 @@ export default function OrderCompleteProducts({ products, cost }: { products: Pr
             <p>{cost.shippingFees === 0 ? '무료' : `${cost.shippingFees.toLocaleString()}원`}</p>
           </div>
         </div>
-        <div className="-mx-4 sm:-mx-6 lg:-mx-8 bg-primary text-sm text-white font-bold px-4 sm:text-base sm:px-6 lg:px-8 mt-3 py-1 sm:py-2 lg:py-3 lg:text-lg flex justify-between">
+        <div className="-mx-4 -mb-4 sm:-mx-6 sm:-mb-6 lg:-mb-8 lg:-mx-8 bg-primary text-sm text-white font-bold px-4 sm:text-base sm:px-6 lg:px-8 mt-3 py-1 sm:py-2 lg:py-3 lg:text-lg flex justify-between">
           <p>총 주문금액</p>
           <p>{cost.total.toLocaleString()}원</p>
         </div>
