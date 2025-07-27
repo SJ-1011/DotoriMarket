@@ -7,7 +7,7 @@ export default function OrderCompleteProducts({ products, cost }: { products: Pr
 
   return (
     <div>
-      <h2 className="text-base sm:text-lg font-bold py-2">주문 상품</h2>
+      <h2 className="text-sm sm:text-base lg:text-lg font-bold py-2">주문 상품</h2>
       <div className="p-4 sm:p-6 lg:p-8 border-t-2 border-primary text-dark-gray bg-white">
         <p className="text-sm sm:text-base font-bold">총 {totalCount}건</p>
         <p className="text-sm sm:text-base">

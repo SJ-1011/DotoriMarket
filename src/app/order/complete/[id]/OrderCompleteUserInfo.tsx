@@ -3,10 +3,10 @@ export default function OrderCompleteUserInfo({ name, phone, address, memo }: { 
 
   return (
     <div>
-      <h2 className="text-base sm:text-lg font-bold py-2">배송 정보</h2>
+      <h2 className="text-sm sm:text-base lg:text-lg font-bold py-2">배송 정보</h2>
 
       <div className="border-t-2 border-primary bg-white">
-        <table className="w-full border text-center border-[#F3E4D8] text-sm sm:text-base">
+        <table className="w-full border text-center border-[#F3E4D8] text-xs sm:text-sm lg:text-base">
           <tbody>
             <tr className="border-b border-[#F3E4D8]">
               <td className="font-semibold border-r border-[#F3E4D8] p-3 sm:p-4 lg:p-5">이름</td>
