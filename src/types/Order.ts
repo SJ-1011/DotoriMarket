@@ -21,6 +21,10 @@ export interface Order {
 }
 
 export interface OrderForm {
+  user: {
+    name: string;
+    phone: string;
+  };
   products: {
     _id: number | string;
     quantity: number;
@@ -36,6 +40,10 @@ export interface OrderResponse extends Order {
   address: {
     name: string;
     value: string;
+  };
+  user: {
+    name: string;
+    phone: string;
   };
   memo: string;
 }
