@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import ReviewImages from './ReviewImages';
 import { LoginUser } from '@/types';
+import { maskUserId } from '@/utils/mask';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -25,9 +26,11 @@ interface ReviewItemProps {
   expanded: boolean;
   toggleExpand: (reviewId: number) => void;
   openImageModal: (images: string[], index: number) => void;
+  onEditClick: (review: { reviewId: number; rating: number; content: string; images?: string[] }) => void;
+  onDeleteClick: (reviewId: number) => void;
 }
 
-export default function ReviewItem({ review, currentUser, expanded, toggleExpand, openImageModal }: ReviewItemProps) {
+export default function ReviewItem({ review, currentUser, expanded, toggleExpand, openImageModal, onEditClick, onDeleteClick }: ReviewItemProps) {
   const imageSrc = (() => {
     const img = review.user.image;
     if (!img) return null;
@@ -38,17 +41,40 @@ export default function ReviewItem({ review, currentUser, expanded, toggleExpand
 
   const isMyReview = currentUser?._id && String(review.user._id) === String(currentUser._id);
 
+  const handleEditClick = () => {
+    onEditClick({
+      reviewId: review._id,
+      rating: review.rating,
+      content: review.content,
+      images: review.images,
+    });
+  };
+
+  const handleDeleteClick = () => {
+    onDeleteClick(review._id);
+  };
+
   return (
     <div className="border-b border-gray-200 py-3">
       <div className="flex items-center gap-3 mb-2">
         {imageSrc ? <Image src={imageSrc} alt={`${review.user.name} 프로필 이미지`} width={40} height={40} className="rounded-full object-cover" unoptimized /> : <Image src="/login-logo.webp" alt="도토리" width={40} height={40} className="rounded-full object-cover" />}
         <div>
           <div className="flex items-center gap-2">
-            <p className="font-semibold text-sm">{review.user.name}</p>
+            <p className="font-semibold text-sm">{maskUserId(review.user.name)}</p>
             {isMyReview && <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">내 후기</span>}
           </div>
           <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString('ko-KR')}</p>
         </div>
+        {isMyReview && (
+          <div className="ml-auto flex gap-2">
+            <button onClick={handleEditClick} className="px-3 py-1 text-xs border rounded hover:bg-gray-100" aria-label="후기 수정">
+              수정
+            </button>
+            <button onClick={handleDeleteClick} className="px-3 py-1 text-xs border border-red-300 text-red-600 rounded hover:bg-red-50" aria-label="후기 삭제">
+              삭제
+            </button>
+          </div>
+        )}
       </div>
       <p className="text-sm mb-1">⭐ {review.rating} / 5</p>
       <p className="text-sm text-gray-700 whitespace-pre-line mb-2">{review.content}</p>
