@@ -111,9 +111,5 @@ export async function createReply(state: ApiRes<PostReply> | null, formData: For
     return { ok: 0, message: '일시적인 네트워크 문제로 등록에 실패했습니다.' };
   }
 
-  if (data.ok) {
-    revalidatePath(`/${body.type}/${body._id}/replies`);
-  }
-
   return data;
 }

@@ -1,7 +1,6 @@
 //자유 게시판
-import ArrowIcon from '@/components/icon/ArrowIcon';
-import FilterIcon from '@/components/icon/FilterIcon';
-import SearchIcon from '@/components/icon/SearchIcon';
+// import ArrowIcon from '@/components/icon/ArrowIcon';
+// import SearchIcon from '@/components/icon/SearchIcon';
 import { Post } from '@/types/Post';
 import { getPosts } from '@/utils/getPosts';
 // import Link from 'next/link';
@@ -36,50 +35,42 @@ export default async function CommunityBoardPage() {
             {/* 🔹 줄: 드롭다운 + 검색창 */}
             <div className="flex items-center gap-2">
               {/* 🔽 드롭다운 */}
-              <div className="relative w-20 sm:w-24">
+              {/* <div className="relative w-20 sm:w-24">
                 <select name="searchField" defaultValue="title" className="appearance-none w-full h-8 lg:h-10 pl-3 pr-8 border border-[#A97452]  bg-white text-[#A97452] text-xs sm:text-sm lg:text-base rounded-full outline-none cursor-pointer">
                   <option value="title">제목</option>
                   <option value="user">작성자</option>
-                </select>
+                </select> */}
 
-                {/* 🔽 Custom ArrowIcon (오른쪽 위에 겹치도록 배치) */}
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+              {/* 🔽 Custom ArrowIcon (오른쪽 위에 겹치도록 배치) */}
+              {/* <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
                   <ArrowIcon svgProps={{ className: 'w-[10px] h-[6px] w-[12px] h-[8px] lg:w-[14px] lg:h-[9px]' }} />
-                </div>
-              </div>
+                </div> */}
+              {/* </div> */}
 
               {/* 🔍 검색 input */}
-              <div className="flex items-center gap-2 border border-[#A97452] rounded-3xl px-3 py-2 w-48 sm:w-60 lg:w-72 h-8 sm:h-8 lg:h-10 bg-white">
+              {/* <div className="flex items-center gap-2 border border-[#A97452] rounded-3xl px-3 py-2 w-48 sm:w-60 lg:w-72 h-8 sm:h-8 lg:h-10 bg-white">
                 <input type="text" placeholder="검색어를 입력하세요" className="flex-1 outline-none border-none bg-transparent text-xs sm:text-sm lg:text-base" />
                 <button type="submit" className="ml-2">
                   <SearchIcon className="w-4 h-4 sm:w-4 sm:h-4 lg:w-6 lg:h-6 text-[#A97452]" />
                 </button>
-              </div>
+              </div> */}
             </div>
-            <div className="mt-4 flex justify-end mb-4">
+            <div className="flex justify-end mb-4">
               <CommunityWriteButton />
             </div>
-            {/* 🔻 필터 아이콘 버튼 */}
+            {/* 🔻 필터 아이콘 버튼
             <button type="button" className="mt-2 text-[#A97452] hover:bg-[#f8f0e9] p-2 rounded-full self-end" title="필터">
               <FilterIcon pathProps={{ fill: '#A97452' }} svgProps={{ className: 'w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10' }} />
-            </button>
+            </button> */}
           </div>
         </div>
 
         {/* 구분선 */}
         <hr className="border-t-2 border-[#A97452] mb-1" />
-        {/* 이미지 그리드 */}
+        {/* 이미지 그리드와 페이지네이션 */}
         <div className="my-8">
           <h3 className="text-lg font-bold mb-4 text-[#A97452]"></h3>
           <CommunityBoardClientWrapper posts={imagePosts} apiUrl={API_URL!} clientId={CLIENT_ID!} />
-        </div>
-        {/* 페이지네이션 일단 더미로 넣어놓음 */}
-        <div className="flex justify-center mt-7 gap-1 sm:gap-2 lg:gap-4 ">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
-            <button key={i} className="px-3 py-1 rounded-full hover:bg-[#E5CBB7] text-xs sm:text-sm lg:text-base">
-              {i}
-            </button>
-          ))}
         </div>
       </div>
     </>
