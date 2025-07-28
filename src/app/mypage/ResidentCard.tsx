@@ -6,8 +6,11 @@ import { getUserById } from '@/utils/getUsers';
 import { useLoginStore } from '@/stores/loginStore';
 import { patchUserImage } from '@/data/actions/patchUserImage';
 import { patchUserIntro } from '@/data/actions/patcUserIntro';
+import { useUserStore } from '@/stores/userStore';
+import Skeleton from '@/components/common/Skeleton';
 
 export default function ResidentCard() {
+  const userState = useUserStore(state => state.user);
   const [editing, setEditing] = useState(false);
   const [user, setUser] = useState<null | {
     name: string;
@@ -18,6 +21,7 @@ export default function ResidentCard() {
   const [introText, setIntroText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const { user: loginUser } = useLoginStore();
+  const [isLoading, setIsLoading] = useState(false);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   // 이미지 로더
@@ -32,6 +36,7 @@ export default function ResidentCard() {
   useEffect(() => {
     if (!loginUser?._id) return;
     const fetchUser = async () => {
+      setIsLoading(true);
       const res = await getUserById(Number(loginUser._id));
       if (res.ok === 1 && res.item) {
         setUser({
@@ -44,6 +49,8 @@ export default function ResidentCard() {
       } else if (res.ok === 0) {
         console.error(res.message);
       }
+
+      setIsLoading(false);
     };
 
     fetchUser();
@@ -104,75 +111,85 @@ export default function ResidentCard() {
     setIsSaving(false);
   };
 
-  if (!user) return <div>Loading...</div>;
+  if (!user) return <Skeleton width="w-full" height="h-full" rounded="rounded-2xl" className="mb-2 w-[350px] h-[192.5px] sm:w-[400px] sm:h-[220px] lg:w-[500px] lg:h-[275px] mx-auto" />;
 
   return (
-    <div className="relative w-80 h-35 sm:w-120 sm:h-50 lg:w-150 lg:h-60 bg-[#E7D8CC] rounded-md shadow-lg flex items-center justify-center">
-      <div className="relative rounded-xl">
-        <Image loader={imageLoader} src="/mypage-greencard.png" alt="Green Card" className="rounded-lg w-75 h-30 sm:w-115 sm:h-45 lg:w-140 lg:h-55 object-cover" width={280} height={100} priority />
+    <>
+      {isLoading && <Skeleton width="w-full" height="h-full" rounded="rounded-2xl" className="mb-2 w-[350px] h-[192.5px] sm:w-[400px] sm:h-[220px] lg:w-[500px] lg:h-[275px] mx-auto" />}
+      {!isLoading && (
+        <div className="flex flex-col flex-nowrap text-xs sm:text-sm lg:text-base">
+          <div className="relative rounded-xl flex flex-row flex-nowrap gap-8 px-8 items-center justify-center border-2 border-primary w-[350px] h-[192.5px] sm:w-[400px] sm:h-[220px] lg:w-[500px] lg:h-[275px] bg-cover bg-center" style={{ backgroundImage: 'url("/mypage-greencard.png")' }}>
+            {/* MEMBERSHIP CARD 텍스트 */}
+            <div className="absolute top-1 w-full text-center flex flex-row flex-nowrap items-center justify-center gap-2">
+              <div className="flex-1 ml-10 border-t border-[#95aa81]"></div>
+              <h2 className="text-[#95aa81]  tracking-wide">MEMBERSHIP CARD</h2>
+              <div className="flex-1 mr-10 border-t border-[#95aa81]"></div>
+            </div>
 
-        {/* 프로필 버튼 */}
-        <button type="button" onClick={() => document.getElementById('profile-upload')?.click()} className="absolute top-7 left-4 w-[3.75rem] h-[3.75rem] sm:left-8 sm:top-11 sm:w-[5rem] sm:h-[5rem] lg:w-[7rem] lg:h-[7rem] lg:left-10 lg:top-12 rounded-xl overflow-hidden">
-          <div className="relative w-full h-full cursor-pointer">
-            <Image src="/mypage-profile.png" alt="Default Profile Background" fill className="object-cover" />
-            {user.image !== '/mypage-profile.png' && <Image loader={imageLoader} src={user.image} fill alt="User Profile" className="absolute inset-0 m-auto p-[2px] rounded-2xl sm:p-[3px] sm:rounded-[20px] lg:p-1 lg:rounded-[30px] object-cover z-2" />}
-          </div>
-          <input type="file" id="profile-upload" accept="image/*" className="hidden" onChange={handleProfileChange} />
-        </button>
-
-        {/* MEMBERSHIP CARD 텍스트 */}
-        <div className="absolute top-0.5 left-10 right-10 text-center flex items-center justify-center gap-2">
-          <div className="flex-1 border-t border-[#95aa81]"></div>
-          <h2 className="text-[#95aa81] text-[.5rem] sm:text-[0.75rem] lg:text-base tracking-wide">MEMBERSHIP CARD</h2>
-          <div className="flex-1 border-t border-[#95aa81]"></div>
-        </div>
-
-        {/* NAME & BIRTH */}
-        <div className="absolute top-7 left-20 space-y-1 sm:top-11 sm:left-35 sm:space-y-2 lg:left-50 lg:top-14">
-          <div className="flex items-center w-45 border-b border-[#95aa81] mb-1.5 sm:w-60 sm:mb-2.5 lg:w-80">
-            <p className="text-[#95aa81] text-[.6rem] pr-2 sm:text-[0.75rem] lg:text-base">NAME</p>
-            <p className="text-[.6rem] sm:text-[0.75rem] lg:text-base text-dark-gray">{user.name}</p>
-          </div>
-          <div className="flex items-center w-45 border-b border-[#95aa81] mb-1.5 sm:w-60 sm:mb-2.5 lg:w-80">
-            <p className="text-[#95aa81] text-[.6rem] pr-2 sm:text-[0.75rem] lg:text-base">BIRTH</p>
-            <p className="text-dark-gray text-[.6rem] sm:text-[0.75rem] lg:text-base">{user.birthday}</p>
-          </div>
-          <div className="flex items-center w-45 border-b border-[#95aa81] sm:w-60 lg:w-80 cursor-pointer group" onClick={() => setEditing(true)}>
-            {editing ? (
-              <input
-                type="text"
-                value={introText}
-                onChange={e => setIntroText(e.target.value)}
-                onBlur={() => {
-                  if (!isSaving) saveIntro();
-                }}
-                onKeyDown={async e => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    if (!isSaving) await saveIntro();
-                  }
-                }}
-                className="text-dark-gray text-[.6rem] sm:text-[0.75rem] lg:text-base w-full bg-transparent focus:outline-none placeholder-gray"
-                placeholder="한줄 소개를 작성해주세요"
-                autoFocus
-              />
-            ) : (
-              <div className="flex items-center justify-between w-full">
-                <p className={`text-[.6rem] sm:text-[0.75rem] lg:text-base ${user.intro ? 'text-dark-gray' : 'text-gray'}`}>{user.intro || '한줄 소개를 작성해주세요'}</p>
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[.6rem] sm:text-[0.75rem] lg:text-base">✏️</span>
+            {/* 프로필 버튼 */}
+            <button type="button" onClick={() => document.getElementById('profile-upload')?.click()} className="overflow-hidden">
+              <div className="w-full h-full cursor-pointer">
+                {user.image !== '/mypage-profile.png' ? (
+                  <div className="relative w-[7rem] h-[7rem]">
+                    <Image loader={imageLoader} src={user.image} fill alt="User Profile" className="object-cover z-2 rounded-2xl border-4 border-secondary-green" />
+                  </div>
+                ) : (
+                  <div className="relative w-[7rem] h-[7rem]">
+                    <Image src="/mypage-profile.png" alt="Default Profile Background" fill className="object-cover" />
+                  </div>
+                )}
               </div>
-            )}
+              <input type="file" id="profile-upload" accept="image/*" className="hidden" onChange={handleProfileChange} />
+            </button>
+
+            {/* NAME & BIRTH */}
+            <div className="flex flex-col flex-1 flex-nowrap gap-2 sm:gap-1">
+              <div className="flex items-center border-b border-[#95aa81] ">
+                <p className="text-[#95aa81] pr-2 ">NAME</p>
+                <p className=" text-dark-gray">{userState?.name ? userState.name : user.name}</p>
+              </div>
+              <div className="flex items-center border-b border-[#95aa81] ">
+                <p className="text-[#95aa81] pr-2 ">BIRTH</p>
+                <p className="text-dark-gray ">{userState?.birthday ? userState.birthday : user.birthday}</p>
+              </div>
+              <div className="flex items-center border-b border-[#95aa81] cursor-pointer group" onClick={() => setEditing(true)}>
+                {editing ? (
+                  <input
+                    type="text"
+                    value={introText}
+                    onChange={e => setIntroText(e.target.value)}
+                    onBlur={() => {
+                      if (!isSaving) saveIntro();
+                    }}
+                    onKeyDown={async e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (!isSaving) await saveIntro();
+                      }
+                    }}
+                    className="text-dark-gray  w-full bg-transparent focus:outline-none placeholder-gray"
+                    placeholder="한줄 소개를 작성해주세요"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="flex items-center justify-between w-full">
+                    <p className={`  ${user.intro ? 'text-dark-gray' : 'text-gray'}`}>{user.intro || '한줄 소개를 작성해주세요'}</p>
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ">✏️</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 바코드 */}
+            <div className="absolute bottom-0 right-10 w-30 h-5 lg:w-40 lg:h-7">
+              <Image loader={imageLoader} src="/mypage-barcode.png" alt="Barcode" className="object-cover" fill />
+            </div>
+
+            {/* 작은 텍스트 */}
+            <div className="absolute left-5 text-[#95aa81] text-[0.5rem] bottom-2 lg:lg:bottom-3">CONSOLE.10G</div>
           </div>
         </div>
-
-        {/* 바코드 */}
-        <div className="absolute bottom-0 right-7 w-22 h-4 sm:right-10 sm:w-30 sm:h-5 lg:w-40 lg:h-7">
-          <Image loader={imageLoader} src="/mypage-barcode.png" alt="Barcode" className="object-cover" fill />
-        </div>
-
-        {/* 작은 텍스트 */}
-        <div className="absolute bottom-1 left-5 text-[#95aa81] text-[.45rem] sm:text-[0.5rem] sm:bottom-2 lg:text-[0.75rem] lg:bottom-3">CONSOLE.10G</div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
