@@ -9,6 +9,7 @@ import { useCartQuantityStore } from '@/stores/cartQuantityStore';
 import { useLoginStore } from '@/stores/loginStore';
 import { useRouter } from 'next/navigation';
 import { useCartSelection } from '@/hooks/useCartSelection';
+import Image from 'next/image';
 import Loading from '../loading';
 import CartTable from './CartTable';
 import CartMobileList from './CartMobileList';
@@ -123,8 +124,11 @@ export default function CartWrapper() {
   // 장바구니가 비어있을 경우
   if (cartData.item.length === 0) {
     return (
-      <div className="p-10 max-w-[900px] mx-auto text-center text-gray-500 text-base sm:text-lg">
-        <p>장바구니에 등록된 상품이 없습니다.</p>
+      <div className="flex flex-col items-center justify-center py-16 space-y-4 sm:space-y-6 lg:space-y-8">
+        <Image src="/cart-empty-dotori.png" alt="장바구니 비었음" width={160} height={160} className="h-auto w-40 sm:w-50 lg:w-60" />
+        <button onClick={() => router.push('/')} className="px-6 py-2 sm:px-8 sm:py-4 lg:sm:px-10  bg-primary text-base sm:text-lg lg:text-xl text-white rounded-md hover:bg-primary/80 transition cursor-pointer">
+          쇼핑하러 가기
+        </button>
       </div>
     );
   }
