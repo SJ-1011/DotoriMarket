@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getPosts } from '@/utils/getPosts';
 import { useLoginStore } from '@/stores/loginStore';
 import Pagination from '@/components/common/Pagination';
+import { maskUserId } from '@/utils/mask';
 
 interface Question {
   id: string;
@@ -19,11 +20,6 @@ const QUESTIONS_PER_PAGE = 5;
 interface ProductQuestionsProps {
   productId: string | number;
   productName: string;
-}
-
-function maskUserId(userId: string) {
-  if (!userId) return '';
-  return userId[0] + '**';
 }
 
 export default function ProductQuestions({ productId, productName }: ProductQuestionsProps) {
