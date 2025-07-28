@@ -32,7 +32,7 @@ export default function CommunityWriteButton() {
 
   //비로그인 상태에서 로그인 후 다시 new페이지로 랜딩하려면 callback으로 url을 전달해줘야할듯?
   return (
-    <button type="button" className="px-4 py-2 w-20 sm:w-24 lg:w-28 rounded-xl bg-[#A97452] text-white text-xs sm:text-sm lg:text-base hover:bg-[#966343] transition-colors" onClick={handleClick}>
+    <button type="button" className="px-4 py-2 w-20 sm:w-24 lg:w-28  bg-[#A97452] text-white text-xs sm:text-sm lg:text-base hover:bg-[#966343] transition-colors" onClick={handleClick}>
       글쓰기
     </button>
   );
