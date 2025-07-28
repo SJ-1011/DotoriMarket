@@ -22,7 +22,7 @@ export default function Footer() {
             <h2 className="font-bold">C.S Center</h2>
             <div className="text-sm sm:text-base text-dark-gray">
               <p>월요일~금요일 / 09:00 - 18:00</p>
-              <p>주말시간 / 12:00 - 13:00</p>
+              <p>점심시간 / 12:00 - 13:00</p>
               <p>주말 공휴일 휴무</p>
             </div>
           </div>
