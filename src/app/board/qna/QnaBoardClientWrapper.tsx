@@ -107,7 +107,10 @@ export default function QnaBoardClientWrapper({ posts }: Props) {
             currentPosts.map(post => (
               <tr key={post._id} className="border-b border-gray-100 hover:bg-gray-50 h-[40px] sm:h-[60px]">
                 <td className="py-2 text-xs sm:text-sm lg:text-base truncate max-w-[200px]">{post._id}</td>
-                <td className="py-2 flex items-center justify-center">{post.extra?.imagePath && <Image src={`${API_URL}/${post.extra.imagePath}`} alt="상품정보" width={30} height={30} className="object-cover sm:w-[50px] sm:h-[50px]" unoptimized />}</td>
+                <td className="py-2 flex items-center justify-center">
+                  {post.extra?.imagePath && <Image src={`${API_URL}/${post.extra.imagePath}`} alt="상품정보" width={30} height={30} className="object-cover sm:w-[50px] sm:h-[50px]" unoptimized />}
+                  {!post.extra?.imagePath && post.extra?.orderProductImage && <Image src={`${API_URL}/${post.extra.orderProductImage}`} alt="상품정보" width={30} height={30} className="object-cover sm:w-[50px] sm:h-[50px]" unoptimized />}
+                </td>{' '}
                 <td className="py-2 text-xs sm:text-sm lg:text-base truncate max-w-[200px]">
                   <Link href={`/board/qna/${post._id}`} className="hover:underline">
                     {post.title}
