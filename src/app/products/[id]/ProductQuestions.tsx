@@ -1,9 +1,11 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { getPosts } from '@/utils/getPosts';
+import { getPosts, getReplies } from '@/utils/getPosts';
 import { useLoginStore } from '@/stores/loginStore';
 import Pagination from '@/components/common/Pagination';
 import { maskUserId } from '@/utils/mask';
+import type { Post, PostReply } from '@/types/Post';
 
 interface Question {
   id: string;
@@ -11,8 +13,9 @@ interface Question {
   userId: string;
   title: string;
   question: string;
-  answers?: string[];
+  answers: string[];
   createdAt: string;
+  hasAnswer: boolean;
 }
 
 const QUESTIONS_PER_PAGE = 5;
@@ -25,7 +28,7 @@ interface ProductQuestionsProps {
 export default function ProductQuestions({ productId, productName }: ProductQuestionsProps) {
   const currentUser = useLoginStore(state => state.user);
 
-  const [expandedIds, setExpandedIds] = useState<(string | number)[]>([]);
+  const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,51 +39,49 @@ export default function ProductQuestions({ productId, productName }: ProductQues
       setLoading(true);
       try {
         const res = await getPosts('qna');
+
         if (res.ok) {
-          const filteredPosts = res.item.filter(post => String(post.extra?.productId) === String(productId));
-          const questionList: Question[] = filteredPosts.map(post => ({
-            id: String(post._id),
-            user: post.user.name,
-            userId: String(post.user._id),
-            title: post.title || '제목 없음',
-            question: post.content,
-            answers: post.replies?.map(reply => reply.content) || [],
-            createdAt: post.createdAt,
-          }));
+          const posts = res.item as Post[];
+          const filteredPosts = posts.filter(post => String(post.extra?.productId) === String(productId));
+          const questionList: Question[] = [];
+
+          for (const post of filteredPosts) {
+            const repliesRes = await getReplies(Number(post._id));
+            const replies: PostReply[] = repliesRes.ok ? repliesRes.item : [];
+
+            questionList.push({
+              id: String(post._id),
+              user: post.user.name,
+              userId: String(post.user._id),
+              title: post.title || '제목 없음',
+              question: post.content,
+              answers: replies.map(reply => reply.content),
+              createdAt: post.createdAt,
+              hasAnswer: replies.length > 0,
+            });
+          }
 
           setQuestions(questionList);
           setCurrentPage(1);
         } else {
-          console.error('[ProductQuestions] API 응답 에러:', res.message);
           setQuestions([]);
         }
       } catch (error) {
-        console.error('[ProductQuestions] 문의 불러오기 실패', error);
+        console.error(error);
         setQuestions([]);
       } finally {
         setLoading(false);
       }
     }
+
     fetchAllQuestions();
   }, [productId]);
 
-  // 로그인 유저 정보와 showMyQuestionsOnly 상태가 바뀔 때 필터링 실행
   const filteredQuestions = (() => {
-    if (!showMyQuestionsOnly) {
-      return questions;
-    }
+    if (!showMyQuestionsOnly) return questions;
+    if (!currentUser?._id) return [];
 
-    // 로그인하지 않은 상태에서 내 문의 보기를 누른 경우
-    if (!currentUser?._id) {
-      return [];
-    }
-
-    const myQuestions = questions.filter(q => {
-      const isMyQuestion = String(q.userId) === String(currentUser._id);
-      return isMyQuestion;
-    });
-
-    return myQuestions;
+    return questions.filter(q => q.userId === String(currentUser._id));
   })();
 
   const totalPages = Math.ceil(filteredQuestions.length / QUESTIONS_PER_PAGE);
@@ -100,7 +101,7 @@ export default function ProductQuestions({ productId, productName }: ProductQues
           <div className="w-full flex flex-col justify-start">
             {currentQuestions.map(q => {
               const isExpanded = expandedIds.includes(q.id);
-              const isMyQuestion = currentUser?._id && String(q.userId) === String(currentUser._id);
+              const isMyQuestion = currentUser?._id && q.userId === String(currentUser._id);
 
               return (
                 <div key={q.id} className={`border-b border-gray-300 py-2 hover:bg-[#f4f1ed] ${isExpanded ? 'bg-[#f4f1ed]' : ''}`}>
@@ -113,7 +114,7 @@ export default function ProductQuestions({ productId, productName }: ProductQues
                       {isMyQuestion && <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">내 문의</span>}
                     </div>
                     <span className="mt-1 text-xs text-gray-600">
-                      {q.answers && q.answers.length > 0 ? '답변 완료' : '답변 예정'} | {maskUserId(q.user)} | {new Date(q.createdAt).toLocaleDateString('ko-KR')}
+                      {q.hasAnswer ? '답변 완료' : '답변 예정'} | {maskUserId(q.user)} | {new Date(q.createdAt).toLocaleDateString('ko-KR')}
                     </span>
                   </button>
                   {isExpanded && (
@@ -121,10 +122,10 @@ export default function ProductQuestions({ productId, productName }: ProductQues
                       <p className="font-semibold mb-2">주문 상품: {productName}</p>
                       <p className="text-gray-800 whitespace-pre-line mb-4">{q.question}</p>
                       <hr className="my-3" />
-                      {q.answers && q.answers.length > 0 ? (
+                      {q.hasAnswer && q.answers.length > 0 ? (
                         q.answers.map((answer, idx) => (
                           <div key={idx} className="mb-4">
-                            <p className="font-semibold mt-6 mb-2">답변 {idx + 1}</p>
+                            <p className="font-semibold mt-6 mb-2">도토리섬 관리자</p>
                             <p className="whitespace-pre-line">{answer}</p>
                           </div>
                         ))
