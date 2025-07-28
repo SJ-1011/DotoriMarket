@@ -78,7 +78,7 @@ export default function MobileHeader() {
               <Link href="/search">
                 <SearchIcon className="w-6 h-6" aria-label="상품 검색" />
               </Link>
-              <Link href="/">
+              <Link href="/cart">
                 <CartIcon pathProps={{ stroke: '#A97452' }} svgProps={{ className: 'w-6 h-6' }} aria-label="마이페이지" />
               </Link>
             </div>

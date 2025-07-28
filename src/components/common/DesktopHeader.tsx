@@ -132,7 +132,7 @@ export default function DesktopHeader() {
           <ul className="flex flex-row flex-nowrap gap-4 justify-end mr-8">
             {isLogin && <li>{user?.name}님 환영합니다!</li>}
             <li>
-              <Link href="/" aria-label="장바구니">
+              <Link href="/cart" aria-label="장바구니">
                 <CartIcon svgProps={{ className: 'w-6 h-6' }} />
               </Link>
             </li>
