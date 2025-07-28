@@ -1,6 +1,4 @@
 // 리빙&소품 페이지
-'use client';
-
 import { LIVING_CATEGORIES } from '@/constants/categories';
 import CategoryPage from '../CategoryPage';
 
