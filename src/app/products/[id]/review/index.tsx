@@ -16,6 +16,7 @@ import { useLoginStore } from '@/stores/loginStore';
 import ReviewFilterTabs from './ReviewFilterTabs';
 import ReviewList from './ReviewList';
 import { ReviewWriteButton, ReviewToggleButton } from './ReviewWriteButton';
+import ReviewSortDropdown, { ReviewSortOption } from './ReviewSortDropdown';
 
 const REVIEWS_PER_PAGE = 5;
 
@@ -49,6 +50,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
   const accessToken = currentUser?.token?.accessToken;
 
   // 상태 관리
+  const [sortOption, setSortOption] = useState<ReviewSortOption>('latest');
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,7 +84,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
     setReviewCount(0);
   };
 
-  // 1. 사용자가 상품을 주문했는지, 작성한 후기가 몇 개인지 확인
+  // 사용자가 상품을 주문했는지, 작성한 후기가 몇 개인지 확인
   useEffect(() => {
     async function fetchUserOrdersAndReviews() {
       if (!accessToken) {
@@ -128,7 +130,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
     fetchUserOrdersAndReviews();
   }, [accessToken, productId]);
 
-  // 2. 후기 불러오기 함수
+  // 후기 불러오기 함수
   const fetchReviews = useCallback(async () => {
     setLoading(true);
     try {
@@ -154,12 +156,12 @@ export default function ProductReviews({ productId, productName }: ProductReview
     }
   }, [productId, showMyReviewsOnly, accessToken]);
 
-  // 3. 후기 불러오기
+  // 후기 불러오기
   useEffect(() => {
     fetchReviews();
   }, [fetchReviews]);
 
-  // 4. 후기 내용 확장/축소 상태 토글 함수
+  // 후기 내용 확장/축소 상태 토글 함수
   const toggleExpand = (reviewId: number) => {
     setExpandedReviewIds(prev => {
       const newSet = new Set(prev);
@@ -169,7 +171,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
     });
   };
 
-  // 5. 탭별 후기 개수 정보
+  // 탭별 후기 개수 정보
   const tabInfo = useMemo(
     () =>
       [
@@ -180,7 +182,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
     [reviews],
   );
 
-  // 6. 탭 필터에 따라 후기 필터링
+  // 탭 필터에 따라 후기 필터링
   const filteredReviews = useMemo(() => {
     return reviews.filter(review => {
       if (filterTab === 'photos') return review.images && review.images.length > 0;
@@ -189,21 +191,41 @@ export default function ProductReviews({ productId, productName }: ProductReview
     });
   }, [filterTab, reviews]);
 
-  // 7. 페이징 계산 및 현재 페이지 후기 목록
-  const totalPages = Math.ceil(filteredReviews.length / REVIEWS_PER_PAGE);
-  const startIdx = (currentPage - 1) * REVIEWS_PER_PAGE;
-  const currentReviews = filteredReviews.slice(startIdx, startIdx + REVIEWS_PER_PAGE);
+  // 정렬 적용
+  const sortedFilteredReviews = useMemo(() => {
+    const sorted = [...filteredReviews];
+    switch (sortOption) {
+      case 'oldest':
+        sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        break;
+      case 'ratingHigh':
+        sorted.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'ratingLow':
+        sorted.sort((a, b) => a.rating - b.rating);
+        break;
+      case 'latest':
+      default:
+        sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+    return sorted;
+  }, [filteredReviews, sortOption]);
 
-  // 8. 후기 작성 가능 여부
+  // 페이징 계산 및 현재 페이지 후기 목록
+  const totalPages = Math.ceil(sortedFilteredReviews.length / REVIEWS_PER_PAGE);
+  const startIdx = (currentPage - 1) * REVIEWS_PER_PAGE;
+  const currentReviews = sortedFilteredReviews.slice(startIdx, startIdx + REVIEWS_PER_PAGE);
+
+  // 후기 작성 가능 여부
   const canWriteReview = hasOrderedProduct && !hasWrittenReview;
 
-  // 9. 수정 모드 활성화 함수
+  // 수정 모드 활성화 함수
   const openEditModal = (review: { reviewId: number; rating: number; content: string; images?: string[] }) => {
     setReviewToEdit(review);
     setIsModalOpen(true);
   };
 
-  // 10. 후기 삭제 함수
+  // 후기 삭제 함수
   const handleDeleteReview = async (reviewId: number) => {
     if (!accessToken) {
       alert('로그인이 필요합니다.');
@@ -235,7 +257,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
     }
   };
 
-  // 11. 후기 작성 버튼 텍스트 및 툴팁
+  // 후기 작성 버튼 텍스트 및 툴팁
   const getButtonText = () => {
     if (!hasOrderedProduct) return '후기 남기기';
     if (hasWrittenReview) return '후기 작성 완료';
@@ -248,7 +270,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
     return undefined;
   };
 
-  // 12. 이미지 모달 열기/닫기 및 이미지 넘기기 함수
+  // 이미지 모달 열기/닫기 및 이미지 넘기기 함수
   const openImageModal = (images: string[], index: number) => {
     setModalReviewImages(images);
     setModalCurrentImageIdx(index);
@@ -269,7 +291,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
     setModalCurrentImageIdx(prev => (prev === modalReviewImages.length - 1 ? 0 : prev + 1));
   };
 
-  // 13. 후기 작성/수정 성공 콜백
+  // 후기 작성/수정 성공 콜백
   const handleReviewSubmitSuccess = async () => {
     setCurrentPage(1);
     await fetchReviews();
@@ -291,13 +313,20 @@ export default function ProductReviews({ productId, productName }: ProductReview
       {/* 후기 필터 탭 (전체, 사진, 일반) */}
       {reviews.length > 0 && <ReviewFilterTabs tabInfo={tabInfo} filterTab={filterTab} setFilterTab={setFilterTab} setCurrentPage={setCurrentPage} />}
 
+      {/* 후기 정렬 드롭다운 */}
+      {filteredReviews.length > 0 && (
+        <div className="flex justify-end mb-4">
+          <ReviewSortDropdown selected={sortOption} onChange={setSortOption} />
+        </div>
+      )}
+
       {/* 후기 목록 */}
       <div className="min-h-[430px] flex flex-col justify-center">
         <ReviewList reviews={currentReviews} loading={loading} currentUser={currentUser} expandedReviewIds={expandedReviewIds} toggleExpand={toggleExpand} openImageModal={openImageModal} onEditClick={openEditModal} onDeleteClick={handleDeleteReview} showMyReviewsOnly={showMyReviewsOnly} />
       </div>
 
       {/* 페이지네이션 */}
-      {filteredReviews.length > REVIEWS_PER_PAGE && (
+      {sortedFilteredReviews.length > REVIEWS_PER_PAGE && (
         <div className="mt-6">
           <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={page => setCurrentPage(page)} />
         </div>
