@@ -5,15 +5,18 @@ import BellIcon from '../icon/BellIcon';
 import { useEffect, useRef, useState } from 'react';
 import TriangleIcon from '../icon/TriangleIcon';
 import { useLoginStore } from '@/stores/loginStore';
-import { getUserNotifications } from '@/utils/getNotifications';
-import { Notification } from '@/types/notification';
 import { patchNotification } from '@/data/actions/patchNotification';
 import CloseIcon from '../icon/CloseIcon';
+import { useNotificationStore } from '@/stores/notificationStore';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function NotificationIcon({ isMobile = false }: { isMobile?: boolean }) {
   const user = useLoginStore(state => state.user);
-  const [notifications, setNotifications] = useState<Notification[] | null>(null);
+  const setUser = useNotificationStore(state => state.setUser);
+  const fetchNotification = useNotificationStore(state => state.fetchNotification);
+  const notification = useNotificationStore(state => state.notification);
+  const deleteNotification = useNotificationStore(state => state.deleteNotification);
+
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +32,8 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
     if (user) {
       try {
         const res = await patchNotification(user);
-        setNotifications([]);
+        deleteNotification();
+
         console.log(res.ok);
       } catch {
         console.log('데이터 읽음 처리 실패');
@@ -50,66 +54,18 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
 
   // 알림 불러오기
   useEffect(() => {
-    if (!user?.token?.accessToken) return;
+    if (!user) return;
+    setUser(user);
 
-    let intervalId: ReturnType<typeof setInterval> | null = null;
-    let isFetching = false;
-
-    const fetchNotification = async () => {
-      if (isFetching) return;
-      isFetching = true;
+    const fetchData = async () => {
       try {
-        const res = await getUserNotifications(user.token.accessToken);
-        if (res.ok) {
-          const data: Notification[] = [];
-          res.item.forEach(note => {
-            if (!note.isRead) data.push(note);
-          });
-          setNotifications(data);
-        } else {
-          throw '알림 불러오기 실패';
-        }
+        await fetchNotification();
       } catch (err) {
-        console.error(err);
-      } finally {
-        isFetching = false;
+        alert(err);
       }
     };
 
-    // polling 시작
-    const startPolling = () => {
-      if (intervalId) clearInterval(intervalId);
-      fetchNotification(); // 포커스 복귀 시 즉시 한 번 호출
-      intervalId = setInterval(fetchNotification, 10000);
-    };
-
-    // polling 중단
-    const stopPolling = () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
-      }
-    };
-
-    // 최초 시작
-    startPolling();
-
-    // visibility change 처리
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        stopPolling();
-      } else {
-        startPolling();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    // cleanup
-    return () => {
-      stopPolling();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
+    fetchData();
   }, [user]);
 
   // 모바일 버전
@@ -118,7 +74,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
       <>
         <button type="button" className="cursor-pointer relative" aria-label="알림" onClick={() => setOpen(prev => !prev)}>
           <BellIcon pathProps={{ fill: '#A97452' }} svgProps={{ className: 'w-6 h-6 cursor-pointer' }} aria-label="알림" />
-          {notifications && notifications?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
+          {notification && notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
         </button>
         {open && (
           <div className="fixed inset-0 bg-white flex flex-col z-50">
@@ -135,8 +91,8 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                     전체 알림 지우기
                   </button>
                 </li>
-                {notifications && notifications.length > 0 ? (
-                  notifications
+                {notification && notification.length > 0 ? (
+                  notification
                     .slice()
                     .reverse()
                     .map((item, index) => {
@@ -175,7 +131,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
     <li className="relative">
       <button type="button" className="cursor-pointer relative" aria-label="알림" onClick={() => setOpen(prev => !prev)}>
         <BellIcon svgProps={{ className: 'w-6 h-6' }} />
-        {notifications && notifications?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
+        {notification && notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
       </button>
       {/* 말풍선 */}
       {open && (
@@ -201,8 +157,8 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                   전체 알림 지우기
                 </button>
               </li>
-              {notifications && notifications.length > 0 ? (
-                notifications
+              {notification && notification.length > 0 ? (
+                notification
                   .slice()
                   .reverse()
                   .map((item, index) => {
