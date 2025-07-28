@@ -7,6 +7,7 @@ import Pagination from '@/components/common/Pagination';
 interface Question {
   id: string;
   user: string;
+  userId: string;
   title: string;
   question: string;
   answers?: string[];
@@ -20,14 +21,14 @@ interface ProductQuestionsProps {
   productName: string;
 }
 
-// 아이디 마스킹 함수 (첫 글자 + '**')
 function maskUserId(userId: string) {
   if (!userId) return '';
   return userId[0] + '**';
 }
 
 export default function ProductQuestions({ productId, productName }: ProductQuestionsProps) {
-  const { user } = useLoginStore();
+  const currentUser = useLoginStore(state => state.user);
+
   const [expandedIds, setExpandedIds] = useState<(string | number)[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,26 +39,27 @@ export default function ProductQuestions({ productId, productName }: ProductQues
     async function fetchAllQuestions() {
       setLoading(true);
       try {
-        const res = await getPosts('qna'); // 전체 문의글 가져오기
+        const res = await getPosts('qna');
         if (res.ok) {
-          // productId와 일치하는 글만 필터링
           const filteredPosts = res.item.filter(post => String(post.extra?.productId) === String(productId));
           const questionList: Question[] = filteredPosts.map(post => ({
             id: String(post._id),
             user: post.user.name,
+            userId: String(post.user._id),
             title: post.title || '제목 없음',
             question: post.content,
             answers: post.replies?.map(reply => reply.content) || [],
             createdAt: post.createdAt,
           }));
+
           setQuestions(questionList);
           setCurrentPage(1);
         } else {
-          console.error('API 응답 에러:', res.message);
+          console.error('[ProductQuestions] API 응답 에러:', res.message);
           setQuestions([]);
         }
       } catch (error) {
-        console.error('문의 불러오기 실패', error);
+        console.error('[ProductQuestions] 문의 불러오기 실패', error);
         setQuestions([]);
       } finally {
         setLoading(false);
@@ -66,7 +68,25 @@ export default function ProductQuestions({ productId, productName }: ProductQues
     fetchAllQuestions();
   }, [productId]);
 
-  const filteredQuestions = showMyQuestionsOnly ? questions.filter(q => q.user === user?.name) : questions;
+  // 로그인 유저 정보와 showMyQuestionsOnly 상태가 바뀔 때 필터링 실행
+  const filteredQuestions = (() => {
+    if (!showMyQuestionsOnly) {
+      return questions;
+    }
+
+    // 로그인하지 않은 상태에서 내 문의 보기를 누른 경우
+    if (!currentUser?._id) {
+      return [];
+    }
+
+    const myQuestions = questions.filter(q => {
+      const isMyQuestion = String(q.userId) === String(currentUser._id);
+      return isMyQuestion;
+    });
+
+    return myQuestions;
+  })();
+
   const totalPages = Math.ceil(filteredQuestions.length / QUESTIONS_PER_PAGE);
   const startIdx = (currentPage - 1) * QUESTIONS_PER_PAGE;
   const currentQuestions = filteredQuestions.slice(startIdx, startIdx + QUESTIONS_PER_PAGE);
@@ -79,19 +99,23 @@ export default function ProductQuestions({ productId, productName }: ProductQues
         {loading ? (
           <div className="flex-grow flex items-center justify-center text-gray-500 text-center">문의 로딩 중...</div>
         ) : filteredQuestions.length === 0 ? (
-          <div className="flex-grow flex items-center justify-center text-gray-500 text-center">등록된 문의가 없습니다.</div>
+          <div className="flex-grow flex items-center justify-center text-gray-500 text-center">{showMyQuestionsOnly && !currentUser ? '로그인 후 내가 남긴 문의를 확인할 수 있습니다.' : showMyQuestionsOnly ? '내가 작성한 문의가 없습니다.' : '등록된 문의가 없습니다.'}</div>
         ) : (
           <div className="w-full flex flex-col justify-start">
-            {/* 문의 목록 렌더링 */}
             {currentQuestions.map(q => {
               const isExpanded = expandedIds.includes(q.id);
+              const isMyQuestion = currentUser?._id && String(q.userId) === String(currentUser._id);
+
               return (
                 <div key={q.id} className={`border-b border-gray-300 py-2 hover:bg-[#f4f1ed] ${isExpanded ? 'bg-[#f4f1ed]' : ''}`}>
                   <button className="w-full text-left px-4 py-3 bg-transparent cursor-pointer flex flex-col items-start" onClick={() => setExpandedIds(prev => (prev.includes(q.id) ? prev.filter(id => id !== q.id) : [...prev, q.id]))}>
-                    <span className="text-sm text-gray-800 truncate">
-                      {q.title.slice(0, 40)}
-                      {q.title.length > 40 ? '...' : ''}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-800 truncate">
+                        {q.title.slice(0, 40)}
+                        {q.title.length > 40 ? '...' : ''}
+                      </span>
+                      {isMyQuestion && <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">내 문의</span>}
+                    </div>
                     <span className="mt-1 text-xs text-gray-600">
                       {q.answers && q.answers.length > 0 ? '답변 완료' : '답변 예정'} | {maskUserId(q.user)} | {new Date(q.createdAt).toLocaleDateString('ko-KR')}
                     </span>
@@ -132,10 +156,12 @@ export default function ProductQuestions({ productId, productName }: ProductQues
         >
           상품 문의하기
         </button>
+
         <button
           className="cursor-pointer border px-4 py-2 text-sm hover:bg-gray-100"
           onClick={() => {
-            setShowMyQuestionsOnly(prev => !prev);
+            const toggled = !showMyQuestionsOnly;
+            setShowMyQuestionsOnly(toggled);
             setCurrentPage(1);
           }}
         >
