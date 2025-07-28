@@ -29,9 +29,9 @@ interface FormState {
   postcode: string;
   address: string;
   detailAddress: string;
-  mobile1: string; 
-  mobile2: string; 
-  mobile3: string; 
+  mobile1: string;
+  mobile2: string;
+  mobile3: string;
   isDefault: boolean;
 }
 
@@ -86,7 +86,7 @@ export default function AddAddress() {
       return;
     }
 
-    const mobile = `${data.mobile1}${data.mobile2}${data.mobile3}`; 
+    const mobile = `${data.mobile1}${data.mobile2}${data.mobile3}`;
 
     const newAddress: Omit<UserAddress, 'id'> = {
       name: data.deliveryName,
@@ -106,134 +106,99 @@ export default function AddAddress() {
     } catch (err) {
       console.error('배송지 추가 실패:', err);
       alert(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
-    } 
+    }
   };
 
   return (
-    <div className="w-full mx-auto p-4 mt-4 text-dark-gray">
-      <h2 className="font-bold text-lg mb-4">배송 주소록 등록</h2>
-
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-[100px_1fr_auto] sm:grid-cols-[150px_minmax(300px,300px)_150px] lg:grid-cols-[200px_minmax(200px,350px)_150px] gap-y-4 sm:gap-y-6 lg:gap-y-6 gap-x-2"
-      >
-        {/* 배송지명 */}
-        <label className="self-center text-xs sm:text-sm lg:text-base font-medium">
-          배송지명 <span className="text-red">*</span>
-        </label>
-        <input
-          {...register('deliveryName', { required: true })}
-          placeholder="예) 집, 회사"
-          className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2"
-        />
-
-        {/* 수령인 */}
-        <label className="self-center text-xs sm:text-sm lg:text-base font-medium">
-          수령인 <span className="text-red">*</span>
-        </label>
-        <input
-          {...register('recipient', { required: true })}
-          className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2"
-        />
-
-        {/* 주소 */}
-        <label className="self-center text-xs sm:text-sm lg:text-base font-medium">
-          주소 <span className="text-red">*</span>
-        </label>
-        <input
-          {...register('postcode', { required: true })}
-          placeholder="우편번호"
-          readOnly
-          className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full"
-        />
-        <button
-          type="button"
-          onClick={handleAddressSearch}
-          className="bg-primary cursor-pointer text-white rounded px-4 py-2 text-xs sm:text-sm lg:text-base"
-        >
-          주소검색
-        </button>
-
-        <div></div>
-        <input
-          {...register('address', { required: true })}
-          placeholder="기본 주소"
-          readOnly
-          className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2"
-        />
-
-        <div></div>
-        <input
-          {...register('detailAddress')}
-          placeholder="상세 주소"
-          className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2"
-        />
-
-        {/* 휴대전화 */}
-        <label className="self-center text-xs sm:text-sm lg:text-base font-medium">
-          휴대전화 <span className="text-red">*</span>
-        </label>
-        <div className="flex gap-2 col-span-2">
-          <select
-            {...register('mobile1', { required: true })}
-            className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-20"
-          >
-            <option value="010">010</option>
-            <option value="011">011</option>
-            <option value="016">016</option>
-            <option value="017">017</option>
-            <option value="018">018</option>
-            <option value="019">019</option>
-          </select>
-
-          <input
-            {...register('mobile2', {
-              required: true,
-              pattern: /^[0-9]{3,4}$/,
-            })}
-            placeholder="중간번호"
-            maxLength={4}
-            className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-24"
-          />
-
-          <input
-            {...register('mobile3', {
-              required: true,
-              pattern: /^[0-9]{4}$/,
-            })}
-            placeholder="끝번호"
-            maxLength={4}
-            className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-24"
-          />
+    <section className="text-xs sm:text-sm lg:text-base bg-white min-h-[700px] py-12">
+      <div className="space-y-4 sm:w-[600px] lg:w-[800px] mx-auto">
+        {/* 타이틀 */}
+        <div className="mb-2 px-4 sm:mb-4 lg:mb-4">
+          <h2 className="font-bold text-base sm:text-lg lg:text-xl text-primary">배송 주소록 등록</h2>
         </div>
 
-        {/* 기본 배송지 체크 */}
-        <div className="col-span-3">
-          <label className="flex items-center w-full text-xs sm:text-sm lg:text-base">
-            <input {...register('isDefault')} type="checkbox" className="w-4 h-4 mr-2 accent-primary" />
-            기본 배송지로 저장
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-[100px_1fr_auto] sm:grid-cols-[minmax(70px,150px)_minmax(150px,auto)_100px] lg:grid-cols-[200px_minmax(200px,auto)_150px] gap-y-4 sm:gap-y-6 lg:gap-y-6 gap-x-2">
+          {/* 배송지명 */}
+          <label className="self-center text-xs sm:text-sm lg:text-base font-medium">
+            배송지명 <span className="text-red">*</span>
           </label>
-        </div>
+          <input {...register('deliveryName', { required: true })} placeholder="예) 집, 회사" className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2" />
 
-        {/* 버튼 영역 */}
-        <div className="col-span-3 w-full flex gap-2 mt-2">
-          <button
-            type="submit"
-            className="flex-1 bg-primary cursor-pointer text-white rounded px-4 py-2 text-xs sm:text-sm lg:text-base"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? '등록 중...' : '등록'}
+          {/* 수령인 */}
+          <label className="self-center text-xs sm:text-sm lg:text-base font-medium">
+            수령인 <span className="text-red">*</span>
+          </label>
+          <input {...register('recipient', { required: true })} className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2" />
+
+          {/* 주소 */}
+          <label className="self-center text-xs sm:text-sm lg:text-base font-medium">
+            주소 <span className="text-red">*</span>
+          </label>
+          <input {...register('postcode', { required: true })} placeholder="우편번호" readOnly className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full" />
+          <button type="button" onClick={handleAddressSearch} className="bg-primary cursor-pointer text-white rounded px-4 py-2 text-xs sm:text-sm lg:text-base">
+            주소검색
           </button>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex-1 cursor-pointer border rounded px-4 py-2 text-xs sm:text-sm lg:text-base"
-            disabled={isSubmitting}
-          >
-            취소
-          </button>
-        </div>
-      </form>
-    </div>
+
+          <div></div>
+          <input {...register('address', { required: true })} placeholder="기본 주소" readOnly className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2" />
+
+          <div></div>
+          <input {...register('detailAddress')} placeholder="상세 주소" className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-full col-span-2" />
+
+          {/* 휴대전화 */}
+          <label className="self-center text-xs sm:text-sm lg:text-base font-medium">
+            휴대전화 <span className="text-red">*</span>
+          </label>
+          <div className="flex gap-2 col-span-2">
+            <select {...register('mobile1', { required: true })} className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-20">
+              <option value="010">010</option>
+              <option value="011">011</option>
+              <option value="016">016</option>
+              <option value="017">017</option>
+              <option value="018">018</option>
+              <option value="019">019</option>
+            </select>
+
+            <input
+              {...register('mobile2', {
+                required: true,
+                pattern: /^[0-9]{3,4}$/,
+              })}
+              placeholder="중간번호"
+              maxLength={4}
+              className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-24"
+            />
+
+            <input
+              {...register('mobile3', {
+                required: true,
+                pattern: /^[0-9]{4}$/,
+              })}
+              placeholder="끝번호"
+              maxLength={4}
+              className="border rounded px-2 py-2 text-xs sm:text-sm lg:text-base w-24"
+            />
+          </div>
+
+          {/* 기본 배송지 체크 */}
+          <div className="col-span-3">
+            <label className="flex items-center w-full text-xs sm:text-sm lg:text-base">
+              <input {...register('isDefault')} type="checkbox" className="w-4 h-4 mr-2 accent-primary" />
+              기본 배송지로 저장
+            </label>
+          </div>
+
+          {/* 버튼 영역 */}
+          <div className="col-span-3 w-full flex gap-2 mt-2">
+            <button type="submit" className="flex-1 bg-primary cursor-pointer text-white rounded px-4 py-2 text-xs sm:text-sm lg:text-base" disabled={isSubmitting}>
+              {isSubmitting ? '등록 중...' : '등록'}
+            </button>
+            <button type="button" onClick={() => router.back()} className="flex-1 cursor-pointer border rounded px-4 py-2 text-xs sm:text-sm lg:text-base" disabled={isSubmitting}>
+              취소
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
   );
 }
