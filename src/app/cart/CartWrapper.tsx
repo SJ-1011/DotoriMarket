@@ -8,6 +8,7 @@ import { deleteCartItems } from '@/data/actions/deleteCartItems';
 import { useCartQuantityStore } from '@/stores/cartQuantityStore';
 import { useLoginStore } from '@/stores/loginStore';
 import { useRouter } from 'next/navigation';
+import { useCartSelection } from '@/hooks/useCartSelection';
 import Loading from '../loading';
 import CartTable from './CartTable';
 import CartMobileList from './CartMobileList';
@@ -17,14 +18,13 @@ import { CartResponse } from '@/types/Cart';
 
 export default function CartWrapper() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const previousQty = useRef<Record<number, number>>({});
   const debounceTimers = useRef<Record<number, NodeJS.Timeout | null>>({});
 
   const { user } = useLoginStore();
   const cartStore = useCartQuantityStore();
   const router = useRouter();
-
+  const { selectedItems, setSelectedItems, toggleAll, toggleItem } = useCartSelection(cartData);
   const getImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
 
   // 선택된 상품 총합 계산
@@ -83,18 +83,6 @@ export default function CartWrapper() {
     const currentQty = cartStore.getQuantity(id);
     if (currentQty <= 1) return;
     cartStore.setQuantity(id, currentQty - 1);
-  };
-
-  const toggleAll = () => {
-    if (!cartData) return;
-    const availableItems = cartData.item.filter(i => i.product.quantity > 0);
-    const availableIds = availableItems.map(i => i._id);
-    const isAllSelected = availableIds.every(id => selectedItems.includes(id));
-    setSelectedItems(isAllSelected ? [] : [...new Set([...selectedItems, ...availableIds])]);
-  };
-
-  const toggleItem = (id: number) => {
-    setSelectedItems(prev => (prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]));
   };
 
   const handleDeleteItem = async (id: number) => {
