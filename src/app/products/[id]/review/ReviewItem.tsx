@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import ReviewImages from './ReviewImages';
 import { LoginUser } from '@/types';
@@ -41,7 +41,23 @@ export default function ReviewItem({ review, currentUser, expanded, toggleExpand
 
   const isMyReview = currentUser?._id && String(review.user._id) === String(currentUser._id);
 
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const toggleMenu = () => setShowMenu(prev => !prev);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleEditClick = () => {
+    setShowMenu(false);
     onEditClick({
       reviewId: review._id,
       rating: review.rating,
@@ -51,11 +67,12 @@ export default function ReviewItem({ review, currentUser, expanded, toggleExpand
   };
 
   const handleDeleteClick = () => {
+    setShowMenu(false);
     onDeleteClick(review._id);
   };
 
   return (
-    <div className="border-b border-gray-200 py-3">
+    <div className="border-b border-gray-200 py-3 relative">
       <div className="flex items-center gap-3 mb-2">
         {imageSrc ? <Image src={imageSrc} alt={`${review.user.name} 프로필 이미지`} width={40} height={40} className="rounded-full object-cover" unoptimized /> : <Image src="/login-logo.webp" alt="도토리" width={40} height={40} className="rounded-full object-cover" />}
         <div>
@@ -65,17 +82,27 @@ export default function ReviewItem({ review, currentUser, expanded, toggleExpand
           </div>
           <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString('ko-KR')}</p>
         </div>
+
         {isMyReview && (
-          <div className="ml-auto flex gap-2">
-            <button onClick={handleEditClick} className="px-3 py-1 text-xs border rounded hover:bg-gray-100" aria-label="후기 수정">
-              수정
+          <div className="ml-auto relative" ref={menuRef}>
+            <button onClick={toggleMenu} className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700" aria-label="메뉴 열기">
+              <span className="text-xl leading-none cursor-pointer">⋮</span>
             </button>
-            <button onClick={handleDeleteClick} className="px-3 py-1 text-xs border border-red-300 text-red-600 rounded hover:bg-red-50" aria-label="후기 삭제">
-              삭제
-            </button>
+
+            {showMenu && (
+              <div className="absolute right-2 mt-2 w-24 bg-white border border-gray-400 rounded z-10">
+                <button onClick={handleEditClick} className="cursor-pointer block w-full text-left text-sm px-3 py-2 hover:bg-gray-100">
+                  수정
+                </button>
+                <button onClick={handleDeleteClick} className="cursor-pointer block w-full text-left text-sm px-3 py-2 text-rose-600 hover:bg-gray-100">
+                  삭제
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
+
       <p className="text-sm mb-1">⭐ {review.rating} / 5</p>
       <p className="text-sm text-gray-700 whitespace-pre-line mb-2">{review.content}</p>
       {review.images && review.images.length > 0 && <ReviewImages images={review.images} reviewId={review._id} expanded={expanded} toggleExpand={toggleExpand} openImageModal={openImageModal} />}
