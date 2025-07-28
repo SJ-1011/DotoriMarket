@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useLoginStore } from '@/stores/loginStore';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getCarts } from '@/utils/getCarts';
 import { getUserAddress } from '@/utils/getUsers';
 import OrderClient from './OrderClient';
@@ -18,11 +18,13 @@ export default function OrderWrapper() {
   const { user } = useLoginStore();
   const token = user?.token?.accessToken;
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const methods = useForm<OrderForm>({
     defaultValues: {
+      user: { name: '', phone: '' },
       products: [],
       address: { name: '', value: '' },
       memo: '',
@@ -41,29 +43,31 @@ export default function OrderWrapper() {
     total: 0,
   });
 
-const onSubmit = async (data: OrderForm) => {
-  if (!token) {
-    alert('로그인이 필요합니다.');
-    return;
-  }
-
-  const res = await createOrder(data, token);
-  if (res.ok) {
-    console.log('주문 성공', res.item);
-
-    // 장바구니 주문일 경우, 선택된 아이템 삭제
-    const idsParam = searchParams.get('ids');
-    if (idsParam) {
-      const selectedIds = idsParam.split(',').map(Number);
-      await deleteCartItems(selectedIds, token);
+  const onSubmit = async (data: OrderForm) => {
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
     }
 
-    // 주문 완료 페이지로 이동
-    // router.push(`/order/complete/${res.item._id}`);
-  } else {
-    alert(res.message || '주문 실패');
-  }
-};
+    const res = await createOrder(data, token);
+    if (res.ok) {
+      console.log('주문 성공', res.item);
+
+      try {
+        const idsParam = searchParams.get('ids');
+        if (idsParam) {
+          const selectedIds = idsParam.split(',').map(Number);
+          await deleteCartItems(selectedIds, token);
+        }
+      } catch (err) {
+        console.error('선택된 장바구니 삭제 실패', err);
+      }
+
+      router.push(`/order/complete/${res.item._id}`);
+    } else {
+      alert(res.message || '주문 실패');
+    }
+  };
 
   useEffect(() => {
     if (!token || !user?._id) return;
@@ -141,6 +145,10 @@ const onSubmit = async (data: OrderForm) => {
           methods.setValue('address', {
             name: defaultAddress.name,
             value: defaultAddress.value,
+          });
+          methods.setValue('user', {
+            name: defaultAddress.recipient,
+            phone: user.phone,
           });
         }
       } catch (err) {
