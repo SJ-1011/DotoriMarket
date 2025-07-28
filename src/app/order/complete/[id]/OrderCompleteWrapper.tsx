@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import { useRouter } from 'next/navigation';
 import Loading from '@/app/loading';
-import { getOrderById } from '@/utils/getOrder';
 import { OrderResponse } from '@/types/Order';
 import OrderCompleteHeader from './OrderCompleteHeader';
 import OrderCompleteProducts from './OrderCompleteProducts';
 import OrderCompleteUserInfo from './OrderCompleteUserInfo';
+import { getOrderById } from '@/utils/getOrders';
 
 export default function OrderCompleteWrapper({ orderId }: { orderId: string }) {
   const { user } = useLoginStore();

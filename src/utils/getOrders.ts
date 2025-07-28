@@ -1,5 +1,8 @@
 import { ApiResPromise } from '@/types';
 import { Order } from '@/types/Order';
+import type { ApiRes } from '@/types/api';
+import type { OrderResponse } from '@/types/Order';
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
@@ -22,4 +25,15 @@ export async function getOrders(accessToken: string): ApiResPromise<Order[]> {
     console.error(error);
     return { ok: 0, message: '일시적인 네트워크 문제로 유저 목록을 불러오지 못했습니다.' };
   }
+}
+
+export async function getOrderById(id: string, token: string): Promise<ApiRes<OrderResponse>> {
+  const res = await fetch(`${API_URL}/orders/${id}`, {
+    headers: {
+      'Client-Id': CLIENT_ID,
+      Authorization: `Bearer ${token}`,
+    },
+    cache: 'no-store',
+  });
+  return res.json();
 }
