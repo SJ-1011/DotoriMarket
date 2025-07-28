@@ -13,6 +13,7 @@ import Favorite from '@/components/icon/FavoriteIcon';
 import FavoriteBorder from '@/components/icon/FavoriteBorderIcon';
 import ShareIcon from '@/components/icon/ShareIcon';
 import { useRouter, usePathname } from 'next/navigation';
+import { addToCart } from '@/data/actions/addToCart';
 
 interface PurchaseSectionProps {
   product: Product & { bookmarkId?: number };
@@ -139,21 +140,25 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
   };
 
   // 장바구니 버튼
-  const handleAddToCart = () => {
-    if (!user) {
-      alert('로그인이 필요합니다.');
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
-      return;
-    }
+const handleAddToCart = async () => {
+  if (!user) {
+    alert('로그인이 필요합니다.');
+    router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+    return;
+  }
 
-    if (isSoldOut) {
-      alert('품절된 상품은 장바구니에 담을 수 없습니다.');
-      return;
-    }
+  if (isSoldOut) {
+    alert('품절된 상품은 장바구니에 담을 수 없습니다.');
+    return;
+  }
 
-    router.push(`/cart?productId=${product._id}&qty=${quantity}`);
-  };
-
+  try {
+    await addToCart(Number(product._id), quantity, accessToken!);
+    alert('장바구니에 상품이 추가되었습니다!');
+  } catch {
+    alert('장바구니 추가에 실패했습니다. 다시 시도해 주세요.');
+  }
+};
   return (
     <>
       {/* Breadcrumb */}
