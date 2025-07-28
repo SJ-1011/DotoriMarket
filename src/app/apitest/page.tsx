@@ -1,5 +1,5 @@
 import { getUsers } from '@/utils/getUsers';
-import type { User } from '@/types/User';
+// import type { User } from '@/types/User';
 import type { Post, BoardType } from '@/types/Post';
 import { getProducts } from '@/utils/getProducts';
 import type { Product } from '@/types/Product';
@@ -19,7 +19,7 @@ export default async function Page() {
     return <p style={{ color: 'red' }}>⚠️ {resUsers.message}</p>;
   }
   // api.ts에 ServerValidationError 부분 넣었기 떄문에 ok === 1 로직으로 검증 먼저 해야함
-  const users: User[] = resUsers.item;
+  // const users: User[] = resUsers.item;
 
   /////상품 목록 조회
   const resProducts = await getProducts();
@@ -46,7 +46,7 @@ export default async function Page() {
   return (
     <>
       {/* 회원 정보 */}
-      <div>
+      {/* <div>
         <h1>유저 목록</h1>
         <ul>
           {users.map(user => (
@@ -55,7 +55,7 @@ export default async function Page() {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
       {/* 상품 목록  */}
       <div>
         <ul>
