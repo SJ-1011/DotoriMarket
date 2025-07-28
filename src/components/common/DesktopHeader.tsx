@@ -28,6 +28,7 @@ export default function DesktopHeader() {
     event.preventDefault();
     if (!query.trim()) return;
     router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    setQuery('');
   };
 
   // 클릭 외부 감지로 닫기
@@ -164,7 +165,7 @@ export default function DesktopHeader() {
           </button>
         </form>
         <nav aria-label="카테고리 메뉴">
-          <ul className="flex flex-row flex-wrap lg:flex-nowrap gap-8 justify-center items-center text-sm lg:text-base">
+          <ul className="flex flex-row flex-wrap gap-8 justify-center items-center text-sm lg:text-base">
             <li>
               <BarIcon
                 className="w-4 h-4 lg:w-6 lg:h-6 cursor-pointer"
@@ -181,7 +182,6 @@ export default function DesktopHeader() {
                   onClick={() => {
                     setIsCategoryOpen(false);
                   }}
-                  className="block py-2 px-1"
                 >
                   {title}
                 </Link>
