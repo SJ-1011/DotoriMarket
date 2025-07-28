@@ -1,4 +1,3 @@
-// app/cart/page.tsx
 import CartWrapper from './CartWrapper';
 import Breadcrumb from '@/components/common/Breadcrumb';
 
