@@ -13,9 +13,12 @@ import Favorite from '@/components/icon/FavoriteIcon';
 import FavoriteBorder from '@/components/icon/FavoriteBorderIcon';
 import ShareIcon from '@/components/icon/ShareIcon';
 import { useRouter, usePathname } from 'next/navigation';
+import type { Review } from '@/types/Review';
 
 interface PurchaseSectionProps {
   product: Product & { bookmarkId?: number };
+  reviews: Review[];
+  loadingReviews: boolean;
 }
 
 // 카테고리별 서브카테고리 매핑
@@ -67,7 +70,7 @@ const getFullImageUrl = (imagePath: string): string => {
   return `https://fesp-api.koyeb.app/market/${imagePath}`;
 };
 
-export default function PurchaseSection({ product }: PurchaseSectionProps) {
+export default function PurchaseSection({ product, reviews, loadingReviews }: PurchaseSectionProps) {
   // 로그인 사용자 정보 및 토큰
   const user = useLoginStore(state => state.user);
   const accessToken = user?.token?.accessToken;
@@ -196,12 +199,12 @@ export default function PurchaseSection({ product }: PurchaseSectionProps) {
                 <span className="text-lg font-bold">{product.price.toLocaleString()}원</span>
               </div>
 
-              {/* TODO 평점 */}
+              {/* 평점 */}
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500">사용후기</span>
                 <div className="flex items-center">
                   <span className="text-red-500 mb-2">★</span>
-                  <span className="text-sm ml-1">5.0 리뷰 3개</span>
+                  <span className="text-sm ml-1">{loadingReviews ? '로딩중...' : reviews.length > 0 ? `${(reviews.reduce((acc: number, r: Review) => acc + r.rating, 0) / reviews.length).toFixed(1)} 리뷰 ${reviews.length}개` : '리뷰 없음'}</span>
                 </div>
               </div>
             </div>
