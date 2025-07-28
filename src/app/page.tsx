@@ -11,7 +11,6 @@ export default async function Home() {
       {/* 캐러셀 섹션 */}
       <Carousel />
 
-      {/* TODO 링크 걸어두기 */}
       <section className="w-full px-4 max-w-[800px]">
         {/* 인기 캐릭터 상품 섹션 */}
         <div className="mb-20 mt-10">

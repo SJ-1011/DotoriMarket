@@ -1,13 +1,8 @@
+import type { Review } from '@/types/Review';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
-/**
- * 특정 상품에 대한 리뷰 목록을 가져옵니다.
- * @param productId - 조회할 상품의 ID (문자열 또는 숫자)
- * @returns 리뷰 배열을 담은 Promise
- * @throws API 요청 실패 또는 서버 응답 형식 오류 시 에러 발생
- */
-export async function getReviews(productId: string | number) {
+export async function getReviews(productId: string | number): Promise<Review[]> {
   try {
     const res = await fetch(`${API_URL}/replies/products/${productId}`, {
       headers: {
@@ -21,8 +16,16 @@ export async function getReviews(productId: string | number) {
     }
 
     const data = await res.json();
+
     if (data.ok === 1 && Array.isArray(data.item)) {
-      return data.item;
+      const reviews = data.item as Review[];
+
+      const processedReviews = reviews.map(review => ({
+        ...review,
+        images: review.extra?.files?.map(file => file.path) ?? [],
+      }));
+
+      return processedReviews;
     } else {
       throw new Error('서버 응답 형식 오류');
     }
@@ -32,13 +35,7 @@ export async function getReviews(productId: string | number) {
   }
 }
 
-/**
- * 로그인한 사용자가 작성한 모든 리뷰 목록을 가져옵니다.
- * @param accessToken - 로그인 사용자 인증을 위한 액세스 토큰
- * @returns 사용자가 작성한 리뷰 배열을 담은 Promise
- * @throws API 요청 실패 또는 서버 응답 형식 오류 시 에러 발생
- */
-export async function getMyReviews(accessToken: string) {
+export async function getMyReviews(accessToken: string): Promise<Review[]> {
   try {
     const res = await fetch(`${API_URL}/replies/`, {
       headers: {
@@ -53,13 +50,21 @@ export async function getMyReviews(accessToken: string) {
     }
 
     const data = await res.json();
+
     if (data.ok === 1 && Array.isArray(data.item)) {
-      return data.item;
+      const reviews = data.item as Review[];
+
+      const processedReviews = reviews.map(review => ({
+        ...review,
+        productId: review.product!._id,
+        images: review.extra?.files?.map(file => file.path) ?? [],
+      }));
+
+      return processedReviews;
     } else {
       throw new Error('서버 응답 형식 오류');
     }
   } catch (error) {
-    console.error('getMyReviews 에러:', error);
     throw error;
   }
 }
