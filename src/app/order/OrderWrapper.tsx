@@ -15,6 +15,7 @@ import { deleteCartItems } from '@/data/actions/deleteCartItems';
 import Loading from '../loading';
 import { createPaymentNotification } from '@/data/actions/addNotification';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { UserAddress } from '@/types';
 
 export default function OrderWrapper() {
   const { user } = useLoginStore();
@@ -22,7 +23,7 @@ export default function OrderWrapper() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-
+  const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const methods = useForm<OrderForm>({
     defaultValues: {
@@ -37,6 +38,7 @@ export default function OrderWrapper() {
     recipient: '',
     phone: '',
     address: '',
+    details: '',
   });
   const [cartCost, setCartCost] = useState({
     products: 0,
@@ -154,13 +156,17 @@ export default function OrderWrapper() {
         // 유저 주소 로드
         const userRes = await getUserAddress(user._id, token);
         if (userRes.ok && userRes.item.length > 0) {
+          setAddresses(userRes.item); // 전체 주소 저장
+
           const defaultAddress = userRes.item.find(a => a.isDefault) ?? userRes.item[0];
           setUserInfo({
             name: defaultAddress.name,
             recipient: defaultAddress.recipient,
             phone: user.phone,
             address: defaultAddress.value,
+            details: defaultAddress.detailAddress || '',
           });
+
           methods.setValue('address', { name: defaultAddress.name, value: defaultAddress.value });
           methods.setValue('user', { name: defaultAddress.recipient, phone: user.phone });
         }
@@ -178,7 +184,7 @@ export default function OrderWrapper() {
 
   return (
     <FormProvider {...methods}>
-      <OrderClient cartItems={cartItems} cartCost={cartCost} userInfo={userInfo} onSubmit={onSubmit} />
+      <OrderClient cartItems={cartItems} cartCost={cartCost} addresses={addresses} userInfo={userInfo} onSubmit={onSubmit} />
     </FormProvider>
   );
 }

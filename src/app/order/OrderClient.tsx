@@ -8,6 +8,7 @@ import OrderProductList from './OrderProductList';
 import OrderCostSummary from './OrderCostSummary';
 import OrderPayment from './OrderPayment';
 import { useState } from 'react';
+import { UserAddress } from '@/types';
 
 interface Props {
   cartItems: CartItem[];
@@ -22,10 +23,12 @@ interface Props {
     recipient: string;
     phone: string;
     address: string;
+    details: string;
   };
+  addresses: UserAddress[];
 }
 
-export default function OrderClient({ cartCost, cartItems, userInfo, onSubmit }: Props & { onSubmit: (data: OrderForm) => Promise<void> }) {
+export default function OrderClient({ cartCost, cartItems, userInfo, addresses, onSubmit }: Props & { onSubmit: (data: OrderForm) => Promise<void> }) {
   const { handleSubmit } = useFormContext<OrderForm>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [payment, setPayment] = useState<{ method: string; bank?: string }>({ method: 'toss' });
@@ -48,7 +51,7 @@ export default function OrderClient({ cartCost, cartItems, userInfo, onSubmit }:
 
   return (
     <form onSubmit={handleSubmit(handleOrderSubmit)} className="relative space-y-4">
-      <OrderUserInfo {...userInfo} />
+      <OrderUserInfo {...userInfo} addresses={addresses} />
       <OrderProductList items={cartItems} />
       <OrderCostSummary cartCost={cartCost} />
       <OrderPayment onPaymentChange={(method, bank) => setPayment({ method, bank })} />
