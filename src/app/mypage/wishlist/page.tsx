@@ -20,24 +20,36 @@ export default function WishList() {
   useEffect(() => {
     if (!user?.token?.accessToken) return;
 
-    const fetchLiked = async () => {
+    try {
       setLoading(true);
-      try {
+      const fetchLiked = async () => {
         const res = await getLikedProducts(user.token.accessToken);
-        const products = Object.values(res)
-          .filter((v): v is { _id: number; product: Product } => typeof v === 'object' && v !== null && 'product' in v && '_id' in v)
-          .map(v => ({
-            ...v.product,
-            bookmarkId: v._id,
-          }));
+
+        console.log(res);
+
+        if (!res.ok) {
+          throw res.message;
+        }
+
+        const items = res.item as unknown as { _id: number; product: Product }[];
+
+        const products = items.map(v => ({
+          ...v.product,
+          bookmarkId: v._id,
+        }));
+
+        console.log(products);
 
         setLikedProducts(products);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchLiked();
+      fetchLiked();
+    } catch (error) {
+      alert(error);
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
 
   const sortedProducts = [...likedProducts].sort((a, b) => {
@@ -59,14 +71,15 @@ export default function WishList() {
             <option value="date">담은 날짜순</option>
           </select>
         </div>
-        {loading ? (
-          <Loading />
-        ) : (
+        {loading && <Loading />}
+        {!loading && sortedProducts.length > 0 ? (
           <ul className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
             {sortedProducts.map(product => (
               <ProductCard key={product._id} product={product} bookmarkId={product.bookmarkId} />
             ))}
           </ul>
+        ) : (
+          <div className="p-4">관심 상품이 없습니다.</div>
         )}
       </div>
     </section>

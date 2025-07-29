@@ -21,6 +21,7 @@ import Image from 'next/image';
 
 export default function EditForm() {
   const user = useLoginStore(state => state.user);
+  const logout = useLoginStore(state => state.logout);
   const fetchUser = useUserStore(state => state.fetchUser);
   const setUserId = useUserStore(state => state.setId);
   const router = useRouter();
@@ -94,7 +95,9 @@ export default function EditForm() {
         alert('회원 정보 수정이 완료되었습니다.');
         setUserId(user._id);
         await fetchUser();
-        setTimeout(() => router.replace('/mypage'), 1500);
+        alert('보안을 위해 다시 로그인해주세요.');
+        logout();
+        setTimeout(() => router.replace('/'), 1500);
       } else {
         // setError();
         alert(result.message || '회원 정보 수정에 실패했습니다.');
@@ -162,7 +165,7 @@ export default function EditForm() {
       {loading && <Loading />}
       {!loading && userInfo && (
         <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col flex-nowrap justify-center sm:bg-background rounded-2xl p-4 sm:p-8 lg:p-16">
+          <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col flex-nowrap justify-center sm:bg-background rounded-4xl border border-primary p-4 sm:p-8 lg:p-16">
             <Image src="/login-logo.webp" alt="도토리섬 회원가입" width={100} height={100} className="mb-8 sm:mb-12" />
 
             {formMessage && <p className="mb-4 text-center text-sm text-red-500">{formMessage}</p>}

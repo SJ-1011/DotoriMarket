@@ -1,5 +1,5 @@
 import { getProductById } from '@/utils/getProducts';
-import ProductDetailPage from './DetailPage';
+import ProductDetailPage from './ProductDetailPage';
 import { notFound } from 'next/navigation';
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {

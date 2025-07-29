@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Post } from '@/types/Post';
 import { getUserPosts } from '@/utils/getPosts';
 import { useLoginStore } from '@/stores/loginStore';
 import Loading from '@/app/loading';
 import { useRouter } from 'next/navigation';
+import Pagination from '@/components/common/Pagination';
 
 export default function MyPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -14,6 +15,33 @@ export default function MyPosts() {
   const router = useRouter();
   const user = useLoginStore(state => state.user);
   const filteredPosts = sortOption === 'all' ? posts : posts.filter(post => post.type === sortOption);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  const itemsPerPage = 10;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 640); // 모바일 기준 폭 설정
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const paginatedPosts = useMemo(() => {
+    if (filteredPosts) {
+      const startIdx = (currentPage - 1) * itemsPerPage;
+      const endIdx = startIdx + itemsPerPage;
+      if (isMobile) {
+        return filteredPosts.slice(0, endIdx);
+      } else {
+        return filteredPosts.slice(startIdx, endIdx);
+      }
+    } else {
+      return [];
+    }
+  }, [filteredPosts, currentPage, isMobile]);
 
   useEffect(() => {
     const fetchMyPosts = async () => {
@@ -24,6 +52,7 @@ export default function MyPosts() {
       if (res.ok === 1 && res.item) {
         const sortedPosts = [...res.item].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setPosts(sortedPosts);
+        setTotalPage(Math.ceil(res.item.length / itemsPerPage));
       } else if (res.ok === 0) {
         console.error(res.message);
       }
@@ -54,13 +83,13 @@ export default function MyPosts() {
 
         {!loading && (
           <>
-            {filteredPosts.length === 0 ? (
+            {paginatedPosts.length === 0 ? (
               <p className="px-4 text-gray text-sm lg:text-base">등록된 글이 없습니다.</p>
             ) : (
               <>
                 {/* 모바일 리스트형 */}
                 <ul className="block sm:hidden">
-                  {filteredPosts.map((post, index) => (
+                  {paginatedPosts.map((post, index) => (
                     <li key={post._id} className={`p-4 border-b border-gray-300 cursor-pointer ${index === 0 ? 'border-t-1 border-t-dark-gray' : ''}`} onClick={() => router.push(`/board/${post.type}/${post._id}`)}>
                       <p className="text-sm font-bold truncate">{post.title}</p>
                       <p className="text-xs text-gray">
@@ -82,16 +111,16 @@ export default function MyPosts() {
 
                   <thead className="bg-secondary">
                     <tr>
-                      <th className="py-2 px-2">번호</th>
+                      <th className="py-2 px-2">글 번호</th>
                       <th className="py-2 px-2">제목</th>
                       <th className="py-2 px-2">분류</th>
                       <th className="py-2 px-2">작성일</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredPosts.map((post, idx) => (
+                    {paginatedPosts.map(post => (
                       <tr key={post._id} className="border-b border-gray-300 cursor-pointer hover:bg-gray-100" onClick={() => router.push(`/board/${post.type}/${post._id}`)}>
-                        <td className="py-2 px-2 lg:py-4 lg:px-4 text-center">{idx + 1}</td>
+                        <td className="py-2 px-2 lg:py-4 lg:px-4 text-center">{post._id}</td>
                         <td className="py-2 px-2 lg:py-4 lg:px-4 truncate">{post.title}</td>
                         <td className="py-2 px-2 lg:py-4 lg:px-4 text-center">{post.type === 'qna' ? '문의' : '자유'}</td>
                         <td className="py-2 px-2 lg:py-4 lg:px-4 text-center">{post.createdAt.slice(0, 10)}</td>
@@ -103,7 +132,22 @@ export default function MyPosts() {
             )}
           </>
         )}
+        <div className="hidden sm:block">
+          <Pagination
+            currentPage={currentPage}
+            onPageChange={page => {
+              setCurrentPage(page);
+            }}
+            totalPages={totalPage}
+          />
+        </div>
       </div>
+
+      {posts && currentPage * itemsPerPage < posts.length && (
+        <button type="button" onClick={() => setCurrentPage(page => page + 1)} className="w-full border p-4 mb-40 cursor-pointer sm:hidden">
+          더보기
+        </button>
+      )}
     </section>
   );
 }

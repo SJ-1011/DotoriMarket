@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useLoginStore } from '@/stores/loginStore';
 import { createPost } from '@/data/actions/post';
 import { useSearchParams } from 'next/navigation';
+import OrderModal from './OrderModal';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 //문의 종류 배열
 const QNA_TYPES = [
@@ -28,7 +29,8 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
 
   const searchParams = useSearchParams();
   const productIdFromQuery = searchParams.get('productId');
-  console.log('NewQnaForm - productIdFromQuery:', productIdFromQuery);
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedOrderProduct, setSelectedOrderProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     if (productIdFromQuery) {
@@ -54,6 +56,12 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
       fetchProduct();
     }
   }, [productIdFromQuery]);
+  // 문의 유형 바뀔때 초기화하는 use effect
+  useEffect(() => {
+    setSelectedProduct(null);
+    setSelectedOrderProduct(null);
+  }, [selectedType]);
+
   // 버튼 1줄, 2줄로 나누기
   const firstRow = QNA_TYPES.slice(0, 3);
   const secondRow = QNA_TYPES.slice(3);
@@ -61,18 +69,25 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
   // 선택에 따라 아래쪽 버튼 텍스트 활성화를 위한 로직. 경우의 수 수정되면 이 부분 바꿔주면 됨
   let selectLabel = '';
   if (selectedType === 'product') selectLabel = '상품 선택';
-  else if (selectedType === 'delivery' || selectedType === 'order') selectLabel = '주문 선택';
+  else if (selectedType === 'delivery' || selectedType === 'order' || selectedType === 'return' || selectedType === 'refund') selectLabel = '주문 선택';
 
   ////검색 후 선택 버튼 누를때 실행될 메서드 props로 전달해줘야함
   const handleProductSelect = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(false);
   };
+  // 주문 선택할때 실행될 메서드 props로 전달
+  const handleOrderSelect = (product: Product) => {
+    setSelectedOrderProduct(product);
+    setIsOrderModalOpen(false);
+  };
 
-  //문의가 상품일 경우 모달 여는 메서드
+  //문의가 상품, 주문일 경우 열 모달 호출 메서드
   const handleProductButtonClick = () => {
     if (selectedType === 'product') {
       setIsModalOpen(true);
+    } else if (selectedType === 'delivery' || selectedType === 'order' || selectedType === 'return' || selectedType === 'refund') {
+      setIsOrderModalOpen(true);
     }
   };
 
@@ -117,11 +132,18 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
 
         {/* 실제 서버로 값 전달 */}
         <input type="hidden" name="extra.qnatype" value={selectedType} />
-        {/* 선택된 상품 정보 전달 */}
+        {/* 상품 문의일 경우 선택된 상품 정보 전달 */}
         {selectedProduct && <input type="hidden" name="extra.productId" value={selectedProduct._id} />}
         {selectedProduct && <input type="hidden" name="extra.productName" value={selectedProduct.name} />}
         {selectedProduct && <input type="hidden" name="extra.imagePath" value={selectedProduct.mainImages[0].path} />}
-
+        {/* 주문 문의일 경우 선택된 주문 정보 전달 */}
+        {selectedOrderProduct && (
+          <>
+            <input type="hidden" name="extra.orderProductId" value={selectedOrderProduct._id} />
+            <input type="hidden" name="extra.orderProductName" value={selectedOrderProduct.name} />
+            <input type="hidden" name="extra.orderProductImage" value={selectedOrderProduct.image?.path} />
+          </>
+        )}
         {/* 선택된 유형에 따라 선택 버튼 노출 */}
         {selectLabel && (
           <div className="mb-6 flex justify-center">
@@ -156,7 +178,28 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
             </div>
           </div>
         )}
-
+        {selectedOrderProduct && selectedType !== 'product' && (
+          <div className="mb-6 flex justify-center">
+            <div className="w-full max-w-xl p-4 border-2 border-[#A97452] rounded-2xl bg-[#F5EEE6]">
+              <div className="flex items-center gap-4">
+                {selectedOrderProduct.image?.path ? (
+                  <Image src={`${API_URL}/${selectedOrderProduct.image.path}`} alt={selectedOrderProduct.name} width={100} height={100} unoptimized className="w-20 h-20 object-cover rounded border" />
+                ) : (
+                  <div className="w-20 h-20 bg-gray-200 rounded border flex items-center justify-center">
+                    <span className="text-gray-400 text-xs">이미지 없음</span>
+                  </div>
+                )}
+                <div className="flex-1">
+                  <div className="font-semibold text-sm sm:text-base mb-1">{selectedOrderProduct.name}</div>
+                  <div className="text-xs text-gray-500">수량: {selectedOrderProduct.quantity}개</div>
+                </div>
+                <button type="button" onClick={() => setSelectedOrderProduct(null)} className="text-red-500 hover:text-red-700 font-bold text-lg">
+                  ×
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="my-4">
           <label className="block mb-2 font-bold text-xs sm:text-sm lg:text-base-xl content-center " htmlFor="title">
             제목
@@ -187,6 +230,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
 
       {/* 상품 검색 모달 */}
       <ProductSearchModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSelectProduct={handleProductSelect} />
+      <OrderModal isOpen={isOrderModalOpen} onClose={() => setIsOrderModalOpen(false)} onSelectOrderProduct={handleOrderSelect} />
     </>
   );
 }

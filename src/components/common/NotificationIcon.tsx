@@ -54,7 +54,11 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
 
   // 알림 불러오기
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      deleteNotification();
+      return;
+    }
+
     setUser(user);
 
     const fetchData = async () => {
@@ -74,7 +78,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
       <>
         <button type="button" className="cursor-pointer relative" aria-label="알림" onClick={() => setOpen(prev => !prev)}>
           <BellIcon pathProps={{ fill: '#A97452' }} svgProps={{ className: 'w-6 h-6 cursor-pointer' }} aria-label="알림" />
-          {notification && notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
+          {notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
         </button>
         {open && (
           <div className="fixed inset-0 bg-white flex flex-col z-50">
@@ -131,7 +135,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
     <li className="relative">
       <button type="button" className="cursor-pointer relative" aria-label="알림" onClick={() => setOpen(prev => !prev)}>
         <BellIcon svgProps={{ className: 'w-6 h-6' }} />
-        {notification && notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
+        {notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
       </button>
       {/* 말풍선 */}
       {open && (

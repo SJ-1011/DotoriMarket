@@ -157,12 +157,16 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
       setLoading(true);
       try {
         const res = await getLikedProducts(user.token.accessToken);
-        const products = Object.values(res)
-          .filter((v): v is { _id: number; product: Product } => typeof v === 'object' && v !== null && 'product' in v && '_id' in v)
-          .map(v => ({
-            ...v.product,
-            bookmarkId: v._id,
-          }));
+        if (!res.ok) {
+          throw res.message;
+        }
+
+        const items = res.item as unknown as { _id: number; product: Product }[];
+
+        const products = items.map(v => ({
+          ...v.product,
+          bookmarkId: v._id,
+        }));
         setLikedProducts(products);
       } catch (err) {
         console.error(err);

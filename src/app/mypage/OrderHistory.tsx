@@ -39,6 +39,10 @@ export default function OrderHistory() {
   const createdDay: string[] = [];
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     if (!user) return;
 
     const fetchOrders = async () => {
