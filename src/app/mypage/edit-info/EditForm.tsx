@@ -165,7 +165,7 @@ export default function EditForm() {
       {loading && <Loading />}
       {!loading && userInfo && (
         <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col flex-nowrap justify-center sm:bg-background rounded-4xl border border-primary p-4 sm:p-8 lg:p-16">
+          <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col flex-nowrap justify-center sm:bg-background rounded-4xl sm:border border-primary p-4 sm:p-8 lg:p-16">
             <Image src="/login-logo.webp" alt="도토리섬 회원가입" width={100} height={100} className="mb-8 sm:mb-12" />
 
             {formMessage && <p className="mb-4 text-center text-sm text-red-500">{formMessage}</p>}
