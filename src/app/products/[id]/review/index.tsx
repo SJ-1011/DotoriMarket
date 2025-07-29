@@ -71,7 +71,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
   // 주문 관련 상태
   const [hasWrittenReview, setHasWrittenReview] = useState(false);
   const [orderCount, setOrderCount] = useState(0);
-  const [reviewCount, setReviewCount] = useState(0);
+  const [, setReviewCount] = useState(0);
   const [hasOrderedProduct, setHasOrderedProduct] = useState(false);
   const [orderIdForProduct, setOrderIdForProduct] = useState<string | number | null>(null);
 
@@ -260,8 +260,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
   // 후기 작성 버튼 텍스트 및 툴팁
   const getButtonText = () => {
     if (!hasOrderedProduct) return '후기 남기기';
-    if (hasWrittenReview) return '후기 작성 완료';
-    return `후기 남기기 (${reviewCount}/${orderCount})`;
+    return hasWrittenReview ? '후기 작성 완료' : '후기 남기기';
   };
 
   const getButtonTooltip = () => {
