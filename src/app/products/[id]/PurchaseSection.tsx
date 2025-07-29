@@ -208,7 +208,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500">사용후기</span>
                 <div className="flex items-center">
-                  <span className="text-red-500 mb-2">★</span>
+                  <span className="mb-1 text-red-500">★</span>
                   <span className="text-sm ml-1">{loadingReviews ? '로딩중...' : reviews.length > 0 ? `${(reviews.reduce((acc: number, r: Review) => acc + r.rating, 0) / reviews.length).toFixed(1)} 리뷰 ${reviews.length}개` : '리뷰 없음'}</span>
                 </div>
               </div>
