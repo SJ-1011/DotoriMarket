@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { UserAddress } from '@/types/User';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Props {
   name: string;
@@ -29,7 +30,10 @@ export default function OrderUserInfo({ name, recipient, phone, address, details
   const predefinedOptions = ['문 앞에 놓아주세요', '부재 시 연락 부탁드려요', '배송 전 미리 연락부탁드려요'];
   const isPredefined = predefinedOptions.includes(memo);
   const isInitial = useRef(true);
-
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentQuery = searchParams.toString();
+  const redirectUrl = currentQuery ? `/order?${currentQuery}` : '/order';
   const handleMemoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     isInitial.current = false;
     const value = e.target.value;
@@ -47,9 +51,19 @@ export default function OrderUserInfo({ name, recipient, phone, address, details
       {/* 헤더 */}
       <div className="flex justify-between items-center">
         <h2 className="text-base sm:text-lg font-semibold">배송정보</h2>
-        <button type="button" onClick={() => setShowAddressList(prev => !prev)} className="text-xs border px-2 py-1 sm:text-sm lg:text-base border-primary rounded cursor-pointer">
-          {showAddressList ? '기본 주소 보기' : '배송지 목록'}
-        </button>
+        <div className="flex gap-2">
+          {/* 배송지 추가 버튼 (목록일 때만 표시) */}
+          {showAddressList && (
+            <button type="button" onClick={() => router.push(`/mypage/address/add?redirect=${encodeURIComponent(redirectUrl)}`)} className="text-xs sm:text-sm lg:text-base border px-2 py-1 border-primary rounded hover:bg-light">
+              배송지 추가
+            </button>
+          )}
+
+          {/* 기존 기본 주소 보기/목록 전환 버튼 */}
+          <button type="button" onClick={() => setShowAddressList(prev => !prev)} className="text-xs border px-2 py-1 sm:text-sm lg:text-base border-primary rounded cursor-pointer">
+            {showAddressList ? '기본 주소 보기' : '배송지 목록'}
+          </button>
+        </div>
       </div>
 
       {/* 기본 UI */}
@@ -91,7 +105,7 @@ export default function OrderUserInfo({ name, recipient, phone, address, details
 
       {/* 배송지 목록 UI */}
       {showAddressList && (
-        <div className="pt-2 space-y-2 max-h-64 sm:max-h-70 lg:max-h-80  text-xs sm:text-sm lg:text-base overflow-y-auto">
+        <div className="pt-2 space-y-2 text-xs sm:text-sm lg:text-base ">
           {addresses.map(addr => (
             <div
               key={addr.id}
