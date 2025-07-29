@@ -8,6 +8,9 @@ interface Payment {
   label: string;
   icon: string;
 }
+interface PaymentProps {
+  onPaymentChange: (method: string, bank?: string) => void;
+}
 
 const METHODS: Payment[] = [
   { id: 'toss', label: '토스 페이', icon: '/order-tosspay.png' },
@@ -18,9 +21,24 @@ const METHODS: Payment[] = [
 
 const BANKS = ['KB국민카드', '신한카드', '삼성카드', '현대카드', 'BC카드', '롯데카드', '하나카드', '우리카드', 'NH카드', '씨티카드'];
 
-export default function PaymentMethods() {
+export default function PaymentMethods({ onPaymentChange }: PaymentProps) {
   const [selected, setSelected] = useState('toss');
   const [selectedBank, setSelectedBank] = useState('');
+
+  const handleMethodChange = (method: string) => {
+    setSelected(method);
+    if (method !== 'card') {
+      setSelectedBank('');
+      onPaymentChange(method);
+    } else {
+      onPaymentChange(method, '');
+    }
+  };
+
+  const handleBankChange = (bank: string) => {
+    setSelectedBank(bank);
+    onPaymentChange(selected, bank);
+  };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-3 rounded-xl bg-white text-dark-gray">
@@ -30,16 +48,16 @@ export default function PaymentMethods() {
         {METHODS.map(method => (
           <li key={method.id} className="flex flex-col">
             <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 my-1">
-              <input type="radio" name="payment" value={method.id} checked={selected === method.id} onChange={() => setSelected(method.id)} className="w-4 h-4 accent-black" />
-              <span className="flex items-center gap-2 sm:gap-3 lg:gap-4 cursor-pointer" onClick={() => setSelected(method.id)}>
+              <input type="radio" name="payment" value={method.id} checked={selected === method.id} onChange={() => handleMethodChange(method.id)} className="w-4 h-4 accent-black" />
+
+              <span className="flex items-center gap-2 sm:gap-3 lg:gap-4 cursor-pointer" onClick={() => handleMethodChange(method.id)}>
                 {method.icon && <Image src={method.icon} alt={method.label} width={28} height={28} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />}
                 <span className="text-sm sm:text-base">{method.label}</span>
               </span>
             </div>
 
-            {/* 신용카드 선택 시 은행 드롭다운 */}
             {selected === 'card' && method.id === 'card' && (
-              <select value={selectedBank} onChange={e => setSelectedBank(e.target.value)} className="mt-1 w-64 border border-gray p-2 text-sm sm:text-base">
+              <select value={selectedBank} onChange={e => handleBankChange(e.target.value)} required className="mt-1 w-64 border p-2 rounded">
                 <option value="">카드사를 선택해주세요.</option>
                 {BANKS.map(bank => (
                   <option key={bank} value={bank}>
