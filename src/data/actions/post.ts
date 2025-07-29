@@ -154,5 +154,13 @@ export async function updatePost(state: ApiRes<Post> | null, formData: FormData)
     return { ok: 0, message: '일시적인 네트워크 문제가 발생했습니다.' };
   }
 
-  return data;
+  if (data.ok) {
+    revalidatePath('/board/qna'); // 게시글 목록 페이지 갱신
+    revalidatePath(`/board/qna/${_id}`); // 게시글 상세 페이지 갱신
+
+    // 상세 페이지로 리다이렉트 (목록이 아닌)
+    redirect(`/board/qna/${_id}`);
+  } else {
+    return data;
+  }
 }
