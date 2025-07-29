@@ -18,7 +18,7 @@ export default function ProductTabSection({ product, activeTab, setActiveTab, or
 
   return (
     <>
-      <nav className="flex mt-12 bg-primary-light overflow-hidden sticky top-0 z-50" style={{ height: '44px' }}>
+      <nav className="flex mt-12 bg-primary-light overflow-hidden sticky top-[60px] sm:top-0 z-50" style={{ height: '44px' }}>
         {tabs.map(tab => {
           const isActive = activeTab === tab;
           return (
