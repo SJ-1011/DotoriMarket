@@ -102,11 +102,11 @@ export default function OrderUserInfo({ name, recipient, phone, address, details
 
       {/* 배송지 목록 UI */}
       {showAddressList && (
-        <div className="pt-2 space-y-2 text-xs sm:text-sm lg:text-base ">
+        <div className="pt-2 space-y-2 text-xs sm:text-sm lg:text-base">
           {addresses.map(addr => (
             <div
               key={addr.id}
-              className={`p-3 space-y-1 sm:space-y-2  border rounded-md cursor-pointer hover:bg-gray-50 ${selectedId === addr.id ? 'border-primary bg-light' : !selectedId && addr.isDefault ? 'border-primary' : 'border-gray-300'}`}
+              className={`p-3 space-y-1 sm:space-y-2 border rounded-md cursor-pointer hover:bg-gray-50 ${selectedId === addr.id ? 'border-primary bg-light' : !selectedId && addr.isDefault ? 'border-primary' : 'border-gray-300'}`}
               onClick={() => {
                 setValue('user', { name: addr.recipient, phone: addr.mobile }, { shouldValidate: true });
                 setValue('address', { name: addr.name, value: addr.value, details: addr.detailAddress ?? '' }, { shouldValidate: true });
@@ -118,7 +118,6 @@ export default function OrderUserInfo({ name, recipient, phone, address, details
                   value: addr.value,
                   details: addr.detailAddress ?? '',
                 });
-
                 setShowAddressList(false);
               }}
             >

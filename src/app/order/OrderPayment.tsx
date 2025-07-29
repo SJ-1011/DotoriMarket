@@ -27,7 +27,12 @@ export default function PaymentMethods({ onPaymentChange }: PaymentProps) {
 
   const handleMethodChange = (method: string) => {
     setSelected(method);
-    onPaymentChange(method, method === 'card' ? selectedBank : undefined);
+    if (method !== 'card') {
+      setSelectedBank('');
+      onPaymentChange(method);
+    } else {
+      onPaymentChange(method, '');
+    }
   };
 
   const handleBankChange = (bank: string) => {
@@ -43,7 +48,6 @@ export default function PaymentMethods({ onPaymentChange }: PaymentProps) {
         {METHODS.map(method => (
           <li key={method.id} className="flex flex-col">
             <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 my-1">
-              {/*  라디오 버튼 */}
               <input type="radio" name="payment" value={method.id} checked={selected === method.id} onChange={() => handleMethodChange(method.id)} className="w-4 h-4 accent-black" />
 
               <span className="flex items-center gap-2 sm:gap-3 lg:gap-4 cursor-pointer" onClick={() => handleMethodChange(method.id)}>
@@ -52,9 +56,8 @@ export default function PaymentMethods({ onPaymentChange }: PaymentProps) {
               </span>
             </div>
 
-            {/* 신용카드 선택 */}
             {selected === 'card' && method.id === 'card' && (
-              <select value={selectedBank} onChange={e => handleBankChange(e.target.value)} className="mt-1 w-64 border p-2">
+              <select value={selectedBank} onChange={e => handleBankChange(e.target.value)} required className="mt-1 w-64 border p-2 rounded">
                 <option value="">카드사를 선택해주세요.</option>
                 {BANKS.map(bank => (
                   <option key={bank} value={bank}>

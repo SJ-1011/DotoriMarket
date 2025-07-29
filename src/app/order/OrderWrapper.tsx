@@ -60,7 +60,7 @@ export default function OrderWrapper() {
       alert('배송지를 등록해야 주문이 가능합니다.');
       handleAddressAdd();
     }
-  }, [loading, addresses, router]);
+  }, [loading]);
 
   useEffect(() => {
     if (user) setUserToNotif(user);
