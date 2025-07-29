@@ -26,9 +26,10 @@ interface Props {
     details: string;
   };
   addresses: UserAddress[];
+  onAddAddress: () => void;
 }
 
-export default function OrderClient({ cartCost, cartItems, userInfo, addresses, onSubmit }: Props & { onSubmit: (data: OrderForm) => Promise<void> }) {
+export default function OrderClient({ cartCost, cartItems, userInfo, addresses, onSubmit, onAddAddress }: Props & { onSubmit: (data: OrderForm) => Promise<void> }) {
   const { handleSubmit } = useFormContext<OrderForm>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [payment, setPayment] = useState<{ method: string; bank?: string }>({ method: 'toss' });
@@ -51,7 +52,7 @@ export default function OrderClient({ cartCost, cartItems, userInfo, addresses, 
 
   return (
     <form onSubmit={handleSubmit(handleOrderSubmit)} className="relative space-y-4">
-      <OrderUserInfo {...userInfo} addresses={addresses} />
+      <OrderUserInfo {...userInfo} addresses={addresses} onAddAddress={onAddAddress} />
       <OrderProductList items={cartItems} />
       <OrderCostSummary cartCost={cartCost} />
       <OrderPayment onPaymentChange={(method, bank) => setPayment({ method, bank })} />

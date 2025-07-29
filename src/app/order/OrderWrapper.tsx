@@ -25,6 +25,8 @@ export default function OrderWrapper() {
   const [loading, setLoading] = useState(true);
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const currentQuery = searchParams.toString();
+  const redirectUrl = currentQuery ? `/order?${currentQuery}` : '/order';
   const methods = useForm<OrderForm>({
     defaultValues: {
       user: { name: '', phone: '' },
@@ -49,6 +51,16 @@ export default function OrderWrapper() {
 
   const setUserToNotif = useNotificationStore(state => state.setUser);
   const fetchNotification = useNotificationStore(state => state.fetchNotification);
+  const handleAddressAdd = () => {
+    router.push(`/mypage/address/add?redirect=${encodeURIComponent(redirectUrl)}`);
+  };
+
+  useEffect(() => {
+    if (!loading && addresses.length === 0) {
+      alert('배송지를 등록해야 주문이 가능합니다.');
+      handleAddressAdd();
+    }
+  }, [loading, addresses, router]);
 
   useEffect(() => {
     if (user) setUserToNotif(user);
@@ -184,7 +196,7 @@ export default function OrderWrapper() {
 
   return (
     <FormProvider {...methods}>
-      <OrderClient cartItems={cartItems} cartCost={cartCost} addresses={addresses} userInfo={userInfo} onSubmit={onSubmit} />
+      <OrderClient cartItems={cartItems} cartCost={cartCost} addresses={addresses} userInfo={userInfo} onSubmit={onSubmit} onAddAddress={handleAddressAdd} />
     </FormProvider>
   );
 }

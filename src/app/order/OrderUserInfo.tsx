@@ -3,7 +3,6 @@
 import { useState, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { UserAddress } from '@/types/User';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Props {
   name: string;
@@ -12,9 +11,10 @@ interface Props {
   address: string;
   details: string;
   addresses: UserAddress[];
+  onAddAddress: () => void;
 }
 
-export default function OrderUserInfo({ name, recipient, phone, address, details, addresses }: Props) {
+export default function OrderUserInfo({ name, recipient, phone, address, details, addresses, onAddAddress }: Props) {
   const { setValue, register, watch } = useFormContext();
   const [showAddressList, setShowAddressList] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -30,10 +30,7 @@ export default function OrderUserInfo({ name, recipient, phone, address, details
   const predefinedOptions = ['문 앞에 놓아주세요', '부재 시 연락 부탁드려요', '배송 전 미리 연락부탁드려요'];
   const isPredefined = predefinedOptions.includes(memo);
   const isInitial = useRef(true);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentQuery = searchParams.toString();
-  const redirectUrl = currentQuery ? `/order?${currentQuery}` : '/order';
+
   const handleMemoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     isInitial.current = false;
     const value = e.target.value;
@@ -54,7 +51,7 @@ export default function OrderUserInfo({ name, recipient, phone, address, details
         <div className="flex gap-2">
           {/* 배송지 추가 버튼 (목록일 때만 표시) */}
           {showAddressList && (
-            <button type="button" onClick={() => router.push(`/mypage/address/add?redirect=${encodeURIComponent(redirectUrl)}`)} className="text-xs sm:text-sm lg:text-base border px-2 py-1 border-primary rounded hover:bg-light">
+            <button type="button" onClick={onAddAddress} className="text-xs sm:text-sm lg:text-base border px-2 py-1 border-primary rounded hover:bg-light">
               배송지 추가
             </button>
           )}
