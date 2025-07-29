@@ -48,12 +48,16 @@ export default function NewProductsSection() {
 
         if (accessToken) {
           const resLiked = await getLikedProducts(accessToken);
-          const liked = Object.values(resLiked)
-            .filter((v): v is { _id: number; product: Product } => typeof v === 'object' && v !== null && 'product' in v && '_id' in v)
-            .map(v => ({
-              ...v.product,
-              bookmarkId: v._id,
-            }));
+          if (!resLiked.ok) {
+            throw resLiked.message;
+          }
+
+          const items = resLiked.item as unknown as { _id: number; product: Product }[];
+
+          const liked = items.map(v => ({
+            ...v.product,
+            bookmarkId: v._id,
+          }));
 
           setLikedProducts(liked);
         } else {
