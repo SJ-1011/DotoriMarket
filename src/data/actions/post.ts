@@ -164,3 +164,28 @@ export async function updatePost(state: ApiRes<Post> | null, formData: FormData)
     return data;
   }
 }
+
+/**
+ * 테스트용 댓글 생성 함수
+ */
+export async function testReply(content: string, accessToken: string, post: number) {
+  try {
+    const res = await fetch(`${API_URL}/posts/${post}/replies`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Client-Id': CLIENT_ID,
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }), //accessToken존재하면 헤더에 포함하고 아니면 안함
+      },
+      body: JSON.stringify({ content: content }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) return data;
+  } catch (error) {
+    // 네트워크 오류 처리
+    console.error(error);
+    return { ok: 0, message: '일시적인 네트워크 문제로 등록에 실패했습니다.' };
+  }
+}

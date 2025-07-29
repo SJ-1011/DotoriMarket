@@ -6,6 +6,7 @@ import { getUserNotifications } from '@/utils/getNotifications';
 import { LoginUser } from '@/types';
 
 interface NotificationState {
+  // 여기서 유저는 알림을 "받는" 유저
   user: LoginUser | null;
   setUser: (user: LoginUser) => void;
 
