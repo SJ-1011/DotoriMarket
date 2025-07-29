@@ -57,8 +57,8 @@ export default function MypageInfo() {
   // }, [user]);
 
   return (
-    <section className="flex flex-col lg:flex-row flex-nowrap gap-6 w-full sm:max-w-[800px] lg:max-w-[1200px] sm:items-center lg:items-stretch mx-auto my-8 py-12 sm:py-8">
-      <div className="flex flex-col flex-nowrap w-full sm:w-[600px] lg:w-[350px] bg-white sm:rounded-2xl sm:shadow-[0_0_10px_rgba(0,0,0,0.1)] p-8">
+    <section className="flex flex-col lg:flex-row flex-nowrap gap-12 sm:gap-6 w-full sm:max-w-[800px] lg:max-w-[1200px] items-center lg:items-stretch mx-auto my-8 py-12 sm:py-8">
+      <div className="flex flex-col flex-nowrap w-[90%] sm:w-[600px] lg:w-[350px] bg-white rounded-2xl shadow-[0_0_10px_rgba(0,0,0,0.1)] p-8">
         {isLoading ? (
           <>
             <Skeleton width="w-24" height="h-4" className="mb-2" />
@@ -85,7 +85,7 @@ export default function MypageInfo() {
           </>
         )}
       </div>
-      <div className="flex flex-col lg:flex-row flex-nowrap w-full sm:w-[600px] lg:flex-1 bg-white sm:rounded-2xl sm:shadow-[0_0_10px_rgba(0,0,0,0.1)] p-8">
+      <div className="flex flex-col lg:flex-row flex-nowrap w-[98%] sm:w-[600px] lg:flex-1 bg-white rounded-2xl shadow-[0_0_10px_rgba(0,0,0,0.1)] p-8">
         {isLoading ? (
           <>
             <Skeleton width="w-24" height="h-4" className="mb-2" />

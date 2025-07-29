@@ -74,7 +74,9 @@ export default function ReviewItem({ review, currentUser, expanded, toggleExpand
   return (
     <div className="border-b border-gray-200 py-3 relative">
       <div className="flex items-center gap-3 mb-2">
-        {imageSrc ? <Image src={imageSrc} alt={`${review.user.name} 프로필 이미지`} width={40} height={40} className="rounded-full object-cover" unoptimized /> : <Image src="/login-logo.webp" alt="도토리" width={40} height={40} className="rounded-full object-cover" />}
+        <div className="w-10 h-10 rounded-full overflow-hidden">
+          <Image src={imageSrc || '/login-logo.webp'} alt={imageSrc ? '프로필 이미지' : '도토리'} width={40} height={40} className="w-full h-full object-cover" unoptimized />
+        </div>
         <div>
           <div className="flex items-center gap-2">
             <p className="font-semibold text-sm">{maskUserId(review.user.name)}</p>
