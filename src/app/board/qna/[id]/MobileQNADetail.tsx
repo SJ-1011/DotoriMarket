@@ -1,4 +1,6 @@
+'use client';
 import TriangleIcon from '@/components/icon/TriangleIcon';
+import { useLoginStore } from '@/stores/loginStore';
 import { Post, PostReply } from '@/types/Post';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,6 +14,8 @@ interface MobileProps {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function MobileQNADetail({ post, posts, id, reply }: MobileProps) {
+  const user = useLoginStore(state => state.user);
+  const isAuthor = user?.token?.accessToken === post.accessToken;
   const asidePosts: (Post | null)[] = [null, null];
 
   // 하단에 있는 다음글/이전글
@@ -117,8 +121,13 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
             {!asidePosts[1] && <span>이전 글이 없습니다.</span>}
             {asidePosts[1] && <Link href={`/board/qna/${asidePosts[1]._id}`}>{asidePosts[1].title}</Link>}
           </li>
-          <li className="self-end mr-4 mt-8">
-            <Link href="/board/qna" className="w-fit py-2 px-8 bg-primary-dark text-white">
+          <li className="self-end mt-8 flex gap-4">
+            {isAuthor && (
+              <Link href={`/board/qna/edit/${post._id}`} className="w-fit py-2 px-8 bg-primary-dark text-white  hover:bg-[#966343] transition-colors">
+                수정하기
+              </Link>
+            )}
+            <Link href="/board/qna" className="w-fit py-2 px-8 bg-primary-dark text-white hover:bg-[#966343] ">
               목록
             </Link>
           </li>
