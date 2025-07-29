@@ -27,6 +27,13 @@ export default function EditQnaForm({ post }: EditQnaFormProps) {
   return (
     <>
       <form action={formAction}>
+        {isLoading && (
+          <div className="absolute inset-0 z-10  bg-grey bg-opacity-30 flex flex-col items-center justify-end">
+            {/* 로딩 원(스피너) */}
+            <div className="w-12 h-12 border-4 border-[#A97452] border-t-transparent rounded-full animate-spin mb-2"></div>
+            <span className="text-white font-semibold text-sm">처리 중...</span>
+          </div>
+        )}
         {/* 수정을 위한 필수 정보 */}
         <input type="hidden" name="_id" value={post._id} />
         <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
