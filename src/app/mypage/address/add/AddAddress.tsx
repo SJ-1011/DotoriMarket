@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useLoginStore } from '@/stores/loginStore';
 import { FieldErrors, FormProvider, useForm } from 'react-hook-form';
 import AddressNameField from '../components/AddressNameField';
@@ -42,7 +42,8 @@ export interface AddressFormState {
 
 export default function AddAddress() {
   const router = useRouter();
-
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/order';
   const user = useLoginStore(state => state.user);
 
   const methods = useForm<AddressFormState>({
@@ -88,7 +89,7 @@ export default function AddAddress() {
       if (!result.ok) throw new Error('배송지 추가에 실패했습니다.');
 
       alert('배송지가 추가되었습니다.');
-      router.push('/mypage/address');
+      router.push(redirect);
     } catch (err) {
       console.error('배송지 추가 실패:', err);
       alert(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
