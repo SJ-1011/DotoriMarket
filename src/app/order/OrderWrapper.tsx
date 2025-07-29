@@ -13,6 +13,8 @@ import { getProductById } from '@/utils/getProducts';
 import { createOrder } from '@/data/actions/createOrder';
 import { deleteCartItems } from '@/data/actions/deleteCartItems';
 import Loading from '../loading';
+import { createPaymentNotification } from '@/data/actions/addNotification';
+import { useNotificationStore } from '@/stores/notificationStore';
 
 export default function OrderWrapper() {
   const { user } = useLoginStore();
@@ -43,6 +45,14 @@ export default function OrderWrapper() {
     total: 0,
   });
 
+  const setUserToNotif = useNotificationStore(state => state.setUser);
+  const fetchNotification = useNotificationStore(state => state.fetchNotification);
+
+  useEffect(() => {
+    if (user) setUserToNotif(user);
+  }, [user, setUserToNotif]);
+
+  // 주문 제출 핸들러
   const onSubmit = async (data: OrderForm) => {
     if (!token) {
       alert('로그인이 필요합니다.');
@@ -50,9 +60,30 @@ export default function OrderWrapper() {
     }
 
     const res = await createOrder(data, token);
+
     if (res.ok) {
       console.log('주문 성공', res.item);
 
+      // 결제 완료 알림 보내기
+      try {
+        const firstProduct = cartItems[0]?.product;
+        if (firstProduct) {
+          const image = {
+            path: firstProduct.image.path,
+            name: firstProduct.image.name,
+            originalname: firstProduct.image.originalname,
+          };
+
+          const notifRes = await createPaymentNotification(firstProduct.name, image, user);
+          if (notifRes.ok) {
+            await fetchNotification();
+          }
+        }
+      } catch (err) {
+        console.error('결제 알림 생성 실패', err);
+      }
+
+      // 장바구니 아이템 삭제 (장바구니 주문일 경우만)
       try {
         const idsParam = searchParams.get('ids');
         if (idsParam) {
@@ -69,6 +100,7 @@ export default function OrderWrapper() {
     }
   };
 
+  // 초기 데이터 로드
   useEffect(() => {
     if (!token || !user?._id) return;
 
@@ -78,6 +110,7 @@ export default function OrderWrapper() {
         const idsParam = searchParams.get('ids');
         const productId = searchParams.get('productId');
         const qty = Number(searchParams.get('qty') || 1);
+
         if (idsParam) {
           // 장바구니 주문
           const selectedIds = idsParam.split(',').map(Number);
@@ -85,16 +118,11 @@ export default function OrderWrapper() {
           const selectedItems = cartRes.item.filter(item => selectedIds.includes(item._id));
 
           const productsTotal = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-          const shippingFee = cartRes.cost.shippingFees; // 정책에 따라 선택상품에도 동일하게 부과
+          const shippingFee = cartRes.cost.shippingFees;
           const total = productsTotal + shippingFee;
 
           setCartItems(selectedItems);
-          setCartCost({
-            products: productsTotal,
-            shippingFees: shippingFee,
-            discount: { products: 0, shippingFees: 0 },
-            total,
-          });
+          setCartCost({ products: productsTotal, shippingFees: shippingFee, discount: { products: 0, shippingFees: 0 }, total });
 
           methods.setValue(
             'products',
@@ -112,27 +140,18 @@ export default function OrderWrapper() {
           }
 
           const product = productRes.item;
-
           const tempItem: CartItem = {
             _id: -1,
             quantity: qty,
-            product: {
-              ...product,
-              image: product.mainImages?.[0] ?? { path: '/default.png', name: '', originalname: '' },
-            },
+            product: { ...product, image: product.mainImages?.[0] ?? { path: '/default.png', name: '', originalname: '' } },
           };
 
           setCartItems([tempItem]);
-          setCartCost({
-            products: product.price * qty,
-            shippingFees: product.shippingFees,
-            discount: { products: 0, shippingFees: 0 },
-            total: product.price * qty + product.shippingFees,
-          });
+          setCartCost({ products: product.price * qty, shippingFees: product.shippingFees, discount: { products: 0, shippingFees: 0 }, total: product.price * qty + product.shippingFees });
           methods.setValue('products', [{ _id: product._id, quantity: qty }]);
         }
 
-        // 유저 주소 공통 로드
+        // 유저 주소 로드
         const userRes = await getUserAddress(user._id, token);
         if (userRes.ok && userRes.item.length > 0) {
           const defaultAddress = userRes.item.find(a => a.isDefault) ?? userRes.item[0];
@@ -142,14 +161,8 @@ export default function OrderWrapper() {
             phone: user.phone,
             address: defaultAddress.value,
           });
-          methods.setValue('address', {
-            name: defaultAddress.name,
-            value: defaultAddress.value,
-          });
-          methods.setValue('user', {
-            name: defaultAddress.recipient,
-            phone: user.phone,
-          });
+          methods.setValue('address', { name: defaultAddress.name, value: defaultAddress.value });
+          methods.setValue('user', { name: defaultAddress.recipient, phone: user.phone });
         }
       } catch (err) {
         console.error('주문 데이터 로딩 실패:', err);
