@@ -25,7 +25,7 @@ export default async function Home() {
         </div>
 
         {/* 베스트 포토리뷰 섹션 */}
-        <div className="mb-20">
+        <div className="mb-30">
           <SectionTitle title="도토리섬 베스트 포토리뷰" />
           <ReviewSlider />
         </div>
