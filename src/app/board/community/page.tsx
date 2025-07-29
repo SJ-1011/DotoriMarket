@@ -17,8 +17,8 @@ export default async function CommunityBoardPage() {
   // console.log(posts);
   // product.image가 있는 게시글만 필터링
   const imagePosts = posts.filter(post => post.image);
-  console.log(imagePosts);
-  console.log(`${API_URL}/files/${CLIENT_ID}`);
+  // console.log(imagePosts);
+  // console.log(`${API_URL}/files/${CLIENT_ID}`);
   // imagePosts.map(post => console.log(`${API_URL}/files/${CLIENT_ID}/${post.product.image}`));
   return (
     <>
