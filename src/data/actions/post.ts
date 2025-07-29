@@ -38,7 +38,6 @@ export async function createPost(state: ApiRes<Post> | null, formData: FormData)
 
   if (validFiles.length > 0) {
     try {
-      // addReview와 동일한 방식으로 FormData 생성
       const fileFormData = new FormData();
       validFiles.forEach(file => fileFormData.append('attach', file));
 
