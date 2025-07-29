@@ -28,9 +28,16 @@ interface Props {
 export default function OrderClient({ cartCost, cartItems, userInfo, onSubmit }: Props & { onSubmit: (data: OrderForm) => Promise<void> }) {
   const { handleSubmit } = useFormContext<OrderForm>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [payment, setPayment] = useState<{ method: string; bank?: string }>({ method: 'toss' });
 
   const handleOrderSubmit = async (data: OrderForm) => {
-    if (isSubmitting) return;   
+    // 카드사 미선택 시 주문 막기
+    if (payment.method === 'card' && !payment.bank) {
+      alert('카드사를 선택해주세요.');
+      return;
+    }
+
+    if (isSubmitting) return;
     setIsSubmitting(true);
     try {
       await onSubmit(data);
@@ -41,20 +48,19 @@ export default function OrderClient({ cartCost, cartItems, userInfo, onSubmit }:
 
   return (
     <form onSubmit={handleSubmit(handleOrderSubmit)} className="relative space-y-4">
-      {/* 주문 정보 섹션 */}
       <OrderUserInfo {...userInfo} />
       <OrderProductList items={cartItems} />
       <OrderCostSummary cartCost={cartCost} />
-      <OrderPayment />
+      <OrderPayment onPaymentChange={(method, bank) => setPayment({ method, bank })} />
 
       {/* 주문 버튼 */}
-       <button type="submit" disabled={isSubmitting} className="w-full bg-primary text-white py-2 rounded cursor-pointer disabled:opacity-50">
+      <button type="submit" disabled={isSubmitting} className="w-full bg-primary text-white py-2 rounded cursor-pointer disabled:opacity-50">
         {isSubmitting ? '주문 처리 중...' : '주문하기'}
       </button>
 
       {/* 로딩 오버레이 (스피너) */}
       {isSubmitting && (
-        <div className="absolute inset-0 z-10  bg-grey bg-opacity-30 flex flex-col items-center justify-center">
+        <div className="absolute inset-0 z-10 bg-grey bg-opacity-30 flex flex-col items-center justify-center">
           <div className="w-12 h-12 border-4 border-[#A97452] border-t-transparent rounded-full animate-spin mb-2"></div>
           <span className="text-white font-semibold text-sm">주문 처리 중...</span>
         </div>
@@ -62,4 +68,3 @@ export default function OrderClient({ cartCost, cartItems, userInfo, onSubmit }:
     </form>
   );
 }
-
