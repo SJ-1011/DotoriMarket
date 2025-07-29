@@ -146,11 +146,11 @@ export default function ResidentCard() {
             <div className="flex flex-col flex-1 flex-nowrap gap-2 sm:gap-1">
               <div className="flex items-center border-b border-[#95aa81] ">
                 <p className="text-[#95aa81] pr-2 ">NAME</p>
-                <p className=" text-dark-gray">{userState?.name ? userState.name : user.name}</p>
+                <p className=" text-dark-gray font-test">{userState?.name ? userState.name : user.name}</p>
               </div>
               <div className="flex items-center border-b border-[#95aa81] ">
                 <p className="text-[#95aa81] pr-2 ">BIRTH</p>
-                <p className="text-dark-gray ">{userState?.birthday ? userState.birthday : user.birthday}</p>
+                <p className="text-dark-gray font-test">{userState?.birthday ? userState.birthday : user.birthday}</p>
               </div>
               <div className="flex items-center border-b border-[#95aa81] cursor-pointer group" onClick={() => setEditing(true)}>
                 {editing ? (
@@ -167,12 +167,12 @@ export default function ResidentCard() {
                         if (!isSaving) await saveIntro();
                       }
                     }}
-                    className="text-dark-gray  w-full bg-transparent focus:outline-none placeholder-gray"
+                    className="text-dark-gray font-test w-full bg-transparent focus:outline-none placeholder-gray"
                     placeholder="한줄 소개를 작성해주세요"
                     autoFocus
                   />
                 ) : (
-                  <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center justify-between w-full font-test">
                     <p className={`  ${user.intro ? 'text-dark-gray' : 'text-gray'}`}>{user.intro || '한줄 소개를 작성해주세요'}</p>
                     <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ">✏️</span>
                   </div>

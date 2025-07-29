@@ -69,12 +69,12 @@ export default function MypageInfo() {
         ) : (
           <>
             <p className="text-primary-dark font-bold pb-2">{userType == 'user' ? '일반 회원' : '관리자'}</p>
-            <p className="text-2xl pb-8">
+            <p className="text-2xl pb-12 font-test">
               <strong>{name}</strong>님
               <br />
               안녕하세요!🐿️
             </p>
-            <div className="flex flex-col flex-nowrap gap-4">
+            <div className="flex flex-col flex-nowrap gap-2">
               <Link href="/cart" className="w-full text-center bg-primary text-white p-4 rounded-2xl mb-2">
                 장바구니
               </Link>
@@ -85,7 +85,7 @@ export default function MypageInfo() {
           </>
         )}
       </div>
-      <div className="flex flex-col flex-nowrap w-full sm:w-[600px] lg:flex-1 bg-white sm:rounded-2xl sm:shadow-[0_0_10px_rgba(0,0,0,0.1)] p-8">
+      <div className="flex flex-col lg:flex-row flex-nowrap w-full sm:w-[600px] lg:flex-1 bg-white sm:rounded-2xl sm:shadow-[0_0_10px_rgba(0,0,0,0.1)] p-8">
         {isLoading ? (
           <>
             <Skeleton width="w-24" height="h-4" className="mb-2" />
@@ -93,8 +93,8 @@ export default function MypageInfo() {
           </>
         ) : (
           <>
-            <p className="text-primary-dark font-bold pb-2">나의 주민증💳</p>
-            <div className="lg:w-full flex justify-center">
+            <p className="text-primary-dark font-bold pb-4 text-xl text-nowrap">나의 주민증</p>
+            <div className="w-full flex justify-center">
               <ResidentCard />
             </div>
           </>
