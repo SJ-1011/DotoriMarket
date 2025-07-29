@@ -81,6 +81,7 @@ body {
 
 @media (min-width: 1240px) {
   .dot-bg-wrapper {
+    width: 100%;
     position: relative;
     background-image: url('/back-dotori.png'), url('/back-dotori.png');
     background-repeat: repeat-y, repeat-y;

@@ -11,10 +11,6 @@ interface ProductItemCardProps {
 }
 
 export default function ProductItemCard({ products, likedProducts }: ProductItemCardProps) {
-  likedProducts?.map((product, index) => {
-    console.log(index, product);
-  });
-
   return (
     <>
       {products &&
