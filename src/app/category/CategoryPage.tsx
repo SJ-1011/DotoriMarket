@@ -5,11 +5,12 @@ import { LikedProduct, Product } from '@/types/Product';
 import { getLikedProducts, getProducts, getProductsCategory } from '@/utils/getProducts';
 import ProductItemCard from '@/components/common/ProductItemCard';
 import Link from 'next/link';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import Loading from '@/app/loading';
 import Image from 'next/image';
 import FilterIcon from '@/components/icon/FilterIcon';
+import Pagination from '@/components/common/Pagination';
 
 interface CategoryPageProps {
   category: string;
@@ -40,6 +41,33 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
   const [sortOption, setSortOption] = useState('latest');
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLUListElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  const itemsPerPage = 24;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 640); // 모바일 기준 폭 설정
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const paginatedProducts = useMemo(() => {
+    if (products) {
+      const startIdx = (currentPage - 1) * itemsPerPage;
+      const endIdx = startIdx + itemsPerPage;
+      if (isMobile) {
+        return products.slice(0, endIdx);
+      } else {
+        return products.slice(startIdx, endIdx);
+      }
+    } else {
+      return [];
+    }
+  }, [products, currentPage, isMobile]);
 
   // 정렬 핸들러
   const handleChange = (input: React.ChangeEvent<HTMLSelectElement> | string) => {
@@ -100,6 +128,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
           const res = await getProducts();
           if (res.ok) {
             setProducts(res.item);
+            setTotalPage(Math.ceil(res.item.length / 24));
           }
         }
         // 카테고리 상품 조회
@@ -232,13 +261,29 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
         </div>
         {loading ? (
           <Loading />
-        ) : products?.length ? (
-          <ProductGrid>{likedProducts ? <ProductItemCard products={products} likedProducts={likedProducts}></ProductItemCard> : <ProductItemCard products={products}></ProductItemCard>}</ProductGrid>
+        ) : paginatedProducts?.length ? (
+          <ProductGrid>{likedProducts ? <ProductItemCard products={paginatedProducts} likedProducts={likedProducts}></ProductItemCard> : <ProductItemCard products={paginatedProducts}></ProductItemCard>}</ProductGrid>
         ) : (
           <div className="flex flex-col flex-nowrap justify-center items-center gap-4 w-full mx-auto">
             <Image src="/sad-dotori.png" alt="상품 없음" width={247} height={249}></Image>
             <p>해당하는 상품이 없습니다.</p>
           </div>
+        )}
+
+        <div className="hidden sm:block">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPage}
+            onPageChange={page => {
+              setCurrentPage(page);
+            }}
+          />
+        </div>
+
+        {products && currentPage * itemsPerPage < products.length && (
+          <button type="button" onClick={() => setCurrentPage(page => page + 1)} className="w-full border p-4 mb-40 cursor-pointer sm:hidden">
+            상품 더보기
+          </button>
         )}
       </section>
     </main>

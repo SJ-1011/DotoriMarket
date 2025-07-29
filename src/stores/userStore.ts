@@ -9,6 +9,9 @@ interface UserState {
   fetchUser: () => Promise<void>;
 }
 
+/**
+ * 회원 정보를 전역 상태로 관리합니다.
+ */
 export const useUserStore = create<UserState>((set, get) => ({
   id: 0,
   setId: (id: number) => set({ id }),

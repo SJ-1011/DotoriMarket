@@ -39,6 +39,9 @@ export interface Post {
     productId: string;
     productName: string;
     imagePath: string;
+    orderProductId: string;
+    orderProductName: string;
+    orderProductImage: string;
   };
   image: string;
 }

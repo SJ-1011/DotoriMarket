@@ -2,6 +2,7 @@
 
 import { createPaymentNotification } from '@/data/actions/addNotification';
 import { useLoginStore } from '@/stores/loginStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import { Product } from '@/types/Product';
 import { getProducts } from '@/utils/getProducts';
 import Image from 'next/image';
@@ -10,6 +11,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function PayTest() {
   const [products, setProducts] = useState<Product[] | null>(null);
   const user = useLoginStore(state => state.user);
+  const setUser = useNotificationStore(state => state.setUser);
+  const fetchNotification = useNotificationStore(state => state.fetchNotification);
+
+  useEffect(() => {
+    if (!user) return;
+
+    setUser(user);
+  }, [user]);
 
   // 상품 가져오기
   useEffect(() => {
@@ -38,8 +47,9 @@ export default function PayTest() {
 
     const res = await createPaymentNotification(item.name, image, user);
 
-    if (res.ok) console.log('알림 등록 성공!', res);
-    else console.log('실패 ㅠㅠ');
+    if (res.ok) {
+      await fetchNotification();
+    } else alert('실패 ㅠㅠ');
   };
   return (
     <>
