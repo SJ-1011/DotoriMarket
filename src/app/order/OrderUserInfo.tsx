@@ -51,7 +51,7 @@ export default function OrderUserInfo({ name, recipient, phone, address, details
         <div className="flex gap-2">
           {/* 배송지 추가 버튼 (목록일 때만 표시) */}
           {showAddressList && (
-            <button type="button" onClick={onAddAddress} className="text-xs sm:text-sm lg:text-base border px-2 py-1 border-primary rounded hover:bg-light">
+            <button type="button" onClick={onAddAddress} className="text-xs sm:text-sm lg:text-base border px-2 py-1 cursor-pointer border-primary rounded hover:bg-light">
               배송지 추가
             </button>
           )}
@@ -78,7 +78,7 @@ export default function OrderUserInfo({ name, recipient, phone, address, details
 
           {/* 메모 설정 UI */}
           <div className="mt-3 space-y-2 sm:space-y-3 lg:space-y-4">
-            <select value={memoOption} onChange={handleMemoChange} className="w-full border border-primary text-xs sm:text-sm lg:text-base rounded px-1 py-1 sm:px-2 sm:py-2">
+            <select value={memoOption} onChange={handleMemoChange} className="w-full border border-primary text-xs sm:text-sm lg:text-base rounded px-1 py-1 sm:px-2 sm:py-2 cursor-pointer">
               <option value="" disabled hidden>
                 -- 메시지 선택 (선택사항) --
               </option>
