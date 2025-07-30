@@ -11,6 +11,7 @@ import CommunityWriteButton from './CommunityWriteButton';
 import CommunityBoardClientWrapper from './CommunityBoardClientWrapper';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
+export const dynamic = 'force-dynamic';
 export default async function CommunityBoardPage() {
   const res = await getPosts('community');
   const posts: Post[] = res.ok === 1 ? res.item : [];
