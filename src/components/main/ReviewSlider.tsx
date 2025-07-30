@@ -1,28 +1,48 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import Image from 'next/image';
+import { useEffect, useState, useRef } from 'react';
+import { getAllReviews } from '@/utils/getReviews';
+import type { Review } from '@/types/Review';
+import BestReviewCard from './BestReviewCard';
 
-interface Product {
-  id: number;
-  image: string;
-  name: string;
-}
-
-const mockProducts: Product[] = Array.from({ length: 10 }, (_, i) => ({
-  id: i,
-  image: `/images/product${(i % 5) + 1}.png`,
-  name: `리뷰 ${i + 1}`,
-}));
-
-export default function ProductGrid() {
+export default function ReviewSlider() {
   const [showAll, setShowAll] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedReviews, setSelectedReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const isTouching = useRef(false);
   const isMouseDown = useRef(false);
   const lastX = useRef(0);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const allReviews = await getAllReviews();
+
+        // 이미지가 있고 평점이 4 이상인 리뷰만 필터링
+        const imageReviews = allReviews.filter(review => review.images && review.images.length > 0 && review.rating >= 4);
+
+        // 랜덤으로 섞고 12개 선택
+        const shuffled = imageReviews.sort(() => Math.random() - 0.5);
+        const selected = shuffled.slice(0, 12);
+
+        setSelectedReviews(selected);
+      } catch (err) {
+        console.error('리뷰 가져오기 실패:', err);
+        setError('리뷰를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
 
   // 터치 이벤트
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -73,17 +93,38 @@ export default function ProductGrid() {
 
   return (
     <section className="my-8 px-4">
-      {/* 제목 + 전체보기 버튼 */}
+      {/* 전체보기 토글 버튼 */}
       <div className="flex justify-end mb-4">
         <button onClick={() => setShowAll(!showAll)} className="text-sm text-gray-600" type="button">
           {showAll ? '간략 보기' : '전체 보기'}
         </button>
       </div>
 
-      {/* 간략 보기 모드 (가로 스크롤) */}
-      {!showAll && (
+      {/* 로딩 상태 */}
+      {loading && (
+        <div className="flex justify-center items-center py-8">
+          <div className="text-gray-500">리뷰를 불러오는 중...</div>
+        </div>
+      )}
+
+      {/* 에러 상태 */}
+      {error && (
+        <div className="flex justify-center items-center py-8">
+          <div className="text-red-500">{error}</div>
+        </div>
+      )}
+
+      {/* 리뷰가 없을 때 */}
+      {!loading && !error && selectedReviews.length === 0 && (
+        <div className="flex justify-center items-center py-8">
+          <div className="text-gray-500">베스트 포토리뷰가 없습니다.</div>
+        </div>
+      )}
+
+      {/* 간략 보기 (가로 슬라이더) */}
+      {!loading && !error && selectedReviews.length > 0 && !showAll && (
         <div className="relative">
-          {/* 좌우 화살표 버튼 */}
+          {/* 좌우 버튼 */}
           <button onClick={() => scrollByAmount(-200)} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10" aria-label="왼쪽으로 스크롤" type="button">
             ◀
           </button>
@@ -91,7 +132,7 @@ export default function ProductGrid() {
             ▶
           </button>
 
-          {/* 드래그 가능*/}
+          {/* 드래그 가능 영역 */}
           <div
             ref={scrollRef}
             className="flex gap-4 overflow-x-auto whitespace-nowrap select-none hide-scrollbar py-2"
@@ -108,22 +149,18 @@ export default function ProductGrid() {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
           >
-            {mockProducts.map(product => (
-              <div key={product.id} className="inline-block w-[160px] h-[160px] bg-gray-200 rounded-lg relative overflow-hidden flex-shrink-0">
-                <Image src={product.image} alt={product.name} fill className="object-cover" sizes="160px" />
-              </div>
+            {selectedReviews.map(review => (
+              <BestReviewCard key={String(review._id)} review={review} variant="slider" />
             ))}
           </div>
         </div>
       )}
 
-      {/* 전체 보기 모드 */}
-      {showAll && (
+      {/* 전체 보기 (그리드) */}
+      {!loading && !error && selectedReviews.length > 0 && showAll && (
         <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
-          {mockProducts.map(product => (
-            <div key={product.id} className="aspect-square bg-gray-200 rounded-lg relative overflow-hidden">
-              <Image src={product.image} alt={product.name} fill className="object-cover" sizes="160px" />
-            </div>
+          {selectedReviews.map(review => (
+            <BestReviewCard key={`${String(review._id)}-${showAll ? 'grid' : 'slider'}`} review={review} variant={showAll ? 'grid' : 'slider'} />
           ))}
         </div>
       )}

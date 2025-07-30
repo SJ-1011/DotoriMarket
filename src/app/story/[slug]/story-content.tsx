@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import StoryBlock from './content-block';
 import storyMap from '@/data/stories';
+import Breadcrumb from '@/components/common/Breadcrumb';
 
 type StorySlug = keyof typeof storyMap;
 
@@ -35,11 +35,7 @@ export default function StoryContent({ slug }: { slug: StorySlug }) {
   return (
     <>
       <div className="px-6 pt-8">
-        <nav className="breadcrumb mb-2 text-sm text-gray-600 max-w-[800px] mx-auto">
-          <Link href="/">홈</Link>
-          <span className="mx-2">{' > '}</span>
-          <span>도토리숲 이야기</span>
-        </nav>
+        <Breadcrumb items={[{ label: '홈', href: '/' }, { label: '도토리숲 이야기' }]} />
         <h2 className="max-w-[800px] mx-auto text-primary font-bold text-xl mb-8">에디터 비하인드 스토리</h2>
       </div>
 

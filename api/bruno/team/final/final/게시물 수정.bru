@@ -1,0 +1,26 @@
+meta {
+  name: 게시물 수정
+  type: http
+  seq: 19
+}
+
+patch {
+  url: {{url}}/posts/62
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+      "title": "제목 바꿔볼까요?",
+      "content": "내용도 바꿔볼까요?"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

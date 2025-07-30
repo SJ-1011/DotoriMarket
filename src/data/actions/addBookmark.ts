@@ -12,7 +12,7 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  * @description
  * 서버에 북마크를 추가합니다.
  */
-export async function addBookmark(targetId: number, type: 'product' | 'user' | 'post' = 'product', accessToken: string): ApiResPromise<{ _id: number }> {
+export async function addBookmark(targetId: number, type: 'product' | 'user' | 'post', accessToken: string): ApiResPromise<{ _id: number }> {
   try {
     const res = await fetch(`${API_URL}/bookmarks/${type}`, {
       method: 'POST',
@@ -28,12 +28,16 @@ export async function addBookmark(targetId: number, type: 'product' | 'user' | '
       }),
     });
 
-    if (!res.ok) {
-      throw new Error('북마크 추가 실패');
+    const data = await res.json();
+
+    if (!data.ok) {
+      throw new Error(data.message);
     }
 
-    return res.json();
+    return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    alert(error instanceof Error ? error.message : String(error));
+    throw error; // 여기서 반드시 다시 throw 해야 ApiResPromise 반환 보장됨
   }
 }

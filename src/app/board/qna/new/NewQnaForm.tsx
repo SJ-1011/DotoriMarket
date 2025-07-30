@@ -1,13 +1,14 @@
 'use client';
 
-import { createPost } from '@/actions/post';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useState, useEffect } from 'react';
 import ProductSearchModal from './ProductSearchModal';
 import type { Product } from '@/types/Product';
 import Image from 'next/image';
 import { useLoginStore } from '@/stores/loginStore';
+import { createPost } from '@/data/actions/post';
+import { useSearchParams } from 'next/navigation';
+import OrderModal from './OrderModal';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 //문의 종류 배열
 const QNA_TYPES = [
@@ -26,6 +27,41 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+  const searchParams = useSearchParams();
+  const productIdFromQuery = searchParams.get('productId');
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedOrderProduct, setSelectedOrderProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    if (productIdFromQuery) {
+      async function fetchProduct() {
+        try {
+          const res = await fetch(`${API_URL}/products/${productIdFromQuery}`, {
+            headers: {
+              'client-id': process.env.NEXT_PUBLIC_CLIENT_ID || '',
+            },
+          });
+          console.log('API 호출 응답 상태:', res.status);
+          if (res.ok) {
+            const data = await res.json();
+            setSelectedProduct(data.item);
+          } else {
+            const errorText = await res.text();
+            console.error('API 호출 실패:', res.status, errorText);
+          }
+        } catch (error) {
+          console.error('상품 정보 불러오기 실패', error);
+        }
+      }
+      fetchProduct();
+    }
+  }, [productIdFromQuery]);
+  // 문의 유형 바뀔때 초기화하는 use effect
+  useEffect(() => {
+    setSelectedProduct(null);
+    setSelectedOrderProduct(null);
+  }, [selectedType]);
+
   // 버튼 1줄, 2줄로 나누기
   const firstRow = QNA_TYPES.slice(0, 3);
   const secondRow = QNA_TYPES.slice(3);
@@ -33,47 +69,43 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
   // 선택에 따라 아래쪽 버튼 텍스트 활성화를 위한 로직. 경우의 수 수정되면 이 부분 바꿔주면 됨
   let selectLabel = '';
   if (selectedType === 'product') selectLabel = '상품 선택';
-  else if (selectedType === 'delivery' || selectedType === 'order') selectLabel = '주문 선택';
+  else if (selectedType === 'delivery' || selectedType === 'order' || selectedType === 'return' || selectedType === 'refund') selectLabel = '주문 선택';
 
   ////검색 후 선택 버튼 누를때 실행될 메서드 props로 전달해줘야함
   const handleProductSelect = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(false);
   };
+  // 주문 선택할때 실행될 메서드 props로 전달
+  const handleOrderSelect = (product: Product) => {
+    setSelectedOrderProduct(product);
+    setIsOrderModalOpen(false);
+  };
 
-  //문의가 상품일 경우 모달 여는 메서드
+  //문의가 상품, 주문일 경우 열 모달 호출 메서드
   const handleProductButtonClick = () => {
     if (selectedType === 'product') {
       setIsModalOpen(true);
+    } else if (selectedType === 'delivery' || selectedType === 'order' || selectedType === 'return' || selectedType === 'refund') {
+      setIsOrderModalOpen(true);
     }
   };
 
-  //테스트용
-  // console.log(isLoading, state);
-  // console.log(`board/${boardType}`);
-  //회원쪽 끝나면 작업해봅시다.
-  const router = useRouter();
   const user = useLoginStore(state => state.user);
-  const isLogin = useLoginStore(state => state.isLogin);
-  useEffect(() => {
-    if (!isLogin || !user) {
-      router.replace(`/login`); // 또는 원하는 위치
-    }
-  }, [isLogin, user, router]);
-
-  // 로그인 안된 경우 fallback UI만 보여주고 훅은 모두 실행시킴
-  if (!isLogin || !user) {
-    return <div>로그인 상태가 아닙니다. 로그인 페이지로 이동 중입니다...</div>;
-  }
 
   return (
     <>
       <form action={formAction}>
+        {isLoading && (
+          <div className="absolute inset-0 z-10  bg-grey bg-opacity-30 flex flex-col items-center justify-end">
+            {/* 로딩 원(스피너) */}
+            <div className="w-12 h-12 border-4 border-[#A97452] border-t-transparent rounded-full animate-spin mb-2"></div>
+            <span className="text-white font-semibold text-sm">처리 중...</span>
+          </div>
+        )}
         {/* 로그인 된 사용자일 경우 서버 액션에 accessToken 전달 */}
         <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
         <input type="hidden" name="type" value={boardType} />
-        <input type="hidden" name="author.id" value={user?._id ?? ''} />
-        <input type="hidden" name="author.name" value={user?.name ?? ''} />
         <div className="flex flex-col items-center mb-6">
           <div className="flex gap-2 mb-2">
             {firstRow.map(item => (
@@ -104,12 +136,20 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
             ))}
           </div>
         </div>
-
         {/* 실제 서버로 값 전달 */}
         <input type="hidden" name="extra.qnatype" value={selectedType} />
-        {/* 선택된 상품 정보 전달 */}
+        {/* 상품 문의일 경우 선택된 상품 정보 전달 */}
         {selectedProduct && <input type="hidden" name="extra.productId" value={selectedProduct._id} />}
-
+        {selectedProduct && <input type="hidden" name="extra.productName" value={selectedProduct.name} />}
+        {selectedProduct && <input type="hidden" name="extra.imagePath" value={selectedProduct.mainImages[0].path} />}
+        {/* 주문 문의일 경우 선택된 주문 정보 전달 */}
+        {selectedOrderProduct && (
+          <>
+            <input type="hidden" name="extra.orderProductId" value={selectedOrderProduct._id} />
+            <input type="hidden" name="extra.orderProductName" value={selectedOrderProduct.name} />
+            <input type="hidden" name="extra.orderProductImage" value={selectedOrderProduct.image?.path} />
+          </>
+        )}
         {/* 선택된 유형에 따라 선택 버튼 노출 */}
         {selectLabel && (
           <div className="mb-6 flex justify-center">
@@ -119,7 +159,6 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
             </button>
           </div>
         )}
-
         {/* 선택된 상품 정보 표시 */}
         {selectedProduct && selectedType === 'product' && (
           <div className="mb-6 flex justify-center">
@@ -144,7 +183,28 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
             </div>
           </div>
         )}
-
+        {selectedOrderProduct && selectedType !== 'product' && (
+          <div className="mb-6 flex justify-center">
+            <div className="w-full max-w-xl p-4 border-2 border-[#A97452] rounded-2xl bg-[#F5EEE6]">
+              <div className="flex items-center gap-4">
+                {selectedOrderProduct.image?.path ? (
+                  <Image src={`${API_URL}/${selectedOrderProduct.image.path}`} alt={selectedOrderProduct.name} width={100} height={100} unoptimized className="w-20 h-20 object-cover rounded border" />
+                ) : (
+                  <div className="w-20 h-20 bg-gray-200 rounded border flex items-center justify-center">
+                    <span className="text-gray-400 text-xs">이미지 없음</span>
+                  </div>
+                )}
+                <div className="flex-1">
+                  <div className="font-semibold text-sm sm:text-base mb-1">{selectedOrderProduct.name}</div>
+                  <div className="text-xs text-gray-500">수량: {selectedOrderProduct.quantity}개</div>
+                </div>
+                <button type="button" onClick={() => setSelectedOrderProduct(null)} className="text-red-500 hover:text-red-700 font-bold text-lg">
+                  ×
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="my-4">
           <label className="block mb-2 font-bold text-xs sm:text-sm lg:text-base-xl content-center " htmlFor="title">
             제목
@@ -152,15 +212,13 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
           <input id="title" type="text" placeholder="제목을 입력하세요." className="w-full py-2 px-2 border rounded-md text-xs sm:text-sm lg:text-base-xl dark:bg-gray-700 border-gray-300 focus:outline-none focus:border-[#A97452] focus:border-1  focus:ring-2 focus:ring-[#A97452]" name="title" />
           <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">{state?.ok === 0 && state.errors?.title?.msg}</p>
         </div>
-
         <div className="my-4">
-          <label className="block text-lg content-center" htmlFor="content">
+          <label className="block mb-2 font-bold text-xs sm:text-sm lg:text-base-xl content-center " htmlFor="content">
             내용
           </label>
           <textarea id="content" rows={15} placeholder="내용을 입력하세요." className="w-full p-4 text-sm border rounded-lg border-gray-300 focus:outline-none focus:border-[#A97452] focus:border-1 focus:ring-2 focus:ring-[#A97452]  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" name="content"></textarea>
           <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">{state?.ok === 0 && state.errors?.content?.msg}</p>
         </div>
-
         <div className="flex justify-end my-6 gap-2">
           <button type="submit" className="px-4 py-2 w-20 sm:w-24 lg:w-28 rounded-xl bg-[#A97452] text-white text-xs sm:text-sm lg:text-base hover:bg-[#966343] transition-colors" disabled={isLoading}>
             등록
@@ -175,6 +233,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
 
       {/* 상품 검색 모달 */}
       <ProductSearchModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSelectProduct={handleProductSelect} />
+      <OrderModal isOpen={isOrderModalOpen} onClose={() => setIsOrderModalOpen(false)} onSelectOrderProduct={handleOrderSelect} />
     </>
   );
 }

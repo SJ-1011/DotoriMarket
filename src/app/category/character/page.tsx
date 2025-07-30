@@ -1,5 +1,4 @@
 // 캐릭터 페이지
-'use client';
 
 import { CHARACTER_CATEGORIES } from '@/constants/categories';
 import CategoryPage from '../CategoryPage';

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import SignupForm from './SignupForm';
+import Image from 'next/image';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -21,11 +22,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function SignupPage() {
   return (
     <>
-      <main className="min-h-screen flex-grow flex items-center justify-center bg-background px-4 py-16">
-        <div className="p-12 rounded-lg w-full max-w-[600px] bg-white">
-          <h2 className="text-xl sm:text-2xl  font-bold mb-10 mt-8 ">회원가입</h2>
+      <main className="bg-background py-10">
+        <section className="relative sm:bg-white sm:rounded-2xl lg:rounded-3xl text-xs sm:text-sm lg:text-base w-full sm:w-[30rem] lg:w-[40rem] h-full mx-auto px-10 sm:p-10 sm:pb-80 lg:pb-96">
+          <Image src="/login-logo.webp" alt="도토리섬 로그인" width={100} height={100} />
+          <h2 className="text-xl lg:text-2xl font-bold my-4">회원가입</h2>
           <SignupForm />
-        </div>
+        </section>
       </main>
     </>
   );

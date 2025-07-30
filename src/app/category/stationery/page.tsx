@@ -1,6 +1,4 @@
 // 문구 페이지
-'use client';
-
 import { STATIONERY_CATEGORIES } from '@/constants/categories';
 import CategoryPage from '../CategoryPage';
 

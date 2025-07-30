@@ -1,0 +1,15 @@
+meta {
+  name: 파일 업로드 조회
+  type: http
+  seq: 16
+}
+
+get {
+  url: {{url}}/files
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

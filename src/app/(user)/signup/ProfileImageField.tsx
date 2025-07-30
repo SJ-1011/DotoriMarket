@@ -23,10 +23,8 @@ export default function ProfileImageField() {
   };
 
   return (
-    <div className="mb-8">
-      <label htmlFor="attach" className="block font-semibold mb-2">
-        프로필 이미지
-      </label>
+    <div className="flex flex-col flex-nowrap gap-2">
+      <label htmlFor="attach">프로필 이미지</label>
       <div className="flex items-start gap-4 mt-3">
         <input
           type="file"
@@ -39,11 +37,11 @@ export default function ProfileImageField() {
           }}
           className="hidden"
         />
-        <label htmlFor="attach" className="inline-block cursor-pointer bg-primary-light text-sm text-white px-4 py-2 mr-8 rounded">
+        <label htmlFor="attach" className="bg-primary text-sm text-white px-4 py-3 rounded-xl cursor-pointer">
           파일 선택
         </label>
         {previewSrc && (
-          <div className="w-[200px] h-[200px] relative rounded border border-primary-light overflow-hidden">
+          <div className="w-[12.5rem] h-[12.5rem] relative rounded border border-primary-light overflow-hidden">
             <Image src={previewSrc} alt="프로필 이미지 미리보기" fill style={{ objectFit: 'cover' }} />
           </div>
         )}

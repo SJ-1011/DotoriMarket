@@ -10,15 +10,13 @@ export default function PasswordConfirmField() {
   } = useFormContext<SignupFormValues>();
 
   return (
-    <div className="mb-8">
-      <label htmlFor="passwordConfirm" className="block font-semibold mb-2">
-        비밀번호 확인
-      </label>
+    <div className="flex flex-col flex-nowrap gap-2">
+      <label htmlFor="passwordConfirm">비밀번호 확인</label>
       <input
         id="passwordConfirm"
         type="password"
         placeholder="비밀번호를 다시 입력하세요"
-        className={`w-full px-3 py-2 placeholder:text-sm border rounded focus:outline-none ${errors.passwordConfirm ? 'border-red-500' : 'border-primary-light focus:border-primary-dark'}`}
+        className={`flex-grow p-4 border rounded-xl bg-white ${errors.passwordConfirm ? 'border-red-500' : 'border-primary '}`}
         {...register('passwordConfirm', {
           required: '비밀번호 확인을 입력해주세요.',
           validate: value => value === watch('password') || '비밀번호가 일치하지 않습니다.',

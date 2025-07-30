@@ -11,12 +11,12 @@ interface MobileProps {
 export default function MobileNoticeDetail({ post, posts, id }: MobileProps) {
   const asidePosts: (Post | null)[] = [null, null];
 
+  // 하단에 있는 다음글/이전글
   for (let i = 0; i < posts.length; i++) {
     if (posts[i]._id == id) {
       if (i != 0) {
         asidePosts[0] = posts[i - 1];
       }
-
       if (i != posts.length - 1) {
         asidePosts[1] = posts[i + 1];
       }
@@ -56,6 +56,11 @@ export default function MobileNoticeDetail({ post, posts, id }: MobileProps) {
             <TriangleIcon svgProps={{ className: 'scale-y-[-1] w-3 h-3' }} polygonProps={{ fill: '#757575' }} />
             {!asidePosts[1] && <span>이전 글이 없습니다.</span>}
             {asidePosts[1] && <Link href={`/board/notice/${asidePosts[1]._id}`}>{asidePosts[1].title}</Link>}
+          </li>
+          <li className="self-end mr-4 mt-8">
+            <Link href="/board/notice" className="w-fit py-2 px-8 bg-primary-dark text-white">
+              목록
+            </Link>
           </li>
         </ul>
       </aside>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Product {
   id: number;
@@ -122,9 +123,9 @@ export default function ProductGrid() {
       {isMobile && !showAll && (
         <div ref={scrollRef} className="flex gap-4 overflow-x-hidden whitespace-nowrap select-none" style={{ cursor: isDragging ? 'grabbing' : 'grab' }} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
           {mockProducts.map(product => (
-            <div key={product.id} className="inline-flex flex-col items-center w-[160px] flex-shrink-0">
-              <div className="relative w-[160px] h-[160px] rounded-md overflow-hidden">
-                <Image src={product.image} alt={`${product.name} 캐릭터 이미지`} fill className="object-cover" sizes="160px" />
+            <div key={product.id} className="inline-flex flex-col items-center w-[120px] sm:w-[160px]  flex-shrink-0">
+              <div className="relative  w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-md overflow-hidden">
+                <Image src={product.image} alt={`${product.name} 캐릭터 이미지`} fill className="object-cover" sizes="120px" />
               </div>
               <p className="mt-2 text-center text-sm font-medium">{product.name}</p>
             </div>
@@ -135,13 +136,13 @@ export default function ProductGrid() {
       {/* 4열 그리드 - 640px 이상이거나, showAll이 true일 때 항상 노출 */}
       {(showAll || !isMobile) && (
         <div className="grid grid-cols-4 gap-4">
-          {mockProducts.map(product => (
-            <div key={product.id} className="flex flex-col items-center w-full select-none">
+          {mockProducts.map((product, index) => (
+            <Link href={`/category/character/0${index + 1}`} key={product.id} className="flex flex-col items-center w-full select-none">
               <div className="relative w-full pb-[100%] overflow-hidden rounded-md">
                 <Image src={product.image} alt={`${product.name} 캐릭터 이미지`} fill className="object-cover" sizes="25vw" />
               </div>
               <p className={`mt-2 text-center text-sm ${showAll ? '' : 'font-bold'}`}>{product.name}</p>
-            </div>
+            </Link>
           ))}
         </div>
       )}

@@ -103,3 +103,30 @@ export async function getUserPosts(token: string): ApiResPromise<Post[]> {
     };
   }
 }
+
+export async function getLikedPosts(accessToken: string): ApiResPromise<Post[]> {
+  if (!accessToken) {
+    console.error('로그인 후 다시 시도해주세요.');
+    return {
+      ok: 0,
+      message: '로그인 정보가 없습니다. 다시 로그인해주세요.',
+    };
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/bookmarks/post`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: 'no-store', // 최신 데이터 가져오기
+    });
+    return res.json();
+  } catch (error) {
+    console.error('북마크 API 호출 중 오류:', error);
+    return {
+      ok: 0,
+      message: '좋아요한 상품 목록을 불러오지 못했습니다.',
+    };
+  }
+}

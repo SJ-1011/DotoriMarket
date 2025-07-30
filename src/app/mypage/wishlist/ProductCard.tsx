@@ -51,13 +51,13 @@ export default function ProductCard({ product, bookmarkId: initialBookmarkId }: 
     <li className="overflow-hidden cursor-pointer rounded shadow hover:shadow-lg relative" onClick={() => router.push(`/products/${product._id}`)}>
       <div>
         <div className="relative w-full aspect-square">
-          <Image src={thumbnail} alt={product.name} fill className="object-cover" />
+          <Image src={thumbnail} alt={product.name} fill className="object-cover" unoptimized />
           <button type="button" className="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow hover:scale-110 active:scale-95 transition-transform" onClick={handleLikeToggle}>
             {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 sm:w-3 sm:h-3 text-red' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 sm:w-3 sm:h-3 text-gray' }} />}
           </button>
         </div>
-        <div className="p-2">
-          <p className="text-xs sm:text-sm lg:text-base text-dark-gray truncate">{product.name}</p>
+        <div className="p-2 bg-white">
+          <p className="text-xs lg:text-sm text-dark-gray truncate">{product.name}</p>
           <p className="font-bold text-xs sm:text-sm lg:text-base">{product.price.toLocaleString()}원</p>
         </div>
       </div>
