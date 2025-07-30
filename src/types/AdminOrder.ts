@@ -67,3 +67,23 @@ export interface AdminOrderResponse {
     totalPages: number;
   };
 }
+
+// 상세 응답 타입
+export interface AdminOrderDetailResponse {
+  ok: number;
+  item: AdminOrderDetail | null;
+}
+
+// 주문 상태 변경 이력
+export interface AdminOrderHistory {
+  actor: number;
+  updated: {
+    state: OrderStateCode;
+  };
+  createdAt: string;
+}
+
+// 상세 관리자 주문 타입
+export interface AdminOrderDetail extends AdminOrder {
+  history: AdminOrderHistory[];
+}
