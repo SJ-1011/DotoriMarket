@@ -11,6 +11,7 @@ import { useLoginStore } from '@/stores/loginStore';
 import { useRouter } from 'next/navigation';
 import NotificationIcon from './NotificationIcon';
 import SearchIconHeader from '../icon/SearchIconHeader';
+import CloseIcon from '../icon/CloseIcon';
 
 export default function DesktopHeader() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function DesktopHeader() {
   const popoverRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null); //헤더 전체 영역 참조하는 ref
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null); //드롭다운 타임아웃 처리를 위한ㄴ ref
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // 검색 query를 url로 제출
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
@@ -29,6 +31,7 @@ export default function DesktopHeader() {
     if (!query.trim()) return;
     router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     setQuery('');
+    setIsSearchOpen(!isSearchOpen);
   };
 
   // 클릭 외부 감지로 닫기
@@ -130,31 +133,51 @@ export default function DesktopHeader() {
     <>
       <nav aria-label="유저 상단 메뉴" className="bg-primary-dark p-3 sticky top-0 z-50">
         <div className="flex flex-row flex-nowrap max-w-[600px] lg:max-w-[1000px] mx-auto justify-between items-center">
-          <form onSubmit={handleSearch} className="flex flex-row flex-nowrap justify-between items-center border-b border-white w-sm lg:w-md text-sm px-4 py-2 lg:text-base">
-            <input type="search" aria-label="상품 검색창" placeholder="상품을 검색해보세요!" className="w-[90%] text-white placeholder:text-white" value={query} onChange={event => setQuery(event.target.value)} />
-            <button type="submit" className="cursor-pointer" aria-label="상품 검색 버튼">
-              <SearchIconHeader svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
-            </button>
-          </form>
+          <Link href={'/'} className="flex flex-row flex-nowrap items-center gap-2">
+            <Image src={'/favicon.png'} alt="도토리섬" width={45} height={45} />
+            <span className="font-logo text-2xl text-white">도토리섬</span>
+          </Link>
           <ul className="flex flex-row flex-nowrap gap-4 justify-end">
-            <li>
-              <Link href="/cart" aria-label="장바구니">
-                <CartIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ stroke: 'white' }} />
-              </Link>
-            </li>
-            <li>
-              {isLogin && (
-                <Link href="/mypage" aria-label="마이페이지">
-                  <MypageIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
-                </Link>
-              )}
-              {!isLogin && (
-                <Link href="/login" aria-label="로그인하기">
-                  <MypageIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
-                </Link>
-              )}
-            </li>
-            <NotificationIcon />
+            {!isSearchOpen && (
+              <>
+                <li>
+                  <Link href="/cart" aria-label="장바구니">
+                    <CartIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ stroke: 'white' }} />
+                  </Link>
+                </li>
+                <li>
+                  {isLogin && (
+                    <Link href="/mypage" aria-label="마이페이지">
+                      <MypageIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
+                    </Link>
+                  )}
+                  {!isLogin && (
+                    <Link href="/login" aria-label="로그인하기">
+                      <MypageIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
+                    </Link>
+                  )}
+                </li>
+                <NotificationIcon />
+                <li>
+                  <button type="button" className="cursor-pointer" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+                    <SearchIconHeader svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
+                  </button>
+                </li>
+              </>
+            )}
+            {isSearchOpen && (
+              <li className="flex flex-row flex-nowrap gap-4 slide-in">
+                <form onSubmit={handleSearch} className="flex flex-row flex-nowrap justify-between items-center border-b border-white w-sm lg:w-md text-sm px-4 py-2 lg:text-base">
+                  <input type="search" aria-label="상품 검색창" placeholder="상품을 검색해보세요!" className="w-[90%] text-white placeholder:text-white" value={query} onChange={event => setQuery(event.target.value)} />
+                  <button type="submit" className="cursor-pointer" aria-label="상품 검색 버튼">
+                    <SearchIconHeader svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
+                  </button>
+                </form>
+                <button type="button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+                  <CloseIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       </nav>
