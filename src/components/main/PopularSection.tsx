@@ -1,56 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ProductItemCard from '@/components/common/ProductItemCard';
 import ProductCardSkeleton from '@/components/common/ProductCardSkeleton';
 import { Product } from '@/types/Product';
-import { getProductsCategory, getLikedProducts } from '@/utils/getProducts';
+import { getLikedProducts, getProducts } from '@/utils/getProducts';
 import { useLoginStore } from '@/stores/loginStore';
-
-const ROW_COUNT = 2;
 
 interface LikedProduct extends Product {
   bookmarkId: number;
 }
 
-export default function NewProductsSection() {
+export default function PopularSection() {
   const user = useLoginStore(state => state.user);
   const accessToken = user?.token?.accessToken;
 
   const [products, setProducts] = useState<Product[]>([]);
   const [likedProducts, setLikedProducts] = useState<LikedProduct[]>([]);
-  const [visibleCount, setVisibleCount] = useState(0);
-  const [columns, setColumns] = useState(4);
   const [loading, setLoading] = useState(true);
-  const [colstyle, setColstyle] = useState('grid-cols-6');
 
-  useEffect(() => {
-    const updateColumns = () => {
-      let newColumns = 4;
-      if (window.innerWidth < 640) newColumns = 3;
-      // else if (window.innerWidth < 1024) newColumns = 4;
-      else newColumns = 4;
+  const scrollRef = useRef<HTMLUListElement>(null);
 
-      setColumns(newColumns);
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (!scrollRef.current) return;
 
-      // columns에 의존하지 말고 여기서 바로 스타일까지 설정
-      setColstyle(`grid-cols-${newColumns}`);
-    };
+    const isMobile = window.innerWidth <= 640; // Tailwind 기준 sm 이하
+    const scrollAmount = direction === 'left' ? (isMobile ? -250 : -400) : isMobile ? 250 : 400;
 
-    updateColumns();
-
-    window.addEventListener('resize', updateColumns);
-    return () => window.removeEventListener('resize', updateColumns);
-  }, []);
+    scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
 
       try {
-        const resProducts = await getProductsCategory('new');
+        const resProducts = await getProducts();
         if (resProducts.ok === 1 && Array.isArray(resProducts.item)) {
-          setProducts(resProducts.item);
+          resProducts.item.sort((a, b) => b.buyQuantity - a.buyQuantity);
+          setProducts(resProducts.item.slice(0, 10));
         } else {
           console.error('상품 데이터 이상:', resProducts);
         }
@@ -104,21 +92,11 @@ export default function NewProductsSection() {
     return () => window.removeEventListener('bookmarkChanged', handleBookmarkChange);
   }, [accessToken]);
 
-  useEffect(() => {
-    setVisibleCount(columns * ROW_COUNT);
-  }, [columns]);
-
-  const handleLoadMore = () => {
-    setVisibleCount(prev => prev + columns * ROW_COUNT);
-  };
-
-  const isAllLoaded = visibleCount >= products.length;
-
   if (loading) {
     return (
-      <section className="my-8 flex flex-col items-center bg-background p-4 sm:p-12 text-xs sm:text-sm lg:text-base">
-        <div className={`grid grid-cols-${columns} gap-4 w-[1000px]`}>
-          {Array.from({ length: columns * ROW_COUNT }).map((_, i) => (
+      <section className="my-8">
+        <div className={`flex flex-row flex-nowrap`}>
+          {Array.from({ length: 6 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
         </div>
@@ -127,18 +105,22 @@ export default function NewProductsSection() {
   }
 
   return (
-    <section className="my-8 flex flex-col items-center bg-background p-4 sm:p-12 text-xs sm:text-sm lg:text-base">
-      <div className={`grid ${colstyle} gap-4 w-full sm:w-[600px] lg:w-[1000px]`}>
-        <ProductItemCard products={products.slice(0, visibleCount)} likedProducts={likedProducts} />
-      </div>
+    <section className="relative my-8 py-4 sm:px-12 text-xs sm:text-sm lg:text-base">
+      {/* 좌우 스크롤 버튼 */}
+      <button className="absolute left-2 sm:left-10 top-1/2 -translate-y-1/2 z-10" onClick={() => handleScroll('left')}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="size-12 sm:size-16 lg:size-24 drop-shadow-[0px_0px_4px_rgba(0,0,0,0.5)]">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+      </button>
+      <button className="absolute right-2 sm:right-10 top-1/2 -translate-y-1/2 z-10 transform -scale-x-100" onClick={() => handleScroll('right')}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="size-12 sm:size-16 lg:size-24 drop-shadow-[0px_0px_4px_rgba(0,0,0,0.5)]">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+      </button>
 
-      {!isAllLoaded && (
-        <div className="mt-4 flex justify-center">
-          <button onClick={handleLoadMore} className="px-10 py-3 mb-8 mt-4 text-sm font-medium border cursor-pointer border-gray-300 rounded-sm">
-            상품 더보기
-          </button>
-        </div>
-      )}
+      <ul ref={scrollRef} className={`flex flex-row flex-nowrap p-12 gap-4 overflow-hidden overflow-x-scroll scrollbar-hide`}>
+        <ProductItemCard products={products} likedProducts={likedProducts} type={'large'} />
+      </ul>
     </section>
   );
 }
