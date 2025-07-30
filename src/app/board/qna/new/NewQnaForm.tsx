@@ -126,7 +126,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
               <button
                 key={item.value}
                 type="button"
-                className={`px-4 py-2 rounded-full font-semibold border-2 text-xs sm:text-sm lg:text-base transition-colors
+                className={`px-2 py-2 rounded-full font-semibold border-2 text-xs sm:text-sm lg:text-base transition-colors
                   ${selectedType === item.value ? 'bg-[#A97452] text-white border-[#A97452]' : 'bg-white text-[#A97452] border-[#A97452] hover:bg-[#F5EEE6]'}
                 `}
                 onClick={() => setSelectedType(item.value)}
