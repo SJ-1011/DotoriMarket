@@ -106,7 +106,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur" onClick={onClose}>
       <div className="flex flex-col sm:flex-row bg-transparent rounded-lg overflow-hidden shadow-2xl max-w-[90vw] max-h-[90vh]" onClick={e => e.stopPropagation()}>
         {/* 이미지 영역 */}
-        <div className="bg-black flex items-center justify-center  w-full h-[280px] sm:w-[600px] sm:h-[600px] max-w-[100vw] sm:max-w-[80vw] max-h-[40vh] sm:max-h-[80vh] relative">
+        <div className="bg-black flex items-center justify-center  w-full h-[320px] sm:w-[600px] sm:h-[600px] max-w-[100vw] sm:max-w-[80vw] max-h-[40vh] sm:max-h-[80vh] relative">
           {/* 현재 이미지 */}
           <div className="w-full h-full relative">
             <Image src={images[currentImageIndex]} alt={`${imageAlt} ${currentImageIndex + 1}`} fill className="object-cover" unoptimized priority />
@@ -114,7 +114,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
           {/* 이전 버튼 */}
           {currentImageIndex > 0 && (
             <button onClick={goToPrevious} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 transition-all z-10" aria-label="이전 이미지">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
@@ -122,7 +122,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
           {/* 다음 버튼 */}
           {currentImageIndex < images.length - 1 && (
             <button onClick={goToNext} className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 transition-all z-10" aria-label="다음 이미지">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -143,7 +143,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
           )}
         </div>
         {/* 댓글 영역 */}
-        <div className="bg-white w-full sm:w-[360px] h-[320px] sm:h-[600px] max-w-[100vw] sm:max-w-[90vw] max-h-[40vh] sm:max-h-[80vh] flex flex-col p-0">
+        <div className="bg-white w-full sm:w-[360px] h-[400px] sm:h-[600px] max-w-[100vw] sm:max-w-[90vw] max-h-[50vh] sm:max-h-[80vh] flex flex-col p-0">
           <div className="font-bold text-xl text-gray-800 border-b border-gray-300 pb-2 px-4 pt-4 sm:px-6 sm:pt-6">댓글</div>
           {/* 댓글 리스트 */}
           <div className="flex-grow overflow-y-auto px-4 py-2 sm:px-6 sm:py-4 scrollbar-thin">
@@ -217,7 +217,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
       </button>
 
       {/* 안내 텍스트 */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm opacity-70">{images.length > 1 ? '← → 키나 스와이프로 이미지 전환 • ESC나 클릭으로 닫기' : '클릭하거나 ESC를 눌러 닫기'}</div>
+      {/* <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm opacity-70">{images.length > 1 ? '← → 키나 스와이프로 이미지 전환 • ESC나 클릭으로 닫기' : '클릭하거나 ESC를 눌러 닫기'}</div> */}
     </div>
   );
 }
