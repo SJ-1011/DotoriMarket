@@ -15,6 +15,7 @@ interface LikedProduct extends Product {
 
 export default function NewProductsSection() {
   const user = useLoginStore(state => state.user);
+  const isAdmin = user?.type === 'admin';
   const accessToken = user?.token?.accessToken;
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -120,7 +121,7 @@ export default function NewProductsSection() {
   return (
     <section className="my-8">
       <div className={`grid grid-cols-${columns} gap-4`}>
-        <ProductItemCard products={products.slice(0, visibleCount)} likedProducts={likedProducts} />
+        <ProductItemCard products={products.slice(0, visibleCount)} likedProducts={likedProducts} isAdmin={isAdmin} showCheckbox={false} />
       </div>
 
       {!isAllLoaded && (
