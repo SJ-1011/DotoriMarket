@@ -24,7 +24,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
   const menu = {
     payment: '결제 알림',
     qna: '문의글 알림',
-    community: '커뮤니티 알림',
+    reply: '댓글 알림',
   } as const;
 
   // 모두 읽음 버튼
@@ -60,16 +60,55 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
     }
 
     setUser(user);
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    let isFetching = false;
 
     const fetchData = async () => {
+      if (isFetching) return;
+      isFetching = true;
       try {
         await fetchNotification();
+        console.log('알림 불러오기');
       } catch (err) {
         alert(err);
       }
     };
 
-    fetchData();
+    // polling 시작
+    const startPolling = () => {
+      if (intervalId) clearInterval(intervalId);
+
+      fetchData(); // 포커스 복귀 시 즉시 한 번 호출
+      intervalId = setInterval(fetchNotification, 10000);
+    };
+
+    // polling 중단
+    const stopPolling = () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    };
+
+    // 최초 시작
+    startPolling();
+
+    // visibility change 처리
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopPolling();
+      } else {
+        startPolling();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // cleanup
+    return () => {
+      stopPolling();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [user]);
 
   // 모바일 버전
@@ -130,6 +169,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
       </>
     );
   }
+
   // 데스크탑 버전
   return (
     <li className="relative">
@@ -170,15 +210,35 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                       return (
                         <li key={index} className="flex flex-row flex-nowrap items-center gap-3 p-4 bg-white rounded-2xl w-full">
                           <div className="min-w-18 min-h-18">
-                            <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product} 상품 이미지`} width={72} height={72} className="rounded-full" />
+                            {item.type === 'payment' && <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product} 상품 이미지`} width={72} height={72} className="rounded-full" />}
+                            {item.type === 'reply' && (
+                              <div className="flex flex-row flex-nowrap justify-center items-center w-[72px] h-[72px] border border-primary rounded-full">
+                                <div className="text-xs text-primary">새 댓글</div>
+                              </div>
+                            )}
                           </div>
                           <div className="w-full">
                             <p className="font-bold">{menu[item.type]}</p>
-                            <span className="flex flex-row flex-nowrap items-center text-sm">
-                              [<span className="text-primary-dark max-w-[14rem] truncate">{item.extra.product}</span>]
-                            </span>
-                            <span className="block text-sm">{item.content}</span>
-                            <span className="block text-sm">{item.createdAt}</span>
+                            {/* 결제 알림 */}
+                            {item.type === 'payment' && (
+                              <>
+                                <span className="flex flex-row flex-nowrap items-center text-sm">
+                                  [<span className="text-primary-dark max-w-[14rem] truncate">{item.extra.product}</span>]
+                                </span>
+                                <span className="block text-sm">{item.content}</span>
+                                <span className="block text-sm">{item.createdAt}</span>
+                              </>
+                            )}
+                            {/* 댓글 알림 */}
+                            {item.type === 'reply' && (
+                              <>
+                                <span className="flex flex-row flex-nowrap items-center text-sm">
+                                  [<span className="text-primary-dark max-w-[14rem] truncate">{item.extra.post?.title}</span>]
+                                </span>
+                                <span className="block text-sm">{item.content}</span>
+                                <span className="block text-sm">{item.createdAt}</span>
+                              </>
+                            )}
                           </div>
                         </li>
                       );
