@@ -1,5 +1,6 @@
 'use client';
 import TriangleIcon from '@/components/icon/TriangleIcon';
+import { deletePost } from '@/data/actions/post';
 import { useLoginStore } from '@/stores/loginStore';
 import { Post, PostReply } from '@/types/Post';
 import Image from 'next/image';
@@ -41,7 +42,22 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
     { type: '재입고 문의', value: 'restock' },
     { type: '기타 문의', value: 'etc' },
   ];
+  const handleDelete = async () => {
+    if (window.confirm('정말 삭제하시겠습니까?')) {
+      const formData = new FormData();
+      formData.append('_id', String(post._id));
+      formData.append('accessToken', user?.token.accessToken ?? '');
 
+      const result = await deletePost(null, formData);
+
+      if (result?.ok) {
+        alert('삭제가 완료되었습니다.');
+        // deletePost 내부에서 페이지 이동 처리됨
+      } else {
+        alert(result?.message || '삭제에 실패했습니다.');
+      }
+    }
+  };
   return (
     <article className="bg-white pt-6 pb-12 min-h-[80vh] text-xs">
       <h2 className="sr-only">문의사항</h2>
@@ -123,11 +139,16 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
           </li>
           <li className="self-end mt-8 flex gap-4">
             {isAuthor && (
-              <Link href={`/board/qna/edit/${post._id}`} className="w-fit py-2 px-8 bg-primary-dark text-white  hover:bg-[#966343] transition-colors">
-                수정하기
-              </Link>
+              <>
+                <Link href={`/board/qna/edit/${post._id}`} className="w-fit py-2 px-3 bg-primary-dark text-white  hover:bg-[#966343] transition-colors">
+                  수정하기
+                </Link>
+                <button onClick={handleDelete} className="w-fit py-2 px-3 bg-primary-dark text-white hover:bg-[#966343] transition-colors">
+                  삭제하기
+                </button>
+              </>
             )}
-            <Link href="/board/qna" className="w-fit py-2 px-8 bg-primary-dark text-white hover:bg-[#966343] ">
+            <Link href="/board/qna" className="w-fit py-2 px-3 bg-primary-dark text-white hover:bg-[#966343] ">
               목록
             </Link>
           </li>
