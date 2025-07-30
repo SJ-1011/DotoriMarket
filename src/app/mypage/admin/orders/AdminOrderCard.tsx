@@ -3,6 +3,7 @@
 import type { AdminOrder, OrderStateCode } from '@/types/AdminOrder';
 import Image from 'next/image';
 import { ORDER_STATE_LABEL } from '@/types/AdminOrder';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   order: AdminOrder;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function AdminOrderCard({ order, timeAgo, removePostalCode, onChangeOrderState }: Props) {
+  const router = useRouter();
   const firstProduct = order.products[0];
   const moreProducts = order.products.length > 1 ? ` 외 ${order.products.length - 1}개` : '';
   const addressValue = removePostalCode(order.address?.value);
@@ -33,7 +35,7 @@ export default function AdminOrderCard({ order, timeAgo, removePostalCode, onCha
         {/* 상품 이미지 */}
         {firstProduct?.image?.path && (
           <div className="w-20 h-20 border rounded overflow-hidden flex-shrink-0 border-primary-light">
-            <Image src={`${process.env.NEXT_PUBLIC_API_URL}/${firstProduct.image.path}`} alt={firstProduct.name} width={80} height={80} className="object-cover w-full h-full" />
+            <Image src={`${process.env.NEXT_PUBLIC_API_URL}/${firstProduct.image.path}`} alt={firstProduct.name} unoptimized width={80} height={80} className="object-cover w-full h-full" />
           </div>
         )}
 
@@ -52,7 +54,9 @@ export default function AdminOrderCard({ order, timeAgo, removePostalCode, onCha
 
       {/* 버튼 */}
       <div className="grid grid-cols-2 gap-2 w-full mt-2">
-        <button className="text-xs py-2 rounded border border-primary text-primary-dark hover:bg-secondary">상세보기</button>
+        <button onClick={() => router.push(`/mypage/admin/orders/${order._id}`)} className="text-xs py-2 rounded border border-primary text-primary-dark hover:bg-secondary">
+          상세보기
+        </button>
         <button onClick={() => onChangeOrderState(order._id, 'OS020')} className="text-xs py-2 rounded bg-primary text-white hover:bg-primary-dark">
           상태 변경
         </button>

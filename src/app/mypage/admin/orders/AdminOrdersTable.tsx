@@ -42,7 +42,7 @@ export default function AdminOrdersTable({ orders, timeAgo, removePostalCode, on
                 <td className="p-2 lg:p-3 text-gray">{timeAgo(order.createdAt)}</td>
 
                 {/* 상품 이미지만 */}
-                <td className="p-2 lg:p-3">{product?.image?.path && <Image src={`${process.env.NEXT_PUBLIC_API_URL}/${product.image.path}`} alt="상품 이미지" width={36} height={36} className="rounded border inline-block lg:w-[42px] lg:h-[42px]" />}</td>
+                <td className="p-2 lg:p-3">{product?.image?.path && <Image src={`${process.env.NEXT_PUBLIC_API_URL}/${product.image.path}`} alt="상품 이미지" unoptimized width={36} height={36} className="rounded border inline-block lg:w-[42px] lg:h-[42px]" />}</td>
 
                 <td className="p-2 lg:p-3 font-bold">{order.cost.total.toLocaleString()}원</td>
                 <td className="p-2 lg:p-3">{order.user?.name}</td>
