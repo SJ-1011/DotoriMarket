@@ -209,3 +209,47 @@ export async function testReply(content: string, accessToken: string, post: numb
     return { ok: 0, message: '일시적인 네트워크 문제로 등록에 실패했습니다.' };
   }
 }
+
+/**
+ * 게시글을 삭제하는 함수
+ * @param {ApiRes<Post> | null} state - 이전 상태(사용하지 않음)
+ * @param {FormData} formData - 삭제할 게시글 정보를 담은 FormData 객체
+ * @returns {Promise<ApiRes<Post>>} - 삭제 결과 응답 객체
+ * @throws {Error} - 네트워크 오류 발생 시
+ * @description
+ * 게시글을 삭제하고, 성공 시 해당 게시판 목록 페이지로 리다이렉트합니다.
+ * 실패 시 에러 메시지를 반환합니다.
+ */
+export async function deletePost(state: ApiRes<Post> | null, formData: FormData): ApiResPromise<Post> {
+  const _id = formData.get('_id');
+  const accessToken = formData.get('accessToken');
+
+  let res: Response;
+  let data: ApiRes<{ ok: 0 | 1 }>;
+
+  try {
+    res = await fetch(`${API_URL}/posts/${_id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Client-Id': CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    data = await res.json();
+  } catch (error) {
+    // 네트워크 오류 처리
+    console.error(error);
+    return { ok: 0, message: '일시적인 네트워크 문제가 발생했습니다.' };
+  }
+
+  if (data.ok) {
+    revalidatePath('/board/qna'); // 게시글 목록 페이지 갱신
+
+    // 상세 페이지로 리다이렉트 (목록이 아닌)
+    redirect(`/board/qna`);
+  } else {
+    return data;
+  }
+}
