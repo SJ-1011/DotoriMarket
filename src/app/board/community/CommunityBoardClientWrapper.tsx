@@ -15,11 +15,6 @@ interface Props {
   clientId: string;
 }
 
-interface BookmarkResponseItem {
-  _id: number;
-  post: Post;
-}
-
 export default function CommunityBoardClientWrapper({ posts, apiUrl, clientId }: Props) {
   const user = useLoginStore(state => state.user);
   const [loading, setLoading] = useState(true);
@@ -36,46 +31,54 @@ export default function CommunityBoardClientWrapper({ posts, apiUrl, clientId }:
 
   // 북마크 정보와 게시글 합치기
   useEffect(() => {
-    if (!user?.token?.accessToken) {
-      setMergedPosts(posts);
-      setLoading(false);
-      return;
-    }
-
-    const fetchLiked = async () => {
-      setLoading(true);
+    async function fetchBookmarks() {
+      if (!user?.token?.accessToken) {
+        setMergedPosts(posts);
+        setLoading(false);
+        return;
+      }
       try {
         const res = await getLikedPosts(user.token.accessToken);
 
-        const liked = Object.values(res)
-          .filter((v): v is BookmarkResponseItem => typeof v === 'object' && v !== null && '_id' in v && 'post' in v)
-          .map(v => ({
-            postId: v.post._id,
-            bookmarkId: v._id,
-          }));
+        if (res.ok !== 1 || !Array.isArray(res.item)) {
+          // 북마크 불러오기 실패 시 원본 게시물만 설정
+          setMergedPosts(posts);
+          setLoading(false);
+          return;
+        }
 
-        // postId → bookmarkId 맵 생성
+        // 정상 응답 처리
         const bookmarkMap = new Map<number, number>();
-        liked.forEach(v => {
-          bookmarkMap.set(v.postId as number, v.bookmarkId);
+
+        for (const b of res.item) {
+          const postId = b.post?._id;
+          const bookmarkId = b._id;
+
+          if (typeof postId === 'number' && typeof bookmarkId === 'number') {
+            bookmarkMap.set(postId, bookmarkId);
+          }
+        }
+
+        const enriched = posts.map(post => {
+          const rawId = post._id;
+          const bookmarkId = bookmarkMap.get(Number(rawId));
+
+          return {
+            ...post,
+            ...(bookmarkId ? { bookmarkId } : {}),
+          };
         });
 
-        // posts 배열에 bookmarkId 매핑해서 새로운 배열 생성
-        const enriched = posts.map(post => ({
-          ...post,
-          bookmarkId: bookmarkMap.get(post._id as number),
-        }));
-
         setMergedPosts(enriched);
-      } catch (error) {
-        console.error('북마크 가져오기 실패', error);
+      } catch (err) {
+        console.error('북마크 가져오기 실패:', err);
         setMergedPosts(posts);
       } finally {
         setLoading(false);
       }
-    };
+    }
 
-    fetchLiked();
+    fetchBookmarks();
   }, [user, posts]);
 
   // 검색 필터링

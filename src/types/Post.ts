@@ -35,6 +35,9 @@ export interface Post {
   product: PostProduct;
   replies?: PostReply[];
   accessToken: string;
+  post?: {
+    _id: string;
+  };
   extra?: {
     qnatype: string;
     productId: string;
@@ -44,7 +47,7 @@ export interface Post {
     orderProductName: string;
     orderProductImage: string;
   };
-  image: string;
+  image: string[];
 }
 
 /**
@@ -63,9 +66,11 @@ export type PostForm = Partial<Pick<Post, 'type' | 'title' | 'content' | '_id'>>
  * FormData에서 변환된 동적 데이터를 위한 타입
  * 서버 액션에서 FormData 처리 시 사용
  */
+
 export type DynamicFormData = Record<string, FormDataEntryValue> & {
   extra?: Record<string, FormDataEntryValue>;
-  [key: string]: FormDataEntryValue | Record<string, FormDataEntryValue> | undefined;
+  image?: string[]; // 이미지 경로 배열 지원
+  [key: string]: FormDataEntryValue | Record<string, FormDataEntryValue> | string[] | undefined;
 };
 
 //  답글 작성 폼에서 사용하는 타입 (content만 포함)

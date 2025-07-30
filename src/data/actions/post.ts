@@ -32,19 +32,39 @@ export async function createPost(state: ApiRes<Post> | null, formData: FormData)
       }
     }
   });
-  //이미지 있으면  Post 타입의 image 속성에 경로 할당
-  if (formData.get('attach') instanceof File) {
-    const uploadRes = await uploadFile(formData);
-    if (uploadRes.ok === 1 && uploadRes.item.length > 0) {
-      const uploadedPath = uploadRes.item[0].path;
-      //   //uploadRes.item 찍어보니까 아래와 같이 나옴
-      // originalname: 'KakaoTalk_20250624_224418829.jpg',
-      // name: 'SYOW6vB_t.jpg',
-      // path: 'files/febc13-final10-emjf/SYOW6vB_t.jpg'
-      console.log(uploadRes.item);
-      console.log(`업로드 패쓰 : ${uploadedPath}`);
-      body.image = `${API_URL}/${uploadedPath}`;
+  //이미지 있으면  Post 타입의 image 배열에 경로 할당
+  const attachedFiles = formData.getAll('attach') as File[];
+  const validFiles = attachedFiles.filter(file => file instanceof File && file.size > 0);
+
+  if (validFiles.length > 0) {
+    try {
+      const fileFormData = new FormData();
+      validFiles.forEach(file => fileFormData.append('attach', file));
+
+      console.log('[createPost] 파일 업로드 시작, 파일 개수:', validFiles.length);
+      const uploadResult = await uploadFile(fileFormData);
+      console.log('[createPost] uploadFile 결과:', uploadResult);
+
+      if (uploadResult.ok === 1) {
+        const uploadedFiles = uploadResult.item;
+        console.log('[createPost] 업로드된 파일 정보:', uploadedFiles);
+
+        // 업로드된 파일들의 전체 URL 경로를 생성하여 image 배열에 저장
+        const uploadedPaths = uploadedFiles.map(item => `${API_URL}/${item.path}`);
+        console.log(`업로드된 이미지 경로들:`, uploadedPaths);
+
+        // Post의 image 필드에 경로 배열 저장
+        body.image = uploadedPaths;
+      } else {
+        console.error('[createPost] 파일 업로드 실패:', uploadResult);
+        return { ok: 0, message: '이미지 업로드에 실패했습니다.' };
+      }
+    } catch (error) {
+      console.error('[createPost] 파일 업로드 중 에러:', error);
+      return { ok: 0, message: '이미지 업로드 중 오류가 발생했습니다.' };
     }
+  } else {
+    console.log('[createPost] 업로드할 파일이 없습니다.');
   }
 
   let res: Response;

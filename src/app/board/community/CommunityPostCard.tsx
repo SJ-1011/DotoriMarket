@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Post } from '@/types/Post';
 import { useLoginStore } from '@/stores/loginStore';
 import { addBookmark } from '@/data/actions/addBookmark';
@@ -30,7 +30,7 @@ export default function CommunityPostCard({ post, apiUrl, clientId, bookmarkId: 
   // 이미지 모달 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  console.log('Post image:', post.image); // 디버깅용
+  // console.log('Post image:', post.image); // 디버깅용
   console.log(clientId);
 
   // bookmarkId가 props로 바뀌면 상태 동기화
@@ -74,13 +74,17 @@ export default function CommunityPostCard({ post, apiUrl, clientId, bookmarkId: 
     setIsModalOpen(true);
   };
 
+  const handleClose = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
   return (
     <>
       <div className="bg-white rounded-lg border border-[#E5CBB7] overflow-hidden hover:shadow-lg transition-shadow">
         {/* 이미지 부분 - 클릭 시 모달 열기 */}
         <div className="relative aspect-square cursor-pointer group bg-gray-100 overflow-hidden" onClick={handleImageClick}>
           <Image
-            src={post.image}
+            src={post.image[0]}
             alt={post.title}
             width={400}
             height={400}
@@ -127,9 +131,14 @@ export default function CommunityPostCard({ post, apiUrl, clientId, bookmarkId: 
           </div>
         </div>
       </div>
-
       {/* 이미지 모달 */}
-      <ImageModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} imageSrc={post.image} imageAlt={post.title} postId={Number(post._id)} />
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={handleClose}
+        images={post.image} // 이미지 배열 전달
+        imageAlt={post.title}
+        postId={Number(post._id)}
+      />
     </>
   );
 }
