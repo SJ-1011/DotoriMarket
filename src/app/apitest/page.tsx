@@ -12,6 +12,7 @@ const boards: { key: BoardType; label: string }[] = [
   { key: 'notice', label: '공지사항' },
   { key: 'qna', label: '질문게시판' },
 ];
+export const dynamic = 'force-dynamic';
 export default async function Page() {
   /////회원 정보 조회
   const resUsers = await getUsers();
