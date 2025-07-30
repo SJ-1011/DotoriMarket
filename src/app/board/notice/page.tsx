@@ -1,7 +1,7 @@
 import { getPosts } from '@/utils/getPosts';
 import { Post } from '@/types/Post';
 import NoticeBoardClientWrapper from './NoticeBoardClientWrapper';
-
+export const dynamic = 'force-dynamic';
 export default async function NoticeBoardPage() {
   const res = await getPosts('notice');
   const posts: Post[] = res.ok === 1 ? res.item : [];

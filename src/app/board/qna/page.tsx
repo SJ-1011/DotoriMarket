@@ -2,7 +2,7 @@ import { getPosts } from '@/utils/getPosts';
 import { Post } from '@/types/Post';
 import QnaWriteButton from './QnaWriteButton';
 import QnaBoardClientWrapper from './QnaBoardClientWrapper';
-
+export const dynamic = 'force-dynamic';
 export default async function QnaBoardPage() {
   const res = await getPosts('qna');
   const posts: Post[] = res.ok === 1 ? res.item : [];
