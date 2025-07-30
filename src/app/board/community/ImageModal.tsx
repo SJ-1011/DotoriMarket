@@ -3,7 +3,9 @@
 import { useEffect, useState, useActionState, useCallback } from 'react';
 import Image from 'next/image';
 import { PostReply } from '@/types/Post';
-import { getReplies } from '@/utils/getPosts';
+import { getReplies, getPost } from '@/utils/getPosts';
+import { getUserById } from '@/utils/getUsers';
+import { createReplyNotification } from '@/data/actions/addNotification';
 import MypageIcon from '@/components/icon/MypageIcon';
 import { createReply } from '@/data/actions/post';
 import { ApiRes } from '@/types/api';
@@ -30,6 +32,35 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
 
   const [state, formAction, isPending] = useActionState(async (prevState: ApiRes<PostReply> | null, formData: FormData) => {
     const res = await createReply(prevState, formData);
+
+    // 댓글 작성이 성공했을 때 알림 생성
+    if (res?.ok === 1 && user) {
+      try {
+        // 게시글 정보 가져오기
+        const postRes = await getPost(postId);
+
+        if (postRes.ok === 1 && postRes.item) {
+          // 게시글 작성자 정보 가져오기
+          const targetUserRes = await getUserById(Number(postRes.item.user._id));
+
+          if (targetUserRes.ok === 1 && targetUserRes.item) {
+            // 댓글 작성자와 게시글 작성자가 다를 때만 알림 생성
+            if (user._id !== targetUserRes.item._id) {
+              const notiRes = await createReplyNotification(postRes.item, targetUserRes.item, user);
+
+              if (notiRes.ok) {
+                console.log('댓글 알림이 성공적으로 전송되었습니다.');
+              } else {
+                console.error('알림 전송 실패:', notiRes.message);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('알림 생성 중 오류 발생:', error);
+      }
+    }
+
     return res;
   }, null);
 
