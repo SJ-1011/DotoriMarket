@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Post } from '@/types/Post';
 import Pagination from '@/components/common/Pagination';
-import SearchIcon from '@/components/icon/SearchIcon';
 import ArrowIcon from '@/components/icon/ArrowIcon';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -70,9 +69,6 @@ export default function QnaBoardClientWrapper({ posts }: Props) {
           {/* 검색창 */}
           <div className="flex items-center gap-2 border border-[#A97452] rounded-3xl px-3 py-2 w-48 sm:w-60 lg:w-72 h-8 sm:h-8 lg:h-10 bg-white">
             <input type="text" placeholder="검색어를 입력하세요" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="flex-1 outline-none border-none bg-transparent text-xs sm:text-sm lg:text-base" />
-            <button type="submit" className="ml-2">
-              <SearchIcon className="w-4 h-4 sm:w-4 sm:h-4 lg:w-6 lg:h-6 text-[#A97452]" />
-            </button>
           </div>
         </form>
       </div>
