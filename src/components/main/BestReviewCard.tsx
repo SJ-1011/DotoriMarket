@@ -34,13 +34,21 @@ export default function BestReviewCard({ review, variant = 'slider', className =
   const ReviewTextOverlay = (
     <div className="absolute bottom-0 w-full bg-black/60 text-white text-xs p-2 space-y-1 pointer-events-none select-none">
       <div className="text-yellow-400 font-semibold leading-tight">⭐ {review.rating}</div>
-      <div className={`whitespace-normal leading-snug ${variant === 'slider' ? 'line-clamp-2' : ''}`}>{review.content}</div>
+      <div
+        className={`
+        whitespace-normal leading-snug
+        ${variant === 'slider' ? 'line-clamp-2' : ''}
+        ${variant === 'grid' ? 'line-clamp-2 sm:line-clamp-none' : ''}
+      `}
+      >
+        {review.content}
+      </div>
     </div>
   );
 
   if (variant === 'slider') {
     return (
-      <Link href={`/products/${productId}`} className={`relative inline-block w-[170px] h-[220px] flex-shrink-0 rounded shadow-sm overflow-hidden cursor-pointer ${className}`}>
+      <Link href={`/products/${productId}`} className={`relative inline-block w-[120px] h-[160px]  sm:w-[170px] sm:h-[220px]   flex-shrink-0 rounded shadow-sm overflow-hidden cursor-pointer ${className}`}>
         <div className="relative w-full h-full">
           {imageUrl ? <Image src={imageUrl} alt="리뷰 이미지" fill sizes="170px" className="object-cover pointer-events-none" priority={false} /> : <div className="w-full h-full bg-gray-700" />}
 
@@ -73,7 +81,7 @@ export default function BestReviewCard({ review, variant = 'slider', className =
         {imageUrl ? <Image src={imageUrl} alt="리뷰 이미지" fill sizes="170px" className="object-cover" priority={false} /> : <div className="w-full h-full bg-gray-700" />}
 
         {/* 프로필 이미지 */}
-        <div className="absolute top-2 left-2 w-10 h-10 rounded-full overflow-hidden bg-gray-600 z-10">
+        <div className="absolute top-2 left-2 w-10 h-10 rounded-full overflow-hidden bg-gray-600 z-10 hidden sm:block">
           {profileImage ? (
             <Image
               src={profileImage}

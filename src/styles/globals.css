@@ -79,10 +79,14 @@ body {
   border: 0;
 }
 
+.dot-bg-wrapper {
+  width: 100%;
+  position: relative;
+  /* 배경 이미지는 1240px 이상일 때만 보여줌 */
+}
+
 @media (min-width: 1240px) {
   .dot-bg-wrapper {
-    width: 100%;
-    position: relative;
     background-image: url('/back-dotori.png'), url('/back-dotori.png');
     background-repeat: repeat-y, repeat-y;
     background-position:
@@ -92,6 +96,13 @@ body {
       235px auto,
       235px auto;
   }
+}
+
+/* 내부 컨텐츠 최대 너비 제한 */
+.dot-bg-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* 크롬, 사파리 등 Webkit 브라우저 스크롤바 숨기기 */
