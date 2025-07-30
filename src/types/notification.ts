@@ -1,5 +1,5 @@
 import { Post } from './Post';
-import { ProductImage } from './Product';
+import { Product, ProductImage } from './Product';
 import { LoginUser, User } from './User';
 
 export interface Notification {
@@ -11,7 +11,7 @@ export interface Notification {
   // 자유: ㅇㅇㅇ님이 댓글을 남기셨습니다.
   content: string;
   extra: {
-    product?: string;
+    product?: Product;
     image?: ProductImage[];
     post?: Post;
     sendUser?: LoginUser;

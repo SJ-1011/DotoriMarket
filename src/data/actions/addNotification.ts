@@ -1,6 +1,6 @@
 import { LoginUser, User } from '@/types';
 import { Post } from '@/types/Post';
-import { ProductImage } from '@/types/Product';
+import { Product, ProductImage } from '@/types/Product';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
@@ -15,7 +15,7 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  * 결제 완료 알림을 생성하고, 성공 시 POST 이후 반환된 Res객체를 받습니다.
  * 실패 시 에러 메시지를 반환합니다.
  */
-export async function createPaymentNotification(product: string, image: ProductImage, user: LoginUser) {
+export async function createPaymentNotification(product: Product, image: ProductImage, user: LoginUser) {
   const body = {
     type: 'payment',
     target_id: user?._id,
