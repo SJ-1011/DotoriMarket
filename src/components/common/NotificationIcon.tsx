@@ -174,7 +174,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
   return (
     <li className="relative">
       <button type="button" className="cursor-pointer relative" aria-label="알림" onClick={() => setOpen(prev => !prev)}>
-        <BellIcon svgProps={{ className: 'w-6 h-6' }} />
+        <BellIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
         {notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
       </button>
       {/* 말풍선 */}
