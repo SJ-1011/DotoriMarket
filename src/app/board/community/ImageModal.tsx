@@ -104,14 +104,13 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur" onClick={onClose}>
-      <div className="flex bg-transparent rounded-lg overflow-hidden shadow-2xl max-w-[90vw] max-h-[90vh]" onClick={e => e.stopPropagation()}>
+      <div className="flex flex-col sm:flex-row bg-transparent rounded-lg overflow-hidden shadow-2xl max-w-[90vw] max-h-[90vh]" onClick={e => e.stopPropagation()}>
         {/* 이미지 영역 */}
-        <div className="bg-black flex items-center justify-center w-[600px] h-[600px] max-w-[80vw] max-h-[80vh] relative">
+        <div className="bg-black flex items-center justify-center  w-full h-[280px] sm:w-[600px] sm:h-[600px] max-w-[100vw] sm:max-w-[80vw] max-h-[40vh] sm:max-h-[80vh] relative">
           {/* 현재 이미지 */}
           <div className="w-full h-full relative">
             <Image src={images[currentImageIndex]} alt={`${imageAlt} ${currentImageIndex + 1}`} fill className="object-cover" unoptimized priority />
           </div>
-
           {/* 이전 버튼 */}
           {currentImageIndex > 0 && (
             <button onClick={goToPrevious} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 transition-all z-10" aria-label="이전 이미지">
@@ -120,7 +119,6 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
               </svg>
             </button>
           )}
-
           {/* 다음 버튼 */}
           {currentImageIndex < images.length - 1 && (
             <button onClick={goToNext} className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 transition-all z-10" aria-label="다음 이미지">
@@ -129,7 +127,6 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
               </svg>
             </button>
           )}
-
           {/* 이미지 인디케이터 (여러 이미지가 있을 때만 표시) */}
           {images.length > 1 && (
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
@@ -138,7 +135,6 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
               ))}
             </div>
           )}
-
           {/* 이미지 카운터 */}
           {images.length > 1 && (
             <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm z-10">
@@ -146,13 +142,11 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
             </div>
           )}
         </div>
-
         {/* 댓글 영역 */}
-        <div className="bg-white w-[360px] max-w-[90vw] h-[600px] max-h-[80vh] flex flex-col p-0">
-          <div className="font-bold text-xl text-gray-800 border-b border-gray-300 pb-2 px-6 pt-6">댓글</div>
-
+        <div className="bg-white w-full sm:w-[360px] h-[320px] sm:h-[600px] max-w-[100vw] sm:max-w-[90vw] max-h-[40vh] sm:max-h-[80vh] flex flex-col p-0">
+          <div className="font-bold text-xl text-gray-800 border-b border-gray-300 pb-2 px-4 pt-4 sm:px-6 sm:pt-6">댓글</div>
           {/* 댓글 리스트 */}
-          <div className="flex-grow overflow-y-auto px-6 py-4">
+          <div className="flex-grow overflow-y-auto px-4 py-2 sm:px-6 sm:py-4 scrollbar-thin">
             {loading ? (
               <p className="text-gray-500">댓글 로딩 중...</p>
             ) : comments.length === 0 ? (
@@ -181,7 +175,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
           </div>
 
           {/* 댓글 입력 영역 */}
-          <div className="border-t border-gray-200 px-6 py-3 bg-white flex-shrink-0">
+          <div className="border-t border-gray-200 px-4 sm:px-6 py-2 sm:py-3 bg-white flex-shrink-0">
             <form
               action={formAction}
               className="flex items-center"
