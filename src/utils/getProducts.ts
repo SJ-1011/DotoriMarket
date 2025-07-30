@@ -99,3 +99,45 @@ export async function getProductsCategory(category: string, details?: string): A
     return { ok: 0, message: '일시적인 네트워크 문제로 상품 목록을 불러오지 못했습니다.' };
   }
 }
+
+/**
+ * 상품 ID로 단일 상품 조회
+ * @param {string | number} id - 상품 ID
+ * @returns {Promise<ApiRes<Product>>} 상품 상세 정보
+ */
+export async function getProductById(id: string | number): ApiResPromise<Product> {
+  try {
+    const res = await fetch(`${API_URL}/products/${id}`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+      },
+      cache: 'no-store',
+    });
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    return {
+      ok: 0,
+      message: '상품 정보를 불러오지 못했습니다.',
+    };
+  }
+}
+
+/**
+ * 검색 상품 목록을 조회합니다.
+ * @returns {Promise<ApiRes<Product[]>>} 상품 목록 API 응답
+ */
+export async function getSearchProducts(query: string): ApiResPromise<Product[]> {
+  try {
+    const res = await fetch(`${API_URL}/products?showSoldOut=true&keyword=${query}`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+      },
+      cache: 'no-store',
+    });
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    return { ok: 0, message: '일시적인 네트워크 문제로 상품 목록을 불러오지 못했습니다.' };
+  }
+}

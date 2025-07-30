@@ -1,35 +1,56 @@
 'use client';
 
 import BarIcon from '@/components/icon/BarIcon';
-import BellIcon from '@/components/icon/BellIcon';
 import CartIcon from '@/components/icon/CartIcon';
 import MypageIcon from '@/components/icon/MypageIcon';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SearchIcon from '../icon/SearchIcon';
 import { CHARACTER_CATEGORIES, LIVING_CATEGORIES, STATIONERY_CATEGORIES } from '@/constants/categories';
 import { useLoginStore } from '@/stores/loginStore';
+import { useRouter } from 'next/navigation';
+import NotificationIcon from './NotificationIcon';
 
 export default function DesktopHeader() {
-  const { isLogin } = useLoginStore();
-
-  // 햄버거 바 클릭 시 카테고리가 열려있는지 useState로 상태 관리
+  const router = useRouter();
+  const { isLogin, user } = useLoginStore();
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-
-  // 햄버거 바가 클릭 된 상태에서 현재 클릭된 세부 메뉴가 무엇인지 상태 관리
   const [detailOpen, setDetailOpen] = useState('신상품');
-
-  // 카테고리 내부의 세부 내용들 상태 관리
   const [categoryData, setCategoryData] = useState<string[]>(['신상품 보러가기']);
-
-  // 검색창 로직
   const [query, setQuery] = useState('');
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null); //헤더 전체 영역 참조하는 ref
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null); //드롭다운 타임아웃 처리를 위한ㄴ ref
 
+  // 검색 query를 url로 제출
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('검색어', query);
+    if (!query.trim()) return;
+    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    setQuery('');
   };
+
+  // 클릭 외부 감지로 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node) && headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        setIsCategoryOpen(false);
+        if (hoverTimeoutRef.current) {
+          clearTimeout(hoverTimeoutRef.current);
+          hoverTimeoutRef.current = null;
+        }
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      // 컴포넌트 언마운트 시 타이머 정리
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const categoryAddress = {
     신상품: 'new',
@@ -42,6 +63,8 @@ export default function DesktopHeader() {
   } as const;
 
   type CategoryName = keyof typeof categoryAddress;
+
+  const boardAddress = ['notice', 'community', 'qna'];
 
   useEffect(() => {
     switch (detailOpen) {
@@ -69,18 +92,52 @@ export default function DesktopHeader() {
     }
   }, [detailOpen]);
 
+  // 카테고리에 hover 했을 때 실행할 핸들러(baricon은 그대로 클릭임)
+  const handleCategoryHover = (category: string) => {
+    // 기존 타이머가 있으면 취소
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setDetailOpen(category);
+    setIsCategoryOpen(true);
+  };
+
+  // 카테고리 leave 핸들러
+  const handleCategoryLeave = () => {
+    // 마우스 떼고 150ms 후에 닫긩
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsCategoryOpen(false);
+    }, 150);
+  };
+
+  // hover 했을때 펼쳐지는 드롭다운 영역 hover 핸들러
+  const handleDropdownHover = () => {
+    // 기존 타이머가 있으면 취소
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  };
+  //hover 했을때 펼쳐지는 드롭다운 영역 leave 핸들러
+  const handleDropdownLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsCategoryOpen(false);
+    }, 150);
+  };
+
   return (
     <>
-      <header className="max-w-[55rem] lg:max-w-[75rem] mx-auto mt-12">
+      <header ref={headerRef} className="max-w-[55rem] lg:max-w-[75rem] mx-auto mt-12 bg-white">
         <nav aria-label="유저 상단 메뉴">
           <ul className="flex flex-row flex-nowrap gap-4 justify-end mr-8">
+            {isLogin && <li>{user?.name}님 환영합니다!</li>}
             <li>
-              <Link href="/" aria-label="장바구니">
+              <Link href="/cart" aria-label="장바구니">
                 <CartIcon svgProps={{ className: 'w-6 h-6' }} />
               </Link>
             </li>
             <li>
-              {/* TODO 로그인이 안된 상태면 로그인 페이지로 이동 */}
               {isLogin && (
                 <Link href="/mypage" aria-label="마이페이지">
                   <MypageIcon svgProps={{ className: 'w-6 h-6' }} />
@@ -92,36 +149,34 @@ export default function DesktopHeader() {
                 </Link>
               )}
             </li>
-            <li>
-              <Link href="/" aria-label="알림">
-                <BellIcon svgProps={{ className: 'w-6 h-6' }} />
-              </Link>
-            </li>
+            <NotificationIcon />
           </ul>
         </nav>
-        <h1 className="flex justify-center my-8">
+
+        <h1 className="flex justify-center my-8 lg:my-12">
           <Link href="/">
             <Image src="/logo.png" alt="도토리섬 메인으로 이동" width={120} height={120}></Image>
           </Link>
         </h1>
         <form onSubmit={handleSearch} className="flex flex-row flex-nowrap justify-between items-center border rounded-full border-primary w-md lg:w-lg mx-auto py-2 lg:py-3 px-4 lg:px-8 my-6 lg:my-8 text-sm lg:text-base">
-          <input type="search" placeholder="상품을 검색해보세요!" className="w-[90%]" value={query} onChange={event => setQuery(event.target.value)} />
-          <button type="submit" className="cursor-pointer">
+          <input type="search" aria-label="상품 검색창" placeholder="상품을 검색해보세요!" className="w-[90%]" value={query} onChange={event => setQuery(event.target.value)} />
+          <button type="submit" className="cursor-pointer" aria-label="상품 검색 버튼">
             <SearchIcon className="w-6 h-6" />
           </button>
         </form>
         <nav aria-label="카테고리 메뉴">
-          <ul className="flex flex-row flex-wrap lg:flex-nowrap gap-8 justify-center items-center text-sm lg:text-base">
+          <ul className="flex flex-row flex-wrap gap-8 justify-center items-center text-sm lg:text-base">
             <li>
               <BarIcon
                 className="w-4 h-4 lg:w-6 lg:h-6 cursor-pointer"
                 onClick={() => {
                   setIsCategoryOpen(!isCategoryOpen);
                 }}
+                aria-label="메뉴 토글 버튼"
               />
             </li>
             {Object.entries(categoryAddress).map(([title, address]) => (
-              <li key={title}>
+              <li key={title} onMouseEnter={() => handleCategoryHover(title)} onMouseLeave={handleCategoryLeave} className="relative">
                 <Link
                   href={address === 'board' ? `/${address}` : `/category/${address}`}
                   onClick={() => {
@@ -138,10 +193,10 @@ export default function DesktopHeader() {
       <div className="relative">
         <hr className="mt-6 border-primary" />
         {isCategoryOpen && (
-          <nav aria-label="세부 카테고리 메뉴" className="absolute z-[50] left-1/2 -translate-x-1/2 top-full w-[30rem] lg:w-[40rem] text-sm lg:text-base mx-auto bg-[#E5CBB7] flex flex-row border-b border-x border-primary">
+          <nav ref={popoverRef} aria-label="세부 카테고리 메뉴" className="absolute z-[50] left-1/2 -translate-x-1/2 top-full w-[30rem] lg:w-[40rem] text-sm lg:text-base mx-auto bg-[#E5CBB7] flex flex-row border-b border-x border-primary" onMouseEnter={handleDropdownHover} onMouseLeave={handleDropdownLeave}>
             <ul className="flex flex-col flex-nowrap text-center">
               {['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품', 'COMMUNITY'].map(category => (
-                <li key={category} className={`p-4 cursor-pointer ${detailOpen === category ? 'bg-background' : ''}`} onClick={() => setDetailOpen(category)}>
+                <li key={category} className={`p-4 cursor-pointer ${detailOpen === category ? 'bg-background' : ''}`} onClick={() => setDetailOpen(category)} onMouseEnter={() => setDetailOpen(category)}>
                   {category}
                 </li>
               ))}
@@ -154,6 +209,14 @@ export default function DesktopHeader() {
                   return (
                     <li key={i}>
                       <Link href={`/category/${val}/0${i + 1}`} onClick={() => setIsCategoryOpen(false)}>
+                        {item} &gt;
+                      </Link>
+                    </li>
+                  );
+                } else if (val === 'board') {
+                  return (
+                    <li key={i}>
+                      <Link href={`/${val}/${boardAddress[i]}`} onClick={() => setIsCategoryOpen(false)}>
                         {item} &gt;
                       </Link>
                     </li>

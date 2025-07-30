@@ -6,3 +6,12 @@ export const STATIONERY_CATEGORIES = ['필기류', '스티커', '마스킹테이
 
 // 리빙&소품 상품
 export const LIVING_CATEGORIES = ['키링', '미용&악세사리'];
+
+export const CATEGORY_MAP: Record<string, { label: string; href: string }> = {
+  PC01: { label: '캐릭터', href: '/category/character' },
+  PC02: { label: '미니어처', href: '/category/miniature' },
+  PC03: { label: '문구', href: '/category/stationery' },
+  PC04: { label: '리빙&악세사리', href: '/category/living-accessories' },
+  new: { label: '신상품', href: '/category/new' },
+  popular: { label: '인기상품', href: '/category/popular' },
+};

@@ -25,8 +25,13 @@ export interface Product {
   quantity: number;
   buyQuantity: number;
   mainImages: ProductImage[];
+  image?: ProductImage;
   content: string;
   createdAt: string;
   updatedAt: string;
   extra?: ProductExtra;
+}
+
+export interface LikedProduct extends Product {
+  bookmarkId: number;
 }

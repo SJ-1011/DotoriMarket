@@ -21,7 +21,7 @@ export async function uploadFile(formData: FormData): ApiResPromise<FileUpload[]
     headers: {
       'Client-Id': CLIENT_ID,
     },
-    body: fileForm,
+    body: formData,
   });
   // 서버에서 반환된 JSON 결과 반환
   return res.json();
