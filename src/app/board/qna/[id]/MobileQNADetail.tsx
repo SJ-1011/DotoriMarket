@@ -1,10 +1,15 @@
 'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import TriangleIcon from '@/components/icon/TriangleIcon';
-import { deletePost } from '@/data/actions/post';
+import { deletePost, createReply } from '@/data/actions/post';
 import { useLoginStore } from '@/stores/loginStore';
 import { Post, PostReply } from '@/types/Post';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useActionState } from 'react';
+import { ApiRes } from '@/types/api';
 
 interface MobileProps {
   post: Post;
@@ -17,17 +22,20 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function MobileQNADetail({ post, posts, id, reply }: MobileProps) {
   const user = useLoginStore(state => state.user);
   const isAuthor = user?.token?.accessToken === post.accessToken;
-  const asidePosts: (Post | null)[] = [null, null];
+  const router = useRouter();
 
+  const [showReplyPopup, setShowReplyPopup] = useState(false);
+  const [state, formAction, isPending] = useActionState(async (prevState: ApiRes<PostReply> | null, formData: FormData) => {
+    const res = await createReply(prevState, formData);
+    return res;
+  }, null);
+
+  const asidePosts: (Post | null)[] = [null, null];
   // 하단에 있는 다음글/이전글
   for (let i = 0; i < posts.length; i++) {
     if (posts[i]._id == id) {
-      if (i != 0) {
-        asidePosts[0] = posts[i - 1];
-      }
-      if (i != posts.length - 1) {
-        asidePosts[1] = posts[i + 1];
-      }
+      if (i != 0) asidePosts[0] = posts[i - 1];
+      if (i != posts.length - 1) asidePosts[1] = posts[i + 1];
       break;
     }
   }
@@ -42,14 +50,13 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
     { type: '재입고 문의', value: 'restock' },
     { type: '기타 문의', value: 'etc' },
   ];
+
   const handleDelete = async () => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
       const formData = new FormData();
       formData.append('_id', String(post._id));
       formData.append('accessToken', user?.token.accessToken ?? '');
-
       const result = await deletePost(null, formData);
-
       if (result?.ok) {
         alert('삭제가 완료되었습니다.');
         // deletePost 내부에서 페이지 이동 처리됨
@@ -58,9 +65,11 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
       }
     }
   };
+
   return (
     <article className="bg-white pt-6 pb-12 min-h-[80vh] text-xs">
       <h2 className="sr-only">문의사항</h2>
+
       <div className="flex flex-col flex-nowrap px-4">
         <nav aria-label="브레드크럼">
           <ol className="text-xs text-secondary-green flex flex-row flex-nowrap gap-2">
@@ -98,6 +107,7 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
         {/* <span className=" pt-2">{QNA_TYPES.find(item => item.value === post.extra?.qnatype)?.type}</span>
         <span className="font-bold">{post.user.name}</span>
         <span className="text-blue-400">{reply && reply.length > 0 ? '답변 완료' : '답변 대기'}</span> */}
+
         <span className="text-gray">{post.createdAt}</span>
       </div>
       <hr className="border-light-gray my-4" />
@@ -125,17 +135,16 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
           </div>
         )}
       </section>
+
       <aside>
         <ul className="flex flex-col flex-nowrap my-4">
           <li className="flex flex-row flex-nowrap items-center gap-8 border-y border-light-gray p-4">
             <TriangleIcon svgProps={{ className: 'w-3 h-3' }} polygonProps={{ fill: '#757575' }} />
-            {!asidePosts[0] && <span>다음 글이 없습니다.</span>}
-            {asidePosts[0] && <Link href={`/board/qna/${asidePosts[0]._id}`}>{asidePosts[0].title}</Link>}
+            {asidePosts[0] ? <Link href={`/board/qna/${asidePosts[0]._id}`}>{asidePosts[0].title}</Link> : <span>다음 글이 없습니다.</span>}
           </li>
           <li className="flex flex-row flex-nowrap items-center gap-8 border-b border-light-gray p-4">
             <TriangleIcon svgProps={{ className: 'scale-y-[-1] w-3 h-3' }} polygonProps={{ fill: '#757575' }} />
-            {!asidePosts[1] && <span>이전 글이 없습니다.</span>}
-            {asidePosts[1] && <Link href={`/board/qna/${asidePosts[1]._id}`}>{asidePosts[1].title}</Link>}
+            {asidePosts[1] ? <Link href={`/board/qna/${asidePosts[1]._id}`}>{asidePosts[1].title}</Link> : <span>이전 글이 없습니다.</span>}
           </li>
           <li className="self-end mt-8 flex gap-4">
             {isAuthor && (
@@ -148,12 +157,48 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
                 </button>
               </>
             )}
-            <Link href="/board/qna" className="w-fit py-2 px-3 bg-primary-dark text-white hover:bg-[#966343] ">
+            {user?.type === 'admin' && (
+              <button onClick={() => setShowReplyPopup(true)} className="py-2 px-3 bg-primary-dark text-white hover:bg-[#966343]">
+                답변 달기
+              </button>
+            )}
+            <Link href="/board/qna" className="py-2 px-3 bg-primary-dark text-white hover:bg-[#966343]">
               목록
             </Link>
           </li>
         </ul>
       </aside>
+
+      {showReplyPopup && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center" onClick={() => setShowReplyPopup(false)}>
+          <div className="bg-white p-4 rounded shadow-md w-11/12 max-w-sm" onClick={e => e.stopPropagation()}>
+            <h3 className="text-base font-semibold mb-2">답변 작성</h3>
+            <form
+              action={formAction}
+              onSubmit={() => {
+                setShowReplyPopup(false);
+                setTimeout(() => {
+                  router.refresh();
+                }, 300);
+              }}
+            >
+              <textarea name="content" required className="w-full h-24 border border-gray-300 p-2 mb-2 text-sm" placeholder="답변을 입력하세요" />
+              <input type="hidden" name="_id" value={post._id} />
+              <input type="hidden" name="type" value="qna" />
+              <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
+              <div className="flex justify-end gap-2">
+                <button type="button" onClick={() => setShowReplyPopup(false)} className="px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded">
+                  취소
+                </button>
+                <button type="submit" disabled={isPending} className="px-3 py-1 bg-primary-dark text-white text-xs rounded hover:bg-[#966343]">
+                  {isPending ? '등록 중...' : '등록'}
+                </button>
+              </div>
+              {state?.ok === 0 && <p className="text-red-500 text-xs mt-1">{state.message || '답변 등록 실패'}</p>}
+            </form>
+          </div>
+        </div>
+      )}
     </article>
   );
 }

@@ -7,7 +7,7 @@ import { getReplies, getPost } from '@/utils/getPosts';
 import { getUserById } from '@/utils/getUsers';
 import { createReplyNotification } from '@/data/actions/addNotification';
 import MypageIcon from '@/components/icon/MypageIcon';
-import { createReply } from '@/data/actions/post';
+import { createReply, deleteReply } from '@/data/actions/post';
 import { ApiRes } from '@/types/api';
 import { useLoginStore } from '@/stores/loginStore';
 
@@ -26,6 +26,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // 현재 이미지 인덱스
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null); // 활성화된 드롭다운
 
   const user = useLoginStore(state => state.user);
   const isLogin = useLoginStore(state => state.isLogin);
@@ -64,6 +65,19 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
     return res;
   }, null);
 
+  const [deleteState, deleteFormAction, isDeletePending] = useActionState(async (prevState: ApiRes<PostReply> | null, formData: FormData) => {
+    const res = await deleteReply(prevState, formData);
+
+    // 삭제 성공 시 댓글 목록에서 제거
+    if (res?.ok === 1) {
+      const replyId = Number(formData.get('replyId'));
+      setComments(prev => prev.filter(comment => comment._id !== replyId));
+      setActiveDropdown(null); // 드롭다운 닫기
+    }
+
+    return res;
+  }, null);
+
   // 이전/다음 이미지로 이동
   const goToPrevious = useCallback(() => {
     setCurrentImageIndex(prev => (prev > 0 ? prev - 1 : prev));
@@ -91,10 +105,26 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, currentImageIndex, images.length, goToNext, goToPrevious, onClose]);
 
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (activeDropdown !== null) {
+        const target = e.target as Element;
+        if (!target.closest('[data-dropdown]')) {
+          setActiveDropdown(null);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [activeDropdown]);
+
   // 모달이 열릴 때마다 첫 번째 이미지로 초기화
   useEffect(() => {
     if (isOpen) {
       setCurrentImageIndex(0);
+      setActiveDropdown(null); // 드롭다운도 초기화
     }
   }, [isOpen]);
 
@@ -129,6 +159,10 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
       setLoginError(true);
       setTimeout(() => setLoginError(false), 3000);
     }
+  };
+
+  const handleDropdownToggle = (commentId: number) => {
+    setActiveDropdown(activeDropdown === commentId ? null : commentId);
   };
 
   if (!isOpen) return null;
@@ -185,7 +219,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
             ) : (
               <ul className="space-y-4">
                 {comments.map(comment => (
-                  <li key={comment._id} className="flex items-center gap-3">
+                  <li key={comment._id} className="flex items-start gap-3 relative">
                     {comment.user.image ? (
                       <div className="w-7 h-7 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                         <Image src={`${API_URL}/${comment.user.image.path}`} alt={`${comment.user.name} 프로필`} width={28} height={28} className="object-cover w-full h-full" unoptimized />
@@ -195,9 +229,38 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
                         <MypageIcon svgProps={{ className: 'w-5 h-5 text-gray-400' }} />
                       </div>
                     )}
-                    <div>
+                    <div className="flex-grow">
                       <div className="font-semibold text-gray-900">{comment.user.name}</div>
                       <div className="text-gray-700">{comment.content}</div>
+                    </div>
+
+                    {/* 3점 메뉴 버튼 */}
+                    <div className="relative" data-dropdown>
+                      <button onClick={() => handleDropdownToggle(Number(comment._id))} className="p-1 hover:bg-gray-100 rounded-full transition-colors" aria-label="댓글 옵션">
+                        <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                        </svg>
+                      </button>
+
+                      {/* 드롭다운 메뉴 */}
+                      {activeDropdown === comment._id && (
+                        <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-20 min-w-[80px]">
+                          {/* 내 댓글인 경우 삭제 옵션 표시 */}
+                          {user && user._id === comment.user._id && (
+                            <form action={deleteFormAction} className="m-0">
+                              <input type="hidden" name="_id" value={postId} />
+                              <input type="hidden" name="replyId" value={comment._id} />
+                              <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
+                              <button type="submit" disabled={isDeletePending} className="w-full px-3 py-2 text-left text-red-600 hover:bg-gray-50 disabled:opacity-50 text-sm">
+                                {isDeletePending ? '삭제 중...' : '삭제'}
+                              </button>
+                            </form>
+                          )}
+                          <button onClick={() => setActiveDropdown(null)} className="w-full px-3 py-2 text-left text-gray-700 hover:bg-gray-50 text-sm">
+                            취소
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </li>
                 ))}
@@ -236,6 +299,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
             {/* 에러 메시지 */}
             {loginError && <p className="text-red-500 text-sm mt-1">로그인이 필요합니다.</p>}
             {state?.ok === 0 && <p className="text-red-500 text-sm mt-1">{state.message || '댓글 작성 실패'}</p>}
+            {deleteState?.ok === 0 && <p className="text-red-500 text-sm mt-1">{deleteState.message || '댓글 삭제 실패'}</p>}
           </div>
         </div>
       </div>
