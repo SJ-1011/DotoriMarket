@@ -12,6 +12,8 @@ import { useRouter } from 'next/navigation';
 import NotificationIcon from './NotificationIcon';
 import SearchIconHeader from '../icon/SearchIconHeader';
 import CloseIcon from '../icon/CloseIcon';
+import { getProducts } from '@/utils/getProducts';
+import { Product } from '@/types/Product';
 
 export default function DesktopHeader() {
   const router = useRouter();
@@ -20,10 +22,40 @@ export default function DesktopHeader() {
   const [detailOpen, setDetailOpen] = useState('신상품');
   const [categoryData, setCategoryData] = useState<string[]>(['신상품 보러가기']);
   const [query, setQuery] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null); //헤더 전체 영역 참조하는 ref
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null); //드롭다운 타임아웃 처리를 위한ㄴ ref
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchRef = useRef<HTMLLIElement>(null); // 검색 영역 참조
+  const inputRef = useRef<HTMLInputElement>(null); // 검색 입력창 참조
+
+  // 상품 목록 가져오기
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await getProducts();
+      if (response.ok === 1 && response.item) {
+        setProducts(response.item);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // 검색어에 따른 상품 필터링
+  useEffect(() => {
+    if (query.trim() === '') {
+      setFilteredProducts([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const filtered = products.filter(product => product.name.toLowerCase().includes(query.toLowerCase())).slice(0, 5); // 최대 5개까지만 표시
+
+    setFilteredProducts(filtered);
+    setShowSuggestions(filtered.length > 0 && isSearchOpen);
+  }, [query, products, isSearchOpen]);
 
   // 검색 query를 url로 제출
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
@@ -31,7 +63,31 @@ export default function DesktopHeader() {
     if (!query.trim()) return;
     router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     setQuery('');
-    setIsSearchOpen(!isSearchOpen);
+    setIsSearchOpen(false);
+    setShowSuggestions(false);
+  };
+
+  // 상품 선택 시 해당 상품 페이지로 이동
+  const handleProductSelect = (productId: number) => {
+    router.push(`/products/${productId}`);
+    setQuery('');
+    setShowSuggestions(false);
+    setIsSearchOpen(false);
+    inputRef.current?.blur();
+  };
+
+  // 검색창 포커스 해제 시 자동완성 숨기기 (딜레이 200ms)
+  const handleInputBlur = () => {
+    setTimeout(() => {
+      setShowSuggestions(false);
+    }, 200);
+  };
+
+  // 검색창 포커스 시 자동완성 다시 표시
+  const handleInputFocus = () => {
+    if (filteredProducts.length > 0 && query.trim() !== '') {
+      setShowSuggestions(true);
+    }
   };
 
   // 클릭 외부 감지로 닫기
@@ -43,6 +99,11 @@ export default function DesktopHeader() {
           clearTimeout(hoverTimeoutRef.current);
           hoverTimeoutRef.current = null;
         }
+      }
+
+      // 검색 자동완성 처리
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -166,13 +227,34 @@ export default function DesktopHeader() {
               </>
             )}
             {isSearchOpen && (
-              <li className="flex flex-row flex-nowrap gap-4 slide-in">
-                <form onSubmit={handleSearch} className="flex flex-row flex-nowrap justify-between items-center border-b border-white w-sm lg:w-md text-sm px-4 py-2 lg:text-base">
-                  <input type="search" aria-label="상품 검색창" placeholder="상품을 검색해보세요!" className="w-[90%] text-white placeholder:text-white" value={query} onChange={event => setQuery(event.target.value)} />
-                  <button type="submit" className="cursor-pointer" aria-label="상품 검색 버튼">
-                    <SearchIconHeader svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
-                  </button>
-                </form>
+              <li ref={searchRef} className="flex flex-row flex-nowrap gap-4 slide-in relative">
+                <div className="relative">
+                  <form onSubmit={handleSearch} className="flex flex-row flex-nowrap justify-between items-center border-b border-white w-sm lg:w-md text-sm px-4 py-2 lg:text-base">
+                    <input ref={inputRef} type="search" aria-label="상품 검색창" placeholder="상품을 검색해보세요!" className="w-[90%] text-white placeholder:text-white bg-transparent outline-none" value={query} onChange={event => setQuery(event.target.value)} onFocus={handleInputFocus} onBlur={handleInputBlur} />
+                    <button type="submit" className="cursor-pointer" aria-label="상품 검색 버튼">
+                      <SearchIconHeader svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
+                    </button>
+                  </form>
+
+                  {/* 검색 자동완성 드롭다운 */}
+                  {showSuggestions && (
+                    <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 mt-1 max-h-60 overflow-y-auto">
+                      {filteredProducts.map(product => (
+                        <div key={product._id} className="flex items-center p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" onClick={() => handleProductSelect(Number(product._id))}>
+                          {product.mainImages && product.mainImages[0] && (
+                            <div className="w-10 h-10 bg-gray-100 rounded mr-3 flex-shrink-0 overflow-hidden">
+                              <Image src={`${process.env.NEXT_PUBLIC_API_URL}/${product.mainImages[0].path}`} alt={product.name} width={40} height={40} className="w-full h-full object-cover" unoptimized />
+                            </div>
+                          )}
+                          <div className="flex-grow">
+                            <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                            <p className="text-xs text-gray-500">{product.price.toLocaleString()}원</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <button type="button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
                   <CloseIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
                 </button>
