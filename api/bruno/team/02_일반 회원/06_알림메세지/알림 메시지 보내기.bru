@@ -1,0 +1,30 @@
+meta {
+  name: 알림 메시지 보내기
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://fesp-api.koyeb.app/market/notifications
+  body: json
+  auth: bearer
+}
+
+headers {
+  client-id: febc13-final10-emjf
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjUsInR5cGUiOiJ1c2VyIiwibmFtZSI6IuydtOyEoOynhCIsImVtYWlsIjoidXNlckB1c2VyLmNvbSIsImltYWdlIjp7InBhdGgiOiJmaWxlcy9mZWJjMTMtZmluYWwxMC1lbWpmLzJTLUIyYkM1dy53ZWJwIiwibmFtZSI6IjJTLUIyYkM1dy53ZWJwIiwib3JpZ2luYWxuYW1lIjoiw6zCocKxw6zCoMKcw6vCucKELndlYnAifSwibG9naW5UeXBlIjoiZW1haWwiLCJpYXQiOjE3NTMyNTE0ODEsImV4cCI6MTc1MzMzNzg4MSwiaXNzIjoiRkVCQyJ9.cR5QCFKZ7XEMGcy4V_ASjxt4cv8v9paWUpSsBXZKRfs
+}
+
+body:json {
+  {
+    "type": "payment",
+    "target_id": 5,
+    "content": "상품이 정상 결제되었습니다.",
+    "extra": {
+      "product": "일본 고전 만화책 자체 제작 키링"
+    }
+  }
+}

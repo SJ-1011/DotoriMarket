@@ -186,7 +186,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
   ];
 
   return (
-    <main className="flex flex-col-reverse sm:flex-row px-4 sm:max-w-[664px] lg:max-w-[1000px] mx-auto py-4 sm:py-12">
+    <main className="flex flex-col-reverse sm:flex-row p-4 sm:max-w-[664px] lg:max-w-[1000px] mx-auto sm:py-12">
       <section className="w-full text-xs sm:text-sm lg:text-base">
         {/* 페이지 제목 */}
         <nav aria-label="Breadcrumb">

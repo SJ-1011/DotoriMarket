@@ -5,13 +5,15 @@ meta {
 }
 
 get {
-  url: {{url}}/admin/statistics/orders?start=2025.01.01
+  url: {{url}}/admin/statistics/orders?start=2025.07.25&finish=2025.07.31&by=day
   body: none
   auth: bearer
 }
 
 params:query {
-  start: 2025.01.01
+  start: 2025.07.25
+  finish: 2025.07.31
+  by: day
 }
 
 auth:bearer {
