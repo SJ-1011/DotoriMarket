@@ -32,7 +32,7 @@ export default function ProductCard({ product, bookmarkId: initialBookmarkId, sh
     onSelect?.(Number(product._id));
   };
 
-  const productLink = isAdmin ? `/admin/products/edit/${product._id}` : `/products/${product._id}`;
+  const productLink = `/products/${product._id}`;
   const productImageSrc = product.mainImages?.[0]?.path ? `${API_URL}/${product.mainImages[0].path}` : '/default-product.png';
 
   return (
