@@ -9,14 +9,13 @@ interface LikedProduct extends Product {
 interface ProductItemCardProps {
   products: Product[] | null;
   likedProducts?: LikedProduct[] | null;
-  isAdmin?: boolean;
   showCheckbox?: boolean;
   selectedIds?: number[];
   onSelect?: (id: number) => void;
   type?: 'large' | null;
 }
 
-export default function ProductItemCard({ products, likedProducts, type, isAdmin = false, showCheckbox = false, selectedIds = [], onSelect }: ProductItemCardProps) {
+export default function ProductItemCard({ products, likedProducts, type, showCheckbox = false, selectedIds = [], onSelect }: ProductItemCardProps) {
   if (type === 'large') {
     return (
       <>
@@ -26,7 +25,7 @@ export default function ProductItemCard({ products, likedProducts, type, isAdmin
             const bookmarkId = liked ? liked.bookmarkId : 0;
             return (
               <li key={product._id}>
-                <ProductCardLarge product={product} bookmarkId={bookmarkId} index={index + 1} isAdmin={isAdmin} />
+                <ProductCardLarge product={product} bookmarkId={bookmarkId} index={index + 1} />
               </li>
             );
           })}
@@ -39,7 +38,7 @@ export default function ProductItemCard({ products, likedProducts, type, isAdmin
           products.map(product => {
             const liked = likedProducts?.find(likedProduct => likedProduct._id === product._id);
             const bookmarkId = liked ? liked.bookmarkId : 0;
-            return <ProductCard key={product._id} product={product} bookmarkId={bookmarkId} isAdmin={isAdmin} showCheckbox={showCheckbox} isSelected={selectedIds.includes(Number(product._id))} onSelect={onSelect} />;
+            return <ProductCard key={product._id} product={product} bookmarkId={bookmarkId} showCheckbox={showCheckbox} isSelected={selectedIds.includes(Number(product._id))} onSelect={onSelect} />;
           })}
       </>
     );

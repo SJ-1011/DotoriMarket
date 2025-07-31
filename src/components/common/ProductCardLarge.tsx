@@ -10,8 +10,9 @@ import { useToggleBookmark } from '@/hooks/useToggleBookmark';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export default function ProductCardLarge({ product, bookmarkId: initialBookmarkId, index, isAdmin = false }: { product: Product; bookmarkId?: number; index?: number; isAdmin?: boolean }) {
+export default function ProductCardLarge({ product, bookmarkId: initialBookmarkId, index }: { product: Product; bookmarkId?: number; index?: number; isAdmin?: boolean }) {
   const user = useLoginStore(state => state.user);
+  const isAdmin = useLoginStore(state => state.isAdmin);
   const accessToken = user?.token?.accessToken;
 
   const { isLiked, toggle } = useToggleBookmark(initialBookmarkId, Number(product._id), accessToken);

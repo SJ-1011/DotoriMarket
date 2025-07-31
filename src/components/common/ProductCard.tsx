@@ -14,14 +14,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 interface ProductCardProps {
   product: Product;
   bookmarkId?: number;
-  isAdmin?: boolean;
   showCheckbox?: boolean;
   isSelected?: boolean;
   onSelect?: (id: number) => void;
 }
 
-export default function ProductCard({ product, bookmarkId: initialBookmarkId, isAdmin = false, showCheckbox = false, isSelected = false, onSelect }: ProductCardProps) {
+export default function ProductCard({ product, bookmarkId: initialBookmarkId, showCheckbox = false, isSelected = false, onSelect }: ProductCardProps) {
   const user = useLoginStore(state => state.user);
+  const isAdmin = useLoginStore(state => state.isAdmin);
   const accessToken = user?.token?.accessToken;
 
   const { isLiked, toggle } = useToggleBookmark(initialBookmarkId, Number(product._id), accessToken);

@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import type { Product } from '@/types/Product';
 import ProductCard from '@/components/common/ProductCard';
 import { getProductsCategory } from '@/utils/getProducts';
-import { useLoginStore } from '@/stores/loginStore';
 
 interface RelatedProductsProps {
   currentProductId: number;
@@ -21,8 +20,6 @@ const categoryMap: Record<string, string> = {
 export default function RelatedProducts({ currentProductId, categoryCode }: RelatedProductsProps) {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const user = useLoginStore(state => state.user);
-  const isAdmin = user?.type === 'admin';
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -73,7 +70,7 @@ export default function RelatedProducts({ currentProductId, categoryCode }: Rela
         <div className="flex gap-3">
           {relatedProducts.map(product => (
             <div key={product._id} className="min-w-[140px] max-w-[160px] w-full sm:min-w-[160px] sm:max-w-[180px]">
-              <ProductCard product={product} isAdmin={isAdmin} />
+              <ProductCard product={product} />
             </div>
           ))}
         </div>
