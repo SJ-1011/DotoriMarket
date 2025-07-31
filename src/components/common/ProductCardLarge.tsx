@@ -24,10 +24,10 @@ export default function ProductCardLarge({ product, bookmarkId: initialBookmarkI
   };
 
   return (
-    <Link href={`/products/${product._id}`} className="bg-white p-4 rounded-2xl shadow-[0px_0px_10px_rgba(0,0,0,0.2)] flex flex-col justify-between h-[280px] sm:h-[300px] lg:h-[450px]">
+    <Link href={`/products/${product._id}`} className="bg-white p-4 rounded-2xl shadow-[0px_0px_10px_rgba(0,0,0,0.2)] flex flex-col justify-between h-[270px] sm:h-[290px] lg:h-[400px]">
       <div>
         <div className="relative w-full aspect-square">
-          <div className="relative w-[150px] lg:w-[250px] aspect-square overflow-hidden rounded-md">
+          <div className="relative w-[140px] lg:w-[230px] aspect-square overflow-hidden rounded-md">
             <Image src={`${API_URL}/${product.mainImages[0]?.path}`} alt={product.name} fill className="object-cover transition-transform duration-300 ease-in-out hover:scale-110" sizes="(max-width: 640px) 100vw, 238px" />
           </div>
 
@@ -49,7 +49,7 @@ export default function ProductCardLarge({ product, bookmarkId: initialBookmarkI
         </div>
 
         <div className="relative flex flex-col flex-nowrap pt-4">
-          <p className="absolute -top-4 sm:-top-6 lg:-top-11 font-bold text-secondary-green">
+          <p className="absolute -top-4 sm:-top-6 lg:-top-13 font-bold text-secondary-green">
             <span className="italic font-bold text-[40px] sm:text-[50px] lg:text-[70px] text-secondary-green">{index} </span>
             {product.extra?.category?.[0] ? categoryMap[product.extra?.category?.[0]] : '기타'}
           </p>
