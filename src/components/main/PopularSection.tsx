@@ -13,6 +13,7 @@ interface LikedProduct extends Product {
 
 export default function PopularSection() {
   const user = useLoginStore(state => state.user);
+  const isAdmin = user?.type === 'admin';
   const accessToken = user?.token?.accessToken;
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -119,7 +120,7 @@ export default function PopularSection() {
       </button>
 
       <ul ref={scrollRef} className={`flex flex-row flex-nowrap p-12 gap-4 overflow-hidden overflow-x-scroll scrollbar-hide`}>
-        <ProductItemCard products={products} likedProducts={likedProducts} type={'large'} />
+        <ProductItemCard products={products} likedProducts={likedProducts} type={'large'} isAdmin={isAdmin} />
       </ul>
     </section>
   );
