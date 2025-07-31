@@ -6,7 +6,7 @@ interface BreadcrumbProps {
 
 export default function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <nav className="breadcrumb mb-2 text-sm text-gray-600 max-w-[800px] mx-auto">
+    <nav className="breadcrumb text-xs lg:text-sm text-gray-400">
       {items.map((item, index) => (
         <span key={index}>
           {item.href ? (
