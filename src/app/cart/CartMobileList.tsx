@@ -57,7 +57,7 @@ export default function CartMobileList({ items, selectedItems, toggleItem, incre
                     <button className="cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
                       <div className="font-semibold text-sm">{product.product.name}</div>
                     </button>
-                    <button onClick={() => handleDeleteItem(product._id)} className="text-xs border border-gray px-2 py-1 text-gray hover:text-red hover:border-red cursor-pointer">
+                    <button onClick={() => handleDeleteItem(product._id)} className="text-xs border border-gray px-2 py-1 text-dark-gray hover:text-red hover:border-red cursor-pointer">
                       삭제
                     </button>
                   </div>

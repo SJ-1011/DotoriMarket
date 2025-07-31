@@ -14,7 +14,7 @@ export default function AdminOrdersTable({ orders, timeAgo, removePostalCode, on
   const router = useRouter();
 
   const goToDetail = (id: number) => {
-    router.push(`/mypage/admin/orders/${id}`);
+    router.push(`/admin/orders/${id}`);
   };
 
   return (
