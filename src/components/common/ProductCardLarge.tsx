@@ -10,7 +10,7 @@ import { useToggleBookmark } from '@/hooks/useToggleBookmark';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export default function ProductCardLarge({ product, bookmarkId: initialBookmarkId, index }: { product: Product; bookmarkId?: number; index?: number }) {
+export default function ProductCardLarge({ product, bookmarkId: initialBookmarkId, index, isAdmin = false }: { product: Product; bookmarkId?: number; index?: number; isAdmin?: boolean }) {
   const user = useLoginStore(state => state.user);
   const accessToken = user?.token?.accessToken;
 
@@ -31,19 +31,21 @@ export default function ProductCardLarge({ product, bookmarkId: initialBookmarkI
             <Image src={`${API_URL}/${product.mainImages[0]?.path}`} alt={product.name} fill className="object-cover transition-transform duration-300 ease-in-out hover:scale-110" sizes="(max-width: 640px) 100vw, 238px" />
           </div>
 
-          <button
-            type="button"
-            className="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow hover:scale-110 active:scale-95 transition-transform cursor-pointer
+          {!isAdmin && (
+            <button
+              type="button"
+              className="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow hover:scale-110 active:scale-95 transition-transform cursor-pointer
                 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center"
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              toggle(e);
-            }}
-            aria-label={isLiked ? '북마크 해제' : '북마크 추가'}
-          >
-            {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 sm:w-3 sm:h-3 text-red' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 sm:w-3 sm:h-3 text-gray' }} />}
-          </button>
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggle(e);
+              }}
+              aria-label={isLiked ? '북마크 해제' : '북마크 추가'}
+            >
+              {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 sm:w-3 sm:h-3 text-red' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 sm:w-3 sm:h-3 text-gray' }} />}
+            </button>
+          )}
         </div>
 
         <div className="relative flex flex-col flex-nowrap pt-4">
