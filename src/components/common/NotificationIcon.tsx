@@ -8,6 +8,7 @@ import { useLoginStore } from '@/stores/loginStore';
 import { patchNotification } from '@/data/actions/patchNotification';
 import CloseIcon from '../icon/CloseIcon';
 import { useNotificationStore } from '@/stores/notificationStore';
+import Link from 'next/link';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function NotificationIcon({ isMobile = false }: { isMobile?: boolean }) {
@@ -120,7 +121,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
           {notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
         </button>
         {open && (
-          <div className="fixed inset-0 bg-white flex flex-col z-50">
+          <div className="fixed inset-0 bg-white flex flex-col z-[9999]">
             {/* 상단 헤더 */}
             <div className="flex justify-between items-center p-4 border-b border-primary">
               <p className="font-bold text-lg">알림</p>
@@ -143,15 +144,50 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                         return (
                           <li key={index} className="flex items-center gap-3 p-4 bg-white rounded-2xl w-full">
                             <div className="min-w-18 min-h-18">
-                              <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product} 상품 이미지`} width={72} height={72} className="rounded-full" />
+                              {item.type === 'payment' && <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product?.name} 상품 이미지`} width={72} height={72} className="rounded-full border border-gray" />}
+                              {item.type === 'reply' && (
+                                <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
+                                  {/* <div className="text-xs text-primary">새 댓글</div> */}
+                                  <Image src={item.user.image ? `${API_URL}/${item.user.image.path}` : `/character/chiikawa.png`} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                </div>
+                              )}{' '}
                             </div>
                             <div className="w-full">
                               <p className="font-bold">{menu[item.type]}</p>
-                              <span className="flex items-center text-sm">
-                                [<span className="text-primary-dark max-w-[14rem] truncate">{item.extra.product}</span>]
-                              </span>
-                              <span className="block text-sm">{item.content}</span>
-                              <span className="block text-sm">{item.createdAt}</span>
+                              {/* 결제 알림 */}
+                              {item.type === 'payment' && (
+                                <>
+                                  <span className="flex flex-row flex-nowrap items-center text-sm">
+                                    [
+                                    <Link
+                                      href={`/products/${item.extra.product?._id}`}
+                                      onClick={() => {
+                                        setOpen(!open);
+                                      }}
+                                      className="text-primary-dark max-w-[14rem] truncate"
+                                    >
+                                      {item.extra.product?.name}
+                                    </Link>
+                                    ]
+                                  </span>
+                                  <span className="block text-sm">{item.content}</span>
+                                  <span className="block text-sm">{item.createdAt}</span>
+                                </>
+                              )}
+                              {/* 댓글 알림 */}
+                              {item.type === 'reply' && (
+                                <>
+                                  <span className="flex flex-row flex-nowrap items-center text-sm">
+                                    [
+                                    <Link href={`/board/${item.extra.post?.type}/${item.extra.post?._id}`} onClick={() => setOpen(!open)} className="text-primary-dark max-w-[14rem] truncate">
+                                      {item.extra.post?.title}
+                                    </Link>
+                                    ]
+                                  </span>
+                                  <span className="block text-sm">{item.content}</span>
+                                  <span className="block text-sm">{item.createdAt}</span>
+                                </>
+                              )}
                             </div>
                           </li>
                         );
@@ -174,7 +210,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
   return (
     <li className="relative">
       <button type="button" className="cursor-pointer relative" aria-label="알림" onClick={() => setOpen(prev => !prev)}>
-        <BellIcon svgProps={{ className: 'w-6 h-6' }} />
+        <BellIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
         {notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
       </button>
       {/* 말풍선 */}
@@ -210,10 +246,11 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                       return (
                         <li key={index} className="flex flex-row flex-nowrap items-center gap-3 p-4 bg-white rounded-2xl w-full">
                           <div className="min-w-18 min-h-18">
-                            {item.type === 'payment' && <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product} 상품 이미지`} width={72} height={72} className="rounded-full" />}
+                            {item.type === 'payment' && <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product?.name} 상품 이미지`} width={72} height={72} className="rounded-full border border-gray" />}
                             {item.type === 'reply' && (
-                              <div className="flex flex-row flex-nowrap justify-center items-center w-[72px] h-[72px] border border-primary rounded-full">
-                                <div className="text-xs text-primary">새 댓글</div>
+                              <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
+                                {/* <div className="text-xs text-primary">새 댓글</div> */}
+                                <Image src={item.user.image ? `${API_URL}/${item.user.image.path}` : `/character/chiikawa.png`} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                               </div>
                             )}
                           </div>
@@ -223,7 +260,17 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                             {item.type === 'payment' && (
                               <>
                                 <span className="flex flex-row flex-nowrap items-center text-sm">
-                                  [<span className="text-primary-dark max-w-[14rem] truncate">{item.extra.product}</span>]
+                                  [
+                                  <Link
+                                    href={`/products/${item.extra.product?._id}`}
+                                    onClick={() => {
+                                      setOpen(!open);
+                                    }}
+                                    className="text-primary-dark max-w-[14rem] truncate"
+                                  >
+                                    {item.extra.product?.name}
+                                  </Link>
+                                  ]
                                 </span>
                                 <span className="block text-sm">{item.content}</span>
                                 <span className="block text-sm">{item.createdAt}</span>
@@ -233,7 +280,11 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                             {item.type === 'reply' && (
                               <>
                                 <span className="flex flex-row flex-nowrap items-center text-sm">
-                                  [<span className="text-primary-dark max-w-[14rem] truncate">{item.extra.post?.title}</span>]
+                                  [
+                                  <Link href={`/board/${item.extra.post?.type}/${item.extra.post?._id}`} onClick={() => setOpen(!open)} className="text-primary-dark max-w-[14rem] truncate">
+                                    {item.extra.post?.title}
+                                  </Link>
+                                  ]
                                 </span>
                                 <span className="block text-sm">{item.content}</span>
                                 <span className="block text-sm">{item.createdAt}</span>

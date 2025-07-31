@@ -88,7 +88,7 @@ export default function OrderWrapper() {
             originalname: firstProduct.image.originalname,
           };
 
-          const notifRes = await createPaymentNotification(firstProduct.name, image, user);
+          const notifRes = await createPaymentNotification(firstProduct, image, user);
           if (notifRes.ok) {
             await fetchNotification();
           }

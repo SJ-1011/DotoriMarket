@@ -26,7 +26,7 @@ export default function StoryCardList() {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4 mb-8 justify-center">
+    <div className="grid grid-cols-3 gap-4 mb-8 justify-center bg-white">
       {storyProducts.map(story => (
         <StoryCard key={story.id} story={story} />
       ))}
