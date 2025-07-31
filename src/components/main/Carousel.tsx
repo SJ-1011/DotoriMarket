@@ -51,13 +51,17 @@ export default function Carousel() {
       </div>
 
       {/* 왼쪽 화살표 */}
-      <button onClick={() => goToSlide((current - 1 + banners.length) % banners.length)} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 rounded-full p-2 shadow">
-        ◀
+      <button onClick={() => goToSlide((current - 1 + banners.length) % banners.length)} className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="size-12 sm:size-16 lg:size-24 drop-shadow-[0px_0px_4px_rgba(0,0,0,0.5)]">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
       </button>
 
       {/* 오른쪽 화살표 */}
-      <button onClick={() => goToSlide((current + 1) % banners.length)} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 rounded-full p-2 shadow">
-        ▶
+      <button onClick={() => goToSlide((current + 1) % banners.length)} className="absolute right-4 top-1/2 -translate-y-1/2 transform -scale-x-100 cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="size-12 sm:size-16 lg:size-24 drop-shadow-[0px_0px_4px_rgba(0,0,0,0.5)]">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
       </button>
 
       {/* 인디케이터 */}
