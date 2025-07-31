@@ -7,6 +7,7 @@ import CommunityPostCard from './CommunityPostCard';
 import { useLoginStore } from '@/stores/loginStore';
 import Pagination from '@/components/common/Pagination';
 import ArrowIcon from '@/components/icon/ArrowIcon';
+import CommunityWriteButton from './CommunityWriteButton';
 
 interface Props {
   posts: Post[]; // SSR에서 넘어온 전체(또는 image) 게시글 리스트
@@ -23,6 +24,20 @@ export default function CommunityBoardClientWrapper({ posts, apiUrl, clientId }:
   // 검색 상태
   const [searchField, setSearchField] = useState<'title' | 'user'>('title');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // 모바일 상태 확인
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 640); // Tailwind 기준 sm 미만이면 모바일
+    };
+
+    checkIsMobile(); // 초기 확인
+    window.addEventListener('resize', checkIsMobile); // 리사이즈 대응
+
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1);
@@ -131,29 +146,62 @@ export default function CommunityBoardClientWrapper({ posts, apiUrl, clientId }:
   return (
     <>
       {/* 검색바 */}
-      <div className="mb-6">
-        <form onSubmit={handleSearch} className="flex items-center gap-2 justify-end">
-          {/* 드롭다운 */}
-          <div className="relative w-20 sm:w-24">
-            <select name="searchField" value={searchField} onChange={handleSearchFieldChange} className="appearance-none w-full h-8 lg:h-10 pl-3 pr-8 border border-[#A97452] bg-white text-[#A97452] text-xs sm:text-sm lg:text-base rounded-full outline-none cursor-pointer">
-              <option value="title">제목</option>
-              <option value="user">작성자</option>
-            </select>
+      {!isMobile && (
+        <div className="flex flex-row flex-nowrap px-4 justify-between mb-4">
+          <CommunityWriteButton />
+          <form onSubmit={handleSearch} className="flex items-center gap-2 justify-end">
+            {/* 드롭다운 */}
+            <div className="relative w-20 sm:w-24">
+              <select name="searchField" value={searchField} onChange={handleSearchFieldChange} className="appearance-none w-full h-8 lg:h-10 pl-3 pr-8 border border-[#A97452] bg-white text-[#A97452] text-xs sm:text-sm lg:text-base rounded-md outline-none cursor-pointer">
+                <option value="title">제목</option>
+                <option value="user">작성자</option>
+              </select>
 
-            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-              <ArrowIcon svgProps={{ className: 'w-[10px] h-[6px] w-[12px] h-[8px] lg:w-[14px] lg:h-[9px]' }} />
+              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                <ArrowIcon svgProps={{ className: 'w-[10px] h-[6px] w-[12px] h-[8px] lg:w-[14px] lg:h-[9px]' }} />
+              </div>
             </div>
-          </div>
 
-          {/* 검색 input */}
-          <div className="flex items-center gap-2 border border-[#A97452] rounded-3xl px-3 py-2 w-48 sm:w-60 lg:w-72 h-8 sm:h-8 lg:h-10 bg-white">
-            <input type="text" placeholder="검색어를 입력하세요" value={searchQuery} onChange={handleSearchInputChange} className="flex-1 outline-none border-none bg-transparent text-xs sm:text-sm lg:text-base" />
+            {/* 검색 input */}
+            <div className="flex items-center gap-2 border border-[#A97452] rounded-md px-3 py-2 w-48 sm:w-60 lg:w-72 h-8 sm:h-8 lg:h-10 bg-white">
+              <input type="text" placeholder="검색어를 입력하세요" value={searchQuery} onChange={handleSearchInputChange} className="flex-1 outline-none border-none bg-transparent text-xs sm:text-sm lg:text-base" />
+            </div>
+          </form>
+        </div>
+      )}
+      {isMobile && (
+        <div className="flex flex-col flex-nowrap w-full fixed z-20 bottom-0 bg-white border-t border-primary">
+          <div className="flex flex-row flex-nowrap justify-between p-4">
+            <CommunityWriteButton />
+            <button type="button" className="w-full text-sm" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+              검색하기
+            </button>
           </div>
-        </form>
-      </div>
+          {isSearchOpen && (
+            <form onSubmit={handleSearch} className="flex flex-row flex-nowrap mb-4 gap-2 px-2">
+              {/* 드롭다운 */}
+              <div className="relative w-[40%]">
+                <select name="searchField" value={searchField} onChange={handleSearchFieldChange} className="appearance-none p-4 w-full border border-primary text-center bg-white text-[#A97452] text-sm outline-none cursor-pointer">
+                  <option value="title">제목</option>
+                  <option value="user">작성자</option>
+                </select>
+
+                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <ArrowIcon svgProps={{ className: 'w-[10px] h-[6px] w-[12px] h-[8px] lg:w-[14px] lg:h-[9px]' }} />
+                </div>
+              </div>
+
+              {/* 검색 input */}
+              <div className="flex p-4 items-center gap-2 border border-[#A97452] w-full bg-white">
+                <input type="text" placeholder="검색어를 입력하세요" value={searchQuery} onChange={handleSearchInputChange} className="flex-1 outline-none border-none bg-transparent text-xs sm:text-sm lg:text-base" />
+              </div>
+            </form>
+          )}
+        </div>
+      )}
 
       {/* 이미지 그리드 */}
-      <div className="my-8">
+      <div className="px-4 my-8">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {currentPosts.map(post => (
             <CommunityPostCard key={post._id} post={post} apiUrl={apiUrl} clientId={clientId} bookmarkId={post.bookmarkId} />
