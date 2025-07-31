@@ -40,6 +40,78 @@ export const initData = async (clientId, nextSeq) => {
           birthday: '11-23',
         },
       },
+      {
+        _id: await nextSeq('user'),
+        email: 'noognoog@naver.com',
+        password: '$2b$10$q/LrP1x67hqsJgO/WfkJHuQtuctlNRNZCcbbu6jGttRdb0L9UEwua',
+        name: '엄현욱',
+        phone: '01022223333',
+        address: '서울시 강남구 삼성동 456',
+        type: 'admin',
+        loginType: 'email',
+        birthday: '2025-07-01',
+        image: {
+          path: 'files/febc13-final10-emjf/kf_zujg7e.jpg',
+          name: 'kf_zujg7e.jpg',
+          originalname: 'chiikawa.jpg',
+        },
+        createdAt: getTime(-50),
+        updatedAt: getTime(-30, -60 * 60 * 3),
+      },
+      {
+        _id: await nextSeq('user'),
+        email: 'dbqlsrbqls12@naver.com',
+        password: '$2b$10$Vja4K0B77qzWvwWFXBKnK.VNnByAGBoiOA2kdFIYLsF/1lhh8Lm4W',
+        name: '황유빈2',
+        phone: '01022223333',
+        address: '서울시 강남구 삼성동 456',
+        type: 'admin',
+        loginType: 'email',
+        birthday: '1999-09-03',
+        image: {
+          path: 'files/febc13-final10-emjf/3vgUZe2n2.jpg',
+          name: '3vgUZe2n2.jpg',
+          originalname: 'íì´ì´1.jpg',
+        },
+        createdAt: getTime(-50),
+        updatedAt: getTime(-30, -60 * 60 * 3),
+      },
+      {
+        _id: await nextSeq('user'),
+        email: 'dog@cat.com',
+        password: '$2b$10$OQD/8HVG.mntvzggbZPdtOrOzWgsfGGAkOyIiiOCdAWPEuVbaUiSm',
+        name: '가나디',
+        phone: '01022223333',
+        address: '서울시 강남구 삼성동 456',
+        type: 'admin',
+        loginType: 'email',
+        birthday: '2025-07-01',
+        image: {
+          path: 'files/febc13-final10-emjf/2S-B2bC5w.webp',
+          name: '2S-B2bC5w.webp',
+          originalname: 'ì¡±ì ë¹.webp',
+        },
+        createdAt: getTime(-50),
+        updatedAt: getTime(-30, -60 * 60 * 3),
+      },
+      {
+        _id: await nextSeq('user'),
+        email: '11@11.com',
+        password: '$2b$10$tiIBvQaRdQr.T6DBPgBSOO/A1nMyifFHvC34VfkNbFgiMjyCejzQG',
+        name: '정예빈',
+        phone: '01022223333',
+        address: '서울시 강남구 삼성동 456',
+        type: 'admin',
+        loginType: 'email',
+        birthday: '2025-07-01',
+        image: {
+          originalname: 'ì¤í¬ë¦°ì· 2025-03-14 141725.png',
+          name: 'WC1wbndZn.png',
+          path: 'files/febc13-final10-emjf/WC1wbndZn.png',
+        },
+        createdAt: getTime(-50),
+        updatedAt: getTime(-30, -60 * 60 * 3),
+      },
     ],
 
     // 상품
@@ -53,7 +125,7 @@ export const initData = async (clientId, nextSeq) => {
         active: true,
         name: '지브리 토토로 릴패스 파우치',
         quantity: 1,
-        buyQuantity: 5,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0101_01.webp`,
@@ -146,7 +218,7 @@ export const initData = async (clientId, nextSeq) => {
         active: true,
         name: '디즈니 스펀지 키친 매트',
         quantity: 1,
-        buyQuantity: 50,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0102_02.webp`,
@@ -238,7 +310,7 @@ export const initData = async (clientId, nextSeq) => {
         show: true,
         active: true,
         name: '미피 랜덤 액자 마그넷',
-        quantity: 0,
+        quantity: 10,
         buyQuantity: 20,
         mainImages: [
           {
@@ -300,8 +372,8 @@ export const initData = async (clientId, nextSeq) => {
         show: true,
         active: true,
         name: '핑구 일상시리즈 인형 키링',
-        quantity: 0,
-        buyQuantity: 50,
+        quantity: 10,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0105_01.webp`,
@@ -332,7 +404,7 @@ export const initData = async (clientId, nextSeq) => {
         active: true,
         name: 'PINGU 핑구 랜덤 인형 키링',
         quantity: 10,
-        buyQuantity: 5,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0105_02.webp`,
@@ -363,7 +435,7 @@ export const initData = async (clientId, nextSeq) => {
         active: true,
         name: '짱구는못말려 랜덤 액자 마그넷',
         quantity: 10,
-        buyQuantity: 5,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0106_01.webp`,
@@ -394,7 +466,7 @@ export const initData = async (clientId, nextSeq) => {
         active: true,
         name: '치이카와 택 키링 7종',
         quantity: 10,
-        buyQuantity: 5,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0107_01.webp`,
@@ -455,7 +527,7 @@ export const initData = async (clientId, nextSeq) => {
         show: true,
         active: true,
         name: '스누피 랜덤 자석 마그넷',
-        quantity: 0,
+        quantity: 10,
         buyQuantity: 100,
         mainImages: [
           {
@@ -641,7 +713,7 @@ export const initData = async (clientId, nextSeq) => {
         show: true,
         active: true,
         name: '꼬마마법사 레미 폭신 스티커 2종',
-        quantity: 0,
+        quantity: 10,
         buyQuantity: 100,
         mainImages: [
           {
@@ -703,7 +775,7 @@ export const initData = async (clientId, nextSeq) => {
         show: true,
         active: true,
         name: '치이카와 랜덤 마스킹테이프',
-        quantity: 0,
+        quantity: 10,
         buyQuantity: 300,
         mainImages: [
           {
@@ -734,7 +806,7 @@ export const initData = async (clientId, nextSeq) => {
         show: true,
         active: true,
         name: '디즈니 캐릭터 마스킹테이프',
-        quantity: 0,
+        quantity: 10,
         buyQuantity: 20,
         mainImages: [
           {
@@ -796,7 +868,7 @@ export const initData = async (clientId, nextSeq) => {
         show: true,
         active: true,
         name: '2025 산리오 탁상용 달력',
-        quantity: 0,
+        quantity: 10,
         buyQuantity: 20,
         mainImages: [
           {
@@ -952,7 +1024,7 @@ export const initData = async (clientId, nextSeq) => {
         active: true,
         name: '일본 고전 만화책 자체제작 키링',
         quantity: 20,
-        buyQuantity: 50,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0401_01.webp`,
@@ -983,7 +1055,7 @@ export const initData = async (clientId, nextSeq) => {
         active: true,
         name: '벚꽃 스트랩 키링',
         quantity: 20,
-        buyQuantity: 50,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0401_02.webp`,
@@ -1014,7 +1086,7 @@ export const initData = async (clientId, nextSeq) => {
         active: true,
         name: '오목눈이 뱁새 헤어핀',
         quantity: 20,
-        buyQuantity: 50,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0402_01.webp`,
@@ -1045,7 +1117,7 @@ export const initData = async (clientId, nextSeq) => {
         active: true,
         name: '레트로 디저트 헤어핀',
         quantity: 20,
-        buyQuantity: 50,
+        buyQuantity: 0,
         mainImages: [
           {
             path: `files/${clientId}/PC0402_02.webp`,
