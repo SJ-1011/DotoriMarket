@@ -1,0 +1,23 @@
+meta {
+  name: 통계 조회(일별)
+  type: http
+  seq: 20
+}
+
+get {
+  url: {{url}}/admin/statistics/orders?start=2025.01.01
+  body: none
+  auth: bearer
+}
+
+params:query {
+  start: 2025.01.01
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+settings {
+  encodeUrl: true
+}

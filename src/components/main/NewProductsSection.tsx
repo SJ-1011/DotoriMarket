@@ -7,7 +7,7 @@ import { Product } from '@/types/Product';
 import { getProductsCategory, getLikedProducts } from '@/utils/getProducts';
 import { useLoginStore } from '@/stores/loginStore';
 
-const ROW_COUNT = 3;
+const ROW_COUNT = 2;
 
 interface LikedProduct extends Product {
   bookmarkId: number;
@@ -23,14 +23,23 @@ export default function NewProductsSection() {
   const [visibleCount, setVisibleCount] = useState(0);
   const [columns, setColumns] = useState(4);
   const [loading, setLoading] = useState(true);
+  const [colstyle, setColstyle] = useState('grid-cols-6');
 
   useEffect(() => {
     const updateColumns = () => {
-      if (window.innerWidth < 1024) setColumns(3);
-      else setColumns(4);
+      let newColumns = 4;
+      if (window.innerWidth < 640) newColumns = 3;
+      // else if (window.innerWidth < 1024) newColumns = 4;
+      else newColumns = 4;
+
+      setColumns(newColumns);
+
+      // columns에 의존하지 말고 여기서 바로 스타일까지 설정
+      setColstyle(`grid-cols-${newColumns}`);
     };
 
     updateColumns();
+
     window.addEventListener('resize', updateColumns);
     return () => window.removeEventListener('resize', updateColumns);
   }, []);
@@ -108,8 +117,8 @@ export default function NewProductsSection() {
 
   if (loading) {
     return (
-      <section className="my-8">
-        <div className={`grid grid-cols-${columns} gap-4`}>
+      <section className="my-8 flex flex-col items-center bg-background p-4 sm:p-12 text-xs sm:text-sm lg:text-base">
+        <div className={`grid grid-cols-${columns} gap-4 w-[1000px]`}>
           {Array.from({ length: columns * ROW_COUNT }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
@@ -119,8 +128,8 @@ export default function NewProductsSection() {
   }
 
   return (
-    <section className="my-8">
-      <div className={`grid grid-cols-${columns} gap-4`}>
+    <section className="my-8 flex flex-col items-center bg-background p-4 sm:p-12 text-xs sm:text-sm lg:text-base">
+      <div className={`grid ${colstyle} gap-4 w-full sm:w-[600px] lg:w-[1000px]`}>
         <ProductItemCard products={products.slice(0, visibleCount)} likedProducts={likedProducts} isAdmin={isAdmin} showCheckbox={false} />
       </div>
 
