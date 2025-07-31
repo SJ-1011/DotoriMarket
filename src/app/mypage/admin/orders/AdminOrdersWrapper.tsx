@@ -9,6 +9,7 @@ import AdminOrdersTable from './AdminOrdersTable';
 import AdminOrdersMobile from './AdminOrdersMobile';
 import Pagination from '@/components/common/Pagination';
 import { patchOrderState } from '@/data/actions/patchOrderState';
+import Loading from '@/app/loading';
 
 export default function AdminOrdersWrapper() {
   const { user } = useLoginStore();
@@ -100,7 +101,12 @@ export default function AdminOrdersWrapper() {
     fetchOrders();
   }, [fetchOrders]);
 
-  if (loading) return <p className="text-center py-6">⏳ 주문 데이터를 불러오는 중...</p>;
+  if (loading)
+    return (
+      <div className="text-center py-6">
+        <Loading />
+      </div>
+    );
 
   return (
     <section className="p-4 sm:px-0">
