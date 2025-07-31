@@ -9,6 +9,7 @@ import OrderCompleteHeader from './OrderCompleteHeader';
 import OrderCompleteProducts from './OrderCompleteProducts';
 import OrderCompleteUserInfo from './OrderCompleteUserInfo';
 import { getOrderById } from '@/utils/getOrders';
+import OrderCompleteButtons from './OrderCompleteButtons';
 
 export default function OrderCompleteWrapper({ orderId }: { orderId: string }) {
   const { user } = useLoginStore();
@@ -39,7 +40,7 @@ export default function OrderCompleteWrapper({ orderId }: { orderId: string }) {
   if (!order) return <div className="text-center py-10">주문 정보를 불러올 수 없습니다.</div>;
 
   return (
-    <div>
+    <div className="space-y-2 sm:space-y-4 ">
       {/* 주문 완료 헤더 */}
       <OrderCompleteHeader createdAt={order.createdAt} orderId={String(order._id)} />
 
@@ -48,6 +49,9 @@ export default function OrderCompleteWrapper({ orderId }: { orderId: string }) {
 
       {/* 배송 정보 */}
       <OrderCompleteUserInfo name={order.user.name} phone={order.user.phone} address={order.address.value} details={order.address.details} memo={order.memo} />
+
+      {/* 버튼들 */}
+      <OrderCompleteButtons />
     </div>
   );
 }
