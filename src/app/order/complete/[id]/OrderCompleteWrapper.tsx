@@ -47,7 +47,7 @@ export default function OrderCompleteWrapper({ orderId }: { orderId: string }) {
       <OrderCompleteProducts products={order.products} cost={order.cost} />
 
       {/* 배송 정보 */}
-      <OrderCompleteUserInfo name={order.user.name} phone={order.user.phone} address={order.address.value} memo={order.memo} />
+      <OrderCompleteUserInfo name={order.user.name} phone={order.user.phone} address={order.address.value} details={order.address.details} memo={order.memo} />
     </div>
   );
 }

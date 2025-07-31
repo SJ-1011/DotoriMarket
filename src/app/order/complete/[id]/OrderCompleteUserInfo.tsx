@@ -1,4 +1,4 @@
-export default function OrderCompleteUserInfo({ name, phone, address, memo }: { name: string; phone: string; address: string; memo: string }) {
+export default function OrderCompleteUserInfo({ name, phone, address, memo, details }: { name: string; phone: string; address: string; memo: string; details: string }) {
   const displayAddress = address.replace(/^\d{5}\s*/, '');
 
   return (
@@ -18,7 +18,9 @@ export default function OrderCompleteUserInfo({ name, phone, address, memo }: { 
             </tr>
             <tr className="border-b border-[#F3E4D8]">
               <td className="font-semibold border-r border-[#F3E4D8] p-3 sm:p-4 lg:p-5">주소</td>
-              <td className="p-3 sm:p-4 lg:p-5">{displayAddress}</td>
+              <td className="p-3 sm:p-4 lg:p-5">
+                {displayAddress} {details}
+              </td>
             </tr>
             <tr>
               <td className=" font-semibold border-r border-[#F3E4D8] p-3 sm:p-4 lg:p-5">배송 메모</td>
