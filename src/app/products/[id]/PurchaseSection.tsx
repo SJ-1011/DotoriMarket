@@ -75,6 +75,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
   // 로그인 사용자 정보 및 토큰
   const user = useLoginStore(state => state.user);
   const accessToken = user?.token?.accessToken;
+  const isAdmin = useLoginStore(state => state.isAdmin);
 
   // 초기 북마크 아이디
   const initialBookmarkId = product.bookmarkId;
@@ -142,6 +143,11 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
     }
   };
 
+  // 관리자용: 수정하기 버튼 이동
+  const handleEditClick = () => {
+    router.push(`/admin/products/edit/${product._id}`);
+  };
+
   // 장바구니 버튼
   const handleAddToCart = async () => {
     if (!user) {
@@ -165,7 +171,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
   return (
     <>
       {/* Breadcrumb */}
-      <div className="w-full p-4">
+      <div className="flex-1">
         <Breadcrumb items={breadcrumbItems} />
       </div>
 
@@ -240,27 +246,37 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
               total price <span className="text-lg font-bold">{finalPrice.toLocaleString()}원</span> ({quantity}개)
             </div>
 
-            {/* 구매 버튼 */}
-            <div className="space-y-3">
-              <button onClick={handleClick} disabled={isSoldOut} className={`w-full py-4 rounded-md font-medium transition disabled:opacity-50 ${isSoldOut ? 'bg-gray-300 cursor-not-allowed pointer-events-none text-black' : 'bg-primary text-white hover:bg-primary-dark cursor-pointer'}`}>
-                {isSoldOut ? '품절' : '바로 구매하기'}
-              </button>
+            {/* 구매 버튼 및 관리자 수정 버튼 */}
+            {!isAdmin ? (
+              <div className="space-y-3">
+                <button onClick={handleClick} disabled={isSoldOut} className={`w-full py-4 rounded-md font-medium transition disabled:opacity-50 ${isSoldOut ? 'bg-gray-300 cursor-not-allowed pointer-events-none text-black' : 'bg-primary text-white hover:bg-primary-dark cursor-pointer'}`}>
+                  {isSoldOut ? '품절' : '바로 구매하기'}
+                </button>
 
-              <div className="flex gap-3">
-                {/* 장바구니 */}
-                <button onClick={handleAddToCart} className="cursor-pointer flex-1 border border-primary text-primary py-3 rounded-md font-medium">
-                  장바구니
-                </button>
-                {/* 관심상품 등록 버튼 */}
-                <button type="button" onClick={toggle} className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition" aria-label={isLiked ? '북마크 취소' : '북마크 추가'}>
-                  {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 text-red-500' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 text-gray-400' }} />}
-                </button>
-                <button className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition relative" aria-label="공유하기" onClick={handleShare}>
-                  <ShareIcon className="w-5 h-5 text-gray-500" />
-                  {copied && <span className="fixed bottom-16 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-3 py-1 z-50">링크가 복사되었습니다.</span>}{' '}
-                </button>
+                <div className="flex gap-3">
+                  {/* 장바구니 */}
+                  <button onClick={handleAddToCart} className="cursor-pointer flex-1 border border-primary text-primary py-3 rounded-md font-medium">
+                    장바구니
+                  </button>
+
+                  {/* 관심상품 등록 버튼 */}
+                  <button type="button" onClick={toggle} className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition" aria-label={isLiked ? '북마크 취소' : '북마크 추가'}>
+                    {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 text-red-500' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 text-gray-400' }} />}
+                  </button>
+
+                  {/* 공유하기 버튼 */}
+                  <button className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition relative" aria-label="공유하기" onClick={handleShare}>
+                    <ShareIcon className="w-5 h-5 text-gray-500" />
+                    {copied && <span className="fixed bottom-16 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-3 py-1 z-50">링크가 복사되었습니다.</span>}
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              // 관리자 전용 수정 버튼
+              <button onClick={handleEditClick} className="py-4 w-full cursor-pointer text-white bg-secondary-green rounded-md hover:bg-[#6c8c53cc] transition whitespace-nowrap">
+                수정하기
+              </button>
+            )}
           </div>
         </div>
       </div>
