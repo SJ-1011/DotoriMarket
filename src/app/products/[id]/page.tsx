@@ -6,7 +6,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
   const res = await getProductById(Number(id));
 
-  if (!res.ok || !res.item) {
+  if (!res.ok || !res.item || res.item.active === false) {
     notFound();
   }
 
