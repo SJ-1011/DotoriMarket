@@ -15,6 +15,7 @@ import ShareIcon from '@/components/icon/ShareIcon';
 import { useRouter, usePathname } from 'next/navigation';
 import type { Review } from '@/types/Review';
 import { addToCart } from '@/data/actions/addToCart';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface PurchaseSectionProps {
   product: Product & { bookmarkId?: number };
@@ -62,14 +63,6 @@ function getBreadcrumbItems(product: Product) {
 
   return [{ label: '홈', href: '/' }, { label: bigCategory.label, href: bigCategory.href }, ...(subCategory.label ? [{ label: subCategory.label, href: subCategory.href }] : []), { label: product.name, href: `/products/${product._id}` }];
 }
-
-// 이미지 URL 생성 함수
-const getFullImageUrl = (imagePath: string): string => {
-  if (imagePath.startsWith('http')) {
-    return imagePath;
-  }
-  return `https://fesp-api.koyeb.app/market/${imagePath}`;
-};
 
 export default function PurchaseSection({ product, reviews, loadingReviews }: PurchaseSectionProps) {
   // 로그인 사용자 정보 및 토큰
@@ -182,7 +175,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
             {product.mainImages?.length > 0 && (
               <div className="relative">
                 <div className="relative w-full pb-[100%]">
-                  <Image src={getFullImageUrl(product.mainImages[0].path)} alt={product.name} fill className="object-contain w-full h-full" unoptimized />
+                  <Image src={getFullImageUrl(product.mainImages[0].path)} alt={product.name} fill className="object-contain w-full h-full" />
                 </div>
               </div>
             )}

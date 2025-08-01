@@ -8,8 +8,7 @@ import FavoriteBorder from '../icon/FavoriteBorderIcon';
 import { useLoginStore } from '@/stores/loginStore';
 import { useToggleBookmark } from '@/hooks/useToggleBookmark';
 import { useRemainingStock } from '@/hooks/useRemainingStock';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface ProductCardProps {
   product: Product;
@@ -33,7 +32,7 @@ export default function ProductCard({ product, bookmarkId: initialBookmarkId, sh
   };
 
   const productLink = `/products/${product._id}`;
-  const productImageSrc = product.mainImages?.[0]?.path ? `${API_URL}/${product.mainImages[0].path}` : '/default-product.png';
+  const productImageSrc = getFullImageUrl(product.mainImages?.[0]?.path || '');
 
   return (
     <div className="relative">

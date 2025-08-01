@@ -7,8 +7,7 @@ import Favorite from '../icon/FavoriteIcon';
 import FavoriteBorder from '../icon/FavoriteBorderIcon';
 import { useLoginStore } from '@/stores/loginStore';
 import { useToggleBookmark } from '@/hooks/useToggleBookmark';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 export default function ProductCardLarge({ product, bookmarkId: initialBookmarkId, index }: { product: Product; bookmarkId?: number; index?: number; isAdmin?: boolean }) {
   const user = useLoginStore(state => state.user);
@@ -24,12 +23,14 @@ export default function ProductCardLarge({ product, bookmarkId: initialBookmarkI
     PC04: '리빙&소품',
   };
 
+  const productImageSrc = getFullImageUrl(product.mainImages?.[0]?.path || '');
+
   return (
     <Link href={`/products/${product._id}`} className="bg-white p-4 rounded-2xl shadow-[0px_0px_10px_rgba(0,0,0,0.2)] flex flex-col justify-between h-[270px] sm:h-[290px] lg:h-[400px]">
       <div>
         <div className="relative w-full aspect-square">
           <div className="relative w-[140px] lg:w-[230px] aspect-square overflow-hidden rounded-md">
-            <Image src={`${API_URL}/${product.mainImages[0]?.path}`} alt={product.name} fill className="object-cover transition-transform duration-300 ease-in-out hover:scale-110" sizes="(max-width: 640px) 100vw, 238px" />
+            <Image src={productImageSrc} alt={product.name} fill className="object-cover transition-transform duration-300 ease-in-out hover:scale-110" sizes="(max-width: 640px) 100vw, 238px" />
           </div>
 
           {!isAdmin && (
