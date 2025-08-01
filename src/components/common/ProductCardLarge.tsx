@@ -23,15 +23,14 @@ export default function ProductCardLarge({ product, bookmarkId: initialBookmarkI
     PC04: '리빙&소품',
   };
 
-  const productImageSrc = getFullImageUrl(product.mainImages?.[0]?.path || '');
+  const productImagePath = product.mainImages?.[0]?.path ?? '';
+  const productImageSrc = productImagePath.trim() ? getFullImageUrl(productImagePath) : null;
 
   return (
     <Link href={`/products/${product._id}`} className="bg-white p-4 rounded-2xl shadow-[0px_0px_10px_rgba(0,0,0,0.2)] flex flex-col justify-between h-[270px] sm:h-[290px] lg:h-[400px]">
       <div>
         <div className="relative w-full aspect-square">
-          <div className="relative w-[140px] lg:w-[230px] aspect-square overflow-hidden rounded-md">
-            <Image src={productImageSrc} alt={product.name} fill className="object-cover transition-transform duration-300 ease-in-out hover:scale-110" sizes="(max-width: 640px) 100vw, 238px" />
-          </div>
+          <div className="relative w-[140px] lg:w-[230px] aspect-square overflow-hidden rounded-md">{productImageSrc ? <Image src={productImageSrc} alt={product.name} fill className="object-cover transition-transform duration-300 ease-in-out hover:scale-110" sizes="(max-width: 640px) 100vw, 238px" draggable={false} /> : <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-500">이미지 없음</div>}</div>
 
           {!isAdmin && (
             <button

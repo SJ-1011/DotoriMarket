@@ -161,6 +161,8 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
       alert('장바구니 추가에 실패했습니다. 다시 시도해 주세요.');
     }
   };
+
+  const mainImageUrl = getFullImageUrl(product.mainImages?.[0]?.path);
   return (
     <>
       {/* Breadcrumb */}
@@ -172,10 +174,10 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
         <div className="flex flex-col sm:flex-row gap-8">
           <div className="sm:w-1/2 relative">
             {/* 상품 이미지 */}
-            {product.mainImages?.length > 0 && (
+            {mainImageUrl && (
               <div className="relative">
                 <div className="relative w-full pb-[100%]">
-                  <Image src={getFullImageUrl(product.mainImages[0].path)} alt={product.name} fill className="object-contain w-full h-full" />
+                  <Image src={mainImageUrl} alt={product.name} fill className="object-contain w-full h-full" />
                 </div>
               </div>
             )}

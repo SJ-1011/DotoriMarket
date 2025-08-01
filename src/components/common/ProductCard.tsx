@@ -32,8 +32,8 @@ export default function ProductCard({ product, bookmarkId: initialBookmarkId, sh
   };
 
   const productLink = `/products/${product._id}`;
-  const productImageSrc = getFullImageUrl(product.mainImages?.[0]?.path || '');
-
+  const productImagePath = product.mainImages?.[0]?.path ?? '';
+  const productImageSrc = productImagePath.trim() ? getFullImageUrl(productImagePath) : null;
   return (
     <div className="relative">
       {/* 체크박스는 isAdmin이면서 showCheckbox가 true일 때만  */}
@@ -41,9 +41,7 @@ export default function ProductCard({ product, bookmarkId: initialBookmarkId, sh
 
       <Link href={productLink} className="block">
         <div className="relative w-full aspect-square">
-          <div className="relative w-full aspect-square max-w-[238px] overflow-hidden rounded-md">
-            <Image src={productImageSrc} alt={product.name || '상품 이미지'} fill className="object-cover transition-transform duration-300 ease-in-out hover:scale-110" sizes="(max-width: 640px) 100vw, 238px" draggable={false} />
-          </div>
+          <div className="relative w-full aspect-square max-w-[238px] overflow-hidden rounded-md">{productImageSrc ? <Image src={productImageSrc} alt={product.name || '상품 이미지'} fill className="object-cover transition-transform duration-300 ease-in-out hover:scale-110" sizes="(max-width: 640px) 100vw, 238px" draggable={false} /> : <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-500">이미지 없음</div>} </div>
 
           {/* 일반 사용자 북마크 버튼 */}
           {!isAdmin && (

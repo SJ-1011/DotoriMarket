@@ -39,6 +39,7 @@ export default function ProductInfo({ product }: { product: Product }) {
         <div className="flex flex-col items-center gap-8 mt-8">
           {product.mainImages.map((image, index) => {
             const imgSrc = getFullImageUrl(image.path);
+            if (!imgSrc) return null;
             return (
               <div key={index} className="w-full max-w-[500px]">
                 <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={500} height={345} style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
@@ -60,6 +61,7 @@ export default function ProductInfo({ product }: { product: Product }) {
         <div className="flex flex-col items-center gap-8 mt-8">
           {product.mainImages.map((image, index) => {
             const imgSrc = getFullImageUrl(image.path);
+            if (!imgSrc) return null;
             return (
               <div key={index} className="w-full max-w-[500px]">
                 <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={500} height={345} style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />

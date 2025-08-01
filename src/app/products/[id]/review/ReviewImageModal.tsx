@@ -2,8 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface ReviewImageModalProps {
   images: string[];
@@ -29,6 +28,9 @@ export default function ReviewImageModal({ images, currentIndex, isOpen, onClose
 
   if (!isOpen) return null;
 
+  const imageSrc = getFullImageUrl(images[currentIndex]);
+  if (!imageSrc) return null;
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-[1000]" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }} aria-modal="true" role="dialog">
       <div ref={modalRef} className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center mx-auto" style={{ maxWidth: 900, maxHeight: '90vh', width: '90%', height: 'auto' }}>
@@ -48,7 +50,7 @@ export default function ReviewImageModal({ images, currentIndex, isOpen, onClose
         </button>
 
         {/* 이미지 */}
-        <Image src={`${API_URL}/${images[currentIndex]}`} alt={`리뷰 사진 확대 보기 ${currentIndex + 1}`} width={700} height={700} unoptimized className="max-w-[85%] max-h-[80vh] object-contain rounded" style={{ maxHeight: '80vh' }} />
+        <Image src={imageSrc} alt={`리뷰 사진 확대 보기 ${currentIndex + 1}`} width={700} height={700} unoptimized className="max-w-[85%] max-h-[80vh] object-contain rounded" style={{ maxHeight: '80vh' }} />
 
         {/* 다음 버튼 */}
         <button
