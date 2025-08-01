@@ -163,6 +163,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
   };
 
   const mainImageUrl = getFullImageUrl(product.mainImages?.[0]?.path);
+
   return (
     <>
       {/* Breadcrumb */}
@@ -174,13 +175,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
         <div className="flex flex-col sm:flex-row gap-8">
           <div className="sm:w-1/2 relative">
             {/* 상품 이미지 */}
-            {mainImageUrl && (
-              <div className="relative">
-                <div className="relative w-full pb-[100%]">
-                  <Image src={mainImageUrl} alt={product.name} fill className="object-contain w-full h-full" />
-                </div>
-              </div>
-            )}
+            {mainImageUrl ? <Image src={mainImageUrl} alt={product.name} fill className="object-contain w-full h-full" /> : <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">이미지 없음</div>}
             {/* 배송 정보 */}
             <div className="text-sm text-gray-500 mt-2">
               <p>

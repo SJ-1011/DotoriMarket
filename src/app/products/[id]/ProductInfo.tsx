@@ -15,6 +15,8 @@ export default function ProductInfo({ product }: { product: Product }) {
     setHeight(randomHeight);
   }, []);
 
+  const images = (product.mainImages ?? []).filter(img => img && typeof img.path === 'string');
+
   return (
     <section className="max-w-full px-4 py-6 bg-background">
       <div className="product-detail space-y-8 text-center px-6 py-8">
@@ -37,7 +39,9 @@ export default function ProductInfo({ product }: { product: Product }) {
 
         {/* 이미지 */}
         <div className="flex flex-col items-center gap-8 mt-8">
-          {product.mainImages.map((image, index) => {
+          {images.length === 0 && <div className="w-full max-w-[500px] h-[345px] flex items-center justify-center bg-gray-100 text-gray-400">이미지가 없습니다.</div>}
+
+          {images.map((image, index) => {
             const imgSrc = getFullImageUrl(image.path);
             if (!imgSrc) return null;
             return (
@@ -59,7 +63,9 @@ export default function ProductInfo({ product }: { product: Product }) {
 
         {/* 이미지 */}
         <div className="flex flex-col items-center gap-8 mt-8">
-          {product.mainImages.map((image, index) => {
+          {images.length === 0 && <div className="w-full max-w-[500px] h-[345px] flex items-center justify-center bg-gray-100 text-gray-400">이미지가 없습니다.</div>}
+
+          {images.map((image, index) => {
             const imgSrc = getFullImageUrl(image.path);
             if (!imgSrc) return null;
             return (
