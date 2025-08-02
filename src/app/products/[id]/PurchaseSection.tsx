@@ -181,7 +181,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
         <div className="flex flex-col sm:flex-row gap-8">
           <div className="sm:w-1/2 relative">
             {/* 이미지 영역 */}
-            <div className="relative w-full pb-[100%]">{mainImageUrl ? <Image src={mainImageUrl} alt={product.name} fill className="object-contain" /> : <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">이미지 없음</div>}</div>
+            <div className="relative w-full pb-[100%]">{mainImageUrl ? <Image src={mainImageUrl} alt={product.name} fill className="object-contain" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" priority /> : <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">이미지 없음</div>}</div>
             {/* 배송 정보 */}
             <div className="text-sm text-gray-500 mt-2">
               <p>
