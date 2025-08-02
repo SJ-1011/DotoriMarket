@@ -310,7 +310,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
         {loading ? (
           <Loading />
         ) : paginatedProducts?.length ? (
-          <ProductGrid>{likedProducts ? <ProductItemCard products={paginatedProducts} likedProducts={likedProducts} isAdmin={isAdmin} showCheckbox={true} selectedIds={selectedIds} onSelect={toggleSelect}></ProductItemCard> : <ProductItemCard products={paginatedProducts}></ProductItemCard>}</ProductGrid>
+          <ProductGrid>{likedProducts ? <ProductItemCard products={paginatedProducts} likedProducts={likedProducts} showCheckbox={true} selectedIds={selectedIds} onSelect={toggleSelect}></ProductItemCard> : <ProductItemCard products={paginatedProducts}></ProductItemCard>}</ProductGrid>
         ) : (
           <div className="flex flex-col flex-nowrap justify-center items-center gap-4 w-full mx-auto">
             <Image src="/sad-dotori.png" alt="상품 없음" width={247} height={249}></Image>
