@@ -334,7 +334,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             <button onClick={handleDeleteSelected} className="px-3 py-1.5 bg-black cursor-pointer text-white rounded-xs text-sm">
               선택 상품 삭제
             </button>
-            <Link href="/mypage/admin/products/create" className="px-3 py-1.5 cursor-pointer bg-transparent border text-black rounded-xs text-sm">
+            <Link href="/admin/products/create" className="px-3 py-1.5 cursor-pointer bg-transparent border text-black rounded-xs text-sm">
               상품 추가
             </Link>
           </div>
