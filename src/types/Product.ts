@@ -23,7 +23,7 @@ export interface Product {
   name: string;
   quantity: number;
   buyQuantity: number;
-  mainImages: string[];
+  mainImages: ProductImage;
   image?: ProductImage;
   content: string;
   createdAt: string;

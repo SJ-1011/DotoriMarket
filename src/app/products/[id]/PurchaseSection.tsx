@@ -30,23 +30,29 @@ const CATEGORY_MAPPINGS = {
   PC04: LIVING_CATEGORIES,
 } as const;
 
-const CATEGORY_CODE_LENGTH = 4;
-
 // 서브카테고리 정보를 가져오는 함수
 function getSubCategoryInfo(categoryCode: string, smallCategoryCode: string, bigCategory: { label: string; href: string }) {
   const categories = CATEGORY_MAPPINGS[categoryCode as keyof typeof CATEGORY_MAPPINGS];
 
-  if (!categories || !smallCategoryCode.startsWith(categoryCode)) {
+  if (!categories) {
     return { label: '', href: '' };
   }
 
-  const subCode = smallCategoryCode.slice(CATEGORY_CODE_LENGTH);
-  const idx = Number(subCode) - 1;
+  let index = -1;
 
-  if (!Number.isNaN(idx) && idx >= 0 && idx < categories.length) {
+  if (smallCategoryCode.startsWith(categoryCode)) {
+    const codeNumber = smallCategoryCode.slice(categoryCode.length);
+    index = parseInt(codeNumber) - 1;
+  } else if (/^\d+$/.test(smallCategoryCode)) {
+    index = parseInt(smallCategoryCode) - 1;
+  } else {
+    index = categories.findIndex(cat => cat === smallCategoryCode);
+  }
+
+  if (index >= 0 && index < categories.length) {
     return {
-      label: categories[idx],
-      href: `${bigCategory.href}/${String(idx + 1).padStart(2, '0')}`,
+      label: categories[index],
+      href: `${bigCategory.href}/${String(index + 1).padStart(2, '0')}`,
     };
   }
 
@@ -58,7 +64,6 @@ function getBreadcrumbItems(product: Product) {
   const categoryCode = product.extra?.category?.[0] ?? '';
   const smallCategoryCode = product.extra?.category?.[1] ?? '';
   const bigCategory = CATEGORY_MAP[categoryCode] ?? { label: '카테고리', href: '#' };
-
   const subCategory = getSubCategoryInfo(categoryCode, smallCategoryCode, bigCategory);
 
   return [{ label: '홈', href: '/' }, { label: bigCategory.label, href: bigCategory.href }, ...(subCategory.label ? [{ label: subCategory.label, href: subCategory.href }] : []), { label: product.name, href: `/products/${product._id}` }];
@@ -162,24 +167,25 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
     }
   };
 
-  const mainImageUrl = getFullImageUrl(product.mainImages?.[0]?.path);
+  const imageArray = Array.isArray(product.mainImages) ? product.mainImages : Object.values(product.mainImages || {}); // 객체인 경우 값만 추출
 
+  const mainImageUrl = getFullImageUrl(imageArray[0]?.path);
   return (
     <>
       {/* Breadcrumb */}
-      <div className="flex-1">
+      <div className="w-full p-4">
         <Breadcrumb items={breadcrumbItems} />
       </div>
 
       <div className="max-w-6xl mx-auto p-4">
         <div className="flex flex-col sm:flex-row gap-8">
           <div className="sm:w-1/2 relative">
-            {/* 상품 이미지 */}
-            {mainImageUrl ? <Image src={mainImageUrl} alt={product.name} fill className="object-contain w-full h-full" /> : <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">이미지 없음</div>}
+            {/* 이미지 영역 */}
+            <div className="relative w-full pb-[100%]">{mainImageUrl ? <Image src={mainImageUrl} alt={product.name} fill className="object-contain" /> : <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">이미지 없음</div>}</div>
             {/* 배송 정보 */}
             <div className="text-sm text-gray-500 mt-2">
               <p>
-                배송비: {product.shippingFees.toLocaleString()}원 <span className="text-sm text-gray-500">(3만원 이상 무료)</span>
+                배송비: {product.shippingFees.toLocaleString()}원 <span className="text-sm">(3만원 이상 무료)</span>
               </p>
             </div>
           </div>

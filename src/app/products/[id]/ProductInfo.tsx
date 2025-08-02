@@ -15,7 +15,8 @@ export default function ProductInfo({ product }: { product: Product }) {
     setHeight(randomHeight);
   }, []);
 
-  const images = (product.mainImages ?? []).filter(img => img && typeof img.path === 'string');
+  const imageList = Object.values(product.mainImages ?? {}).filter(img => !!img?.path);
+  const images = imageList.map(img => img.path);
 
   return (
     <section className="max-w-full px-4 py-6 bg-background">
@@ -42,11 +43,11 @@ export default function ProductInfo({ product }: { product: Product }) {
           {images.length === 0 && <div className="w-full max-w-[500px] h-[345px] flex items-center justify-center bg-gray-100 text-gray-400">이미지가 없습니다.</div>}
 
           {images.map((image, index) => {
-            const imgSrc = getFullImageUrl(image.path);
+            const imgSrc = getFullImageUrl(image);
             if (!imgSrc) return null;
             return (
               <div key={index} className="w-full max-w-[500px]">
-                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={500} height={345} style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
+                <Image src={imgSrc} alt={`상품 이미지`} width={500} height={345} style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
               </div>
             );
           })}
@@ -66,11 +67,11 @@ export default function ProductInfo({ product }: { product: Product }) {
           {images.length === 0 && <div className="w-full max-w-[500px] h-[345px] flex items-center justify-center bg-gray-100 text-gray-400">이미지가 없습니다.</div>}
 
           {images.map((image, index) => {
-            const imgSrc = getFullImageUrl(image.path);
+            const imgSrc = getFullImageUrl(image);
             if (!imgSrc) return null;
             return (
               <div key={index} className="w-full max-w-[500px]">
-                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={500} height={345} style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
+                <Image src={imgSrc} alt={`상품 이미지`} width={500} height={345} style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
               </div>
             );
           })}
