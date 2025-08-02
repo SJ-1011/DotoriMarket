@@ -13,20 +13,31 @@ const MAIN_CATEGORIES = Object.entries(CATEGORY_MAP).filter(([code]) => ['PC01',
 
 export default function CategorySelector({ initialMain, initialSub, onChange }: { initialMain?: string; initialSub?: string; onChange: (main: string, sub: string) => void }) {
   const [main, setMain] = useState(initialMain || 'PC01');
-  const [sub, setSub] = useState(initialSub || CATEGORY_DETAIL_MAP[initialMain || 'PC01'][0]);
+  const [sub, setSub] = useState(initialSub || '');
 
+  // 초기값에서 sub가 없는 경우, main 카테고리의 첫 번째 소카테고리로 설정
   useEffect(() => {
-    const newSub = CATEGORY_DETAIL_MAP[main]?.[0] ?? '';
-    setSub(newSub);
+    if (!initialSub && CATEGORY_DETAIL_MAP[main]?.length > 0) {
+      setSub(CATEGORY_DETAIL_MAP[main][0]);
+    }
+  }, [initialSub, main]);
+
+  // main 변경 시 sub도 해당하는 첫 번째 소카테고리로 변경
+  useEffect(() => {
+    const defaultSub = CATEGORY_DETAIL_MAP[main]?.[0] || '';
+    if (!CATEGORY_DETAIL_MAP[main]?.includes(sub)) {
+      setSub(defaultSub);
+    }
   }, [main]);
 
   useEffect(() => {
-    onChange(main, sub);
-  }, [main, sub]);
+    if (main && sub) {
+      onChange(main, sub);
+    }
+  }, [main, sub, onChange]);
 
   return (
     <div className="flex gap-2 items-center">
-      {/* 대카테고리 선택 */}
       <select
         value={main}
         onChange={e => {
@@ -41,7 +52,6 @@ export default function CategorySelector({ initialMain, initialSub, onChange }: 
         ))}
       </select>
 
-      {/* 소카테고리 선택 */}
       <select
         value={sub}
         onChange={e => {
@@ -49,7 +59,7 @@ export default function CategorySelector({ initialMain, initialSub, onChange }: 
         }}
         className="border px-2 py-1 rounded"
       >
-        {CATEGORY_DETAIL_MAP[main]?.map(subCat => (
+        {(CATEGORY_DETAIL_MAP[main] || []).map(subCat => (
           <option key={subCat} value={subCat}>
             {subCat}
           </option>
