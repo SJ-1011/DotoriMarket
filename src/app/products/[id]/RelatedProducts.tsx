@@ -32,7 +32,7 @@ export default function RelatedProducts({ currentProductId, categoryCode }: Rela
       const res = await getProductsCategory(mapped);
       if (!res.ok || !Array.isArray(res.item)) return;
 
-      const others = res.item.filter(p => Number(p._id) !== currentProductId);
+      const others = res.item.filter(p => Number(p._id) !== currentProductId && p.active === true);
       const shuffled = others.sort(() => 0.5 - Math.random());
       const selected = shuffled.slice(0, 8);
 
