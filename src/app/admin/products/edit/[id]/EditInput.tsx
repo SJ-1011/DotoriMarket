@@ -32,7 +32,7 @@ const CATEGORY_NAME_TO_CODE: Record<string, Record<string, string>> = {
     '메모지/노트': '06',
   },
   PC04: {
-    // 리빙&악세사리
+    // 리빙&소품
     키링: '01',
     '미용&악세사리': '02',
   },

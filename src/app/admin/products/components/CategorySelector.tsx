@@ -9,42 +9,47 @@ const CATEGORY_DETAIL_MAP: Record<string, string[]> = {
   PC04: LIVING_CATEGORIES,
 };
 
-const MAIN_CATEGORIES = Object.entries(CATEGORY_MAP).filter(([code]) => ['PC01', 'PC03', 'PC04', 'new', 'popular'].includes(code));
+const MAIN_CATEGORIES = Object.entries(CATEGORY_MAP).filter(([code]) => ['PC01', 'PC02', 'PC03', 'PC04', 'new', 'popular'].includes(code));
 
-export default function CategorySelector({ initialMain, initialSub, onChange }: { initialMain?: string; initialSub?: string; onChange: (main: string, sub: string) => void }) {
+interface CategorySelectorProps {
+  initialMain?: string;
+  initialSub?: string;
+  onChange: (main: string, sub: string) => void;
+}
+
+export default function CategorySelector({ initialMain, initialSub, onChange }: CategorySelectorProps) {
   const [main, setMain] = useState(initialMain || 'PC01');
   const [sub, setSub] = useState(initialSub || '');
-
-  // 초기값에서 sub가 없는 경우, main 카테고리의 첫 번째 소카테고리로 설정
   useEffect(() => {
-    if (!initialSub && CATEGORY_DETAIL_MAP[main]?.length > 0) {
-      setSub(CATEGORY_DETAIL_MAP[main][0]);
+    setMain(initialMain || 'PC01');
+  }, [initialMain]);
+
+  useEffect(() => {
+    if (initialSub) {
+      setSub(initialSub);
+    } else {
+      const firstSub = CATEGORY_DETAIL_MAP[main]?.[0] || '';
+      setSub(firstSub);
     }
-  }, [initialSub, main]);
+  }, [initialSub]);
 
-  // main 변경 시 sub도 해당하는 첫 번째 소카테고리로 변경
   useEffect(() => {
-    const defaultSub = CATEGORY_DETAIL_MAP[main]?.[0] || '';
+    const firstSub = CATEGORY_DETAIL_MAP[main]?.[0] || '';
     if (!CATEGORY_DETAIL_MAP[main]?.includes(sub)) {
-      setSub(defaultSub);
+      setSub(firstSub);
     }
   }, [main]);
 
+  // sub가 변경될 때만 부모에 알림
   useEffect(() => {
-    if (main && sub) {
+    if (sub) {
       onChange(main, sub);
     }
-  }, [main, sub, onChange]);
+  }, [sub, main]);
 
   return (
     <div className="flex gap-2 items-center">
-      <select
-        value={main}
-        onChange={e => {
-          setMain(e.target.value);
-        }}
-        className="border px-2 py-1 rounded"
-      >
+      <select value={main} onChange={e => setMain(e.target.value)} className="border px-2 py-1 rounded">
         {MAIN_CATEGORIES.map(([code, info]) => (
           <option key={code} value={code}>
             {info.label}
@@ -52,13 +57,7 @@ export default function CategorySelector({ initialMain, initialSub, onChange }: 
         ))}
       </select>
 
-      <select
-        value={sub}
-        onChange={e => {
-          setSub(e.target.value);
-        }}
-        className="border px-2 py-1 rounded"
-      >
+      <select value={sub} onChange={e => setSub(e.target.value)} className="border px-2 py-1 rounded">
         {(CATEGORY_DETAIL_MAP[main] || []).map(subCat => (
           <option key={subCat} value={subCat}>
             {subCat}
