@@ -3,8 +3,9 @@ import EditInput from './EditInput';
 import ProductEditPage from './ProductEditPage';
 import { notFound } from 'next/navigation';
 
-export default async function AdminProductEditServer({ params }: { params: { id: string } }) {
-  const res = await getProductById(Number(params.id));
+export default async function AdminProductEditServer({ params }: { params: Promise<{ id: string }> }) {
+  const awaitedParams = await params;
+  const res = await getProductById(Number(awaitedParams.id));
 
   if (!res.ok || !res.item || res.item.active === false) {
     notFound();
