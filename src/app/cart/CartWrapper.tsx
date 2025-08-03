@@ -16,6 +16,7 @@ import CartMobileList from './CartMobileList';
 import CartSummary from './CartSummary';
 import CartButtons from './CartButtons';
 import { CartResponse } from '@/types/Cart';
+import { getProductById } from '@/utils/getProducts';
 
 export default function CartWrapper() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
@@ -39,10 +40,38 @@ export default function CartWrapper() {
   // 장바구니 데이터 초기 fetch + Zustand 초기화
   useEffect(() => {
     if (!user?.token?.accessToken) return;
+
     (async () => {
       const data = await getCarts(user.token.accessToken);
-      setCartData(data);
-      cartStore.resetQuantities(Object.fromEntries(data.item.map(p => [p._id, p.quantity])));
+
+      // 상품별 배송비 가져오기
+      const updatedItems = await Promise.all(
+        data.item.map(async cartItem => {
+          try {
+            const productRes = await getProductById(cartItem.product._id);
+            const shippingFee = productRes.ok ? productRes.item.shippingFees : 0;
+
+            return {
+              ...cartItem,
+              product: {
+                ...cartItem.product,
+                shippingFees: shippingFee,
+              },
+            };
+          } catch {
+            return {
+              ...cartItem,
+              product: {
+                ...cartItem.product,
+                shippingFees: 0,
+              },
+            };
+          }
+        }),
+      );
+
+      setCartData({ ...data, item: updatedItems });
+      cartStore.resetQuantities(Object.fromEntries(updatedItems.map(p => [p._id, p.quantity])));
       cartStore.setShippingFee(data.cost.shippingFees);
     })();
   }, [user?.token?.accessToken]);

@@ -13,7 +13,7 @@ export default function CartButtons({ handleDeleteSelected }: CartButtonsProps) 
       </button>
 
       {/* 안내문 */}
-      <span className="hidden sm:block text-xs sm:text-sm text-gray">장바구니는 최대 10개의 상품을 담을 수 있습니다.</span>
+      <span className="hidden sm:block text-xs sm:text-sm text-gray">모든 상품은 합배송되며, 배송비는 가장 높은 금액 한 번만 청구됩니다.</span>
     </div>
   );
 }
