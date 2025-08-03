@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import Loading from '@/app/loading';
-import Image from 'next/image';
 import FilterIcon from '@/components/icon/FilterIcon';
 import Pagination from '@/components/common/Pagination';
 
@@ -263,16 +262,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             </ul>
           )}
         </div>
-        {loading ? (
-          <Loading />
-        ) : paginatedProducts?.length ? (
-          <ProductGrid>{likedProducts ? <ProductItemCard products={paginatedProducts} likedProducts={likedProducts}></ProductItemCard> : <ProductItemCard products={paginatedProducts}></ProductItemCard>}</ProductGrid>
-        ) : (
-          <div className="flex flex-col flex-nowrap justify-center items-center gap-4 w-full mx-auto">
-            <Image src="/sad-dotori.png" alt="상품 없음" width={247} height={249}></Image>
-            <p>해당하는 상품이 없습니다.</p>
-          </div>
-        )}
+        {loading ? <Loading /> : paginatedProducts?.length && <ProductGrid>{likedProducts ? <ProductItemCard products={paginatedProducts} likedProducts={likedProducts}></ProductItemCard> : <ProductItemCard products={paginatedProducts}></ProductItemCard>}</ProductGrid>}
 
         <div className="hidden sm:block">
           <Pagination

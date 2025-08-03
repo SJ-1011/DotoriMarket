@@ -194,13 +194,16 @@ export default function SearchPage() {
         <>
           {loading ? (
             <Loading />
-          ) : products?.length ? (
-            <ProductGrid>{likedProducts ? <ProductItemCard products={products} likedProducts={likedProducts}></ProductItemCard> : <ProductItemCard products={products}></ProductItemCard>}</ProductGrid>
           ) : (
-            <div className="flex flex-col flex-nowrap justify-center items-center gap-4 w-full mx-auto">
-              <Image src="/sad-dotori.png" alt="상품 없음" width={247} height={249}></Image>
-              <p>해당하는 상품이 없습니다.</p>
-            </div>
+            products &&
+            (products?.length ? (
+              <ProductGrid>{likedProducts ? <ProductItemCard products={products} likedProducts={likedProducts}></ProductItemCard> : <ProductItemCard products={products}></ProductItemCard>}</ProductGrid>
+            ) : (
+              <div className="flex flex-col flex-nowrap justify-center items-center gap-4 w-full mx-auto">
+                <Image src="/sad-dotori.png" alt="상품 없음" width={247} height={249}></Image>
+                <p>해당하는 상품이 없습니다.</p>
+              </div>
+            ))
           )}
         </>
       </article>
