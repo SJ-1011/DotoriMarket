@@ -26,7 +26,6 @@ export default function CartWrapper() {
   const cartStore = useCartQuantityStore();
   const router = useRouter();
   const { selectedItems, setSelectedItems, toggleAll, toggleItem } = useCartSelection(cartData);
-  const getImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
 
   // 선택된 상품 총합 계산
   const selectedPriceInfo = useMemo(() => {
@@ -135,9 +134,9 @@ export default function CartWrapper() {
 
   return (
     <div className="p-4 max-w-[900px] mx-auto">
-      <CartTable items={cartData.item} selectedItems={selectedItems} toggleItem={toggleItem} toggleAll={toggleAll} increaseQty={increaseQty} decreaseQty={decreaseQty} handleDeleteItem={handleDeleteItem} getQuantity={cartStore.getQuantity} getImageUrl={getImageUrl} />
+      <CartTable items={cartData.item} selectedItems={selectedItems} toggleItem={toggleItem} toggleAll={toggleAll} increaseQty={increaseQty} decreaseQty={decreaseQty} handleDeleteItem={handleDeleteItem} getQuantity={cartStore.getQuantity} />
       <CartButtons handleDeleteSelected={handleDeleteSelected} />
-      <CartMobileList items={cartData.item} selectedItems={selectedItems} toggleItem={toggleItem} increaseQty={increaseQty} decreaseQty={decreaseQty} handleDeleteItem={handleDeleteItem} getQuantity={cartStore.getQuantity} getImageUrl={getImageUrl} />
+      <CartMobileList items={cartData.item} selectedItems={selectedItems} toggleItem={toggleItem} increaseQty={increaseQty} decreaseQty={decreaseQty} handleDeleteItem={handleDeleteItem} getQuantity={cartStore.getQuantity} />
       <CartSummary productOnlyTotal={selectedPriceInfo.productOnlyTotal} shippingFee={selectedPriceInfo.shippingFee} total={selectedPriceInfo.total} handlePurchase={handlePurchase} />
     </div>
   );

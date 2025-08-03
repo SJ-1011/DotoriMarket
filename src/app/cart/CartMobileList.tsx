@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { CartResponse } from '@/types/Cart';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface CartMobileListProps {
   items: CartResponse['item'];
@@ -12,10 +13,9 @@ interface CartMobileListProps {
   decreaseQty: (id: number) => void;
   handleDeleteItem: (id: number) => void;
   getQuantity: (id: number) => number;
-  getImageUrl: (path: string) => string;
 }
 
-export default function CartMobileList({ items, selectedItems, toggleItem, increaseQty, decreaseQty, handleDeleteItem, getQuantity, getImageUrl }: CartMobileListProps) {
+export default function CartMobileList({ items, selectedItems, toggleItem, increaseQty, decreaseQty, handleDeleteItem, getQuantity }: CartMobileListProps) {
   const router = useRouter();
 
   if (!items || items.length === 0) return null;
@@ -32,7 +32,7 @@ export default function CartMobileList({ items, selectedItems, toggleItem, incre
           {/* 품절 UI */}
           {product.product.quantity === 0 ? (
             <div className="flex items-start gap-4">
-              <Image src={getImageUrl(product.product.image.path)} alt={product.product.name} width={80} height={80} className="rounded-sm cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)} />
+              <Image src={getFullImageUrl(product.product.image.path) ?? '/fallback.png'} alt={product.product.name} width={80} height={80} className="rounded-sm cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)} />
               <div className="flex flex-col flex-1 justify-between">
                 <div className="flex justify-between items-start">
                   <div className="font-semibold text-sm cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
@@ -50,7 +50,7 @@ export default function CartMobileList({ items, selectedItems, toggleItem, incre
               {/* 상품 UI */}
               <div className="flex justify-between items-start gap-4">
                 <button className="cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
-                  <Image src={getImageUrl(product.product.image.path)} alt={product.product.name} width={80} height={80} className="rounded-sm" />
+                  <Image src={getFullImageUrl(product.product.image.path) ?? '/fallback.png'} alt={product.product.name} width={80} height={80} className="rounded-sm" />
                 </button>
                 <div className="flex flex-col flex-1 justify-between">
                   <div className="flex justify-between items-center">
