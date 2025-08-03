@@ -1,10 +1,36 @@
 'use client';
 
+import { useLoginStore } from '@/stores/loginStore';
+import { getUserById } from '@/utils/getUsers';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function MypageNav() {
   const pathname = usePathname();
+  const user = useLoginStore(state => state.user);
+  const [type, setType] = useState<string>('admin');
+
+  useEffect(() => {
+    if (!user) return;
+    const getData = async () => {
+      try {
+        const res = await getUserById(user._id);
+
+        if (res.ok) {
+          const userType = res.item.type;
+          setType(userType);
+        }
+      } catch {
+        alert('일시적인 네트워크 오류로 마이페이지를 불러올 수 없습니다.');
+      }
+    };
+
+    getData();
+  }, [user]);
+
+  if (type === 'admin') return;
+
   return (
     <>
       <div className="sticky top-[60.5px] sm:top-[69px] bg-background z-20 w-full text-sm lg:text-base">
