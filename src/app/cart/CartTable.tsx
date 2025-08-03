@@ -46,7 +46,7 @@ export default function CartTable({ items, selectedItems, toggleItem, toggleAll,
             {/* 상품 정보 */}
             <td className="text-left border-r border-gray-200">
               <div className="flex items-center gap-4 py-4 lg:py-6 cursor-pointer" onClick={() => router.push(`/products/${product.product._id}`)}>
-                <Image src={getFullImageUrl(product.product.image.path) ?? '/fallback.png'} unoptimized alt={product.product.name} width={80} height={80} className="rounded-md" />
+                <Image src={getFullImageUrl(product.product.image.path) ?? '/fallback.png'} alt={product.product.name} width={80} height={80} className="rounded-md" />
                 <div>
                   <div className="font-semibold">{product.product.name}</div>
                   <div className="text-gray-500 text-sm">{product.product.price.toLocaleString()}원</div>
