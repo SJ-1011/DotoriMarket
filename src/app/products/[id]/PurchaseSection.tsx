@@ -15,6 +15,8 @@ import ShareIcon from '@/components/icon/ShareIcon';
 import { useRouter, usePathname } from 'next/navigation';
 import type { Review } from '@/types/Review';
 import { addToCart } from '@/data/actions/addToCart';
+import { useCartBadgeStore } from '@/stores/cartBadgeStore';
+import { getCarts } from '@/utils/getCarts';
 
 interface PurchaseSectionProps {
   product: Product & { bookmarkId?: number };
@@ -156,12 +158,25 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
     }
 
     try {
+      const cartRes = await getCarts(accessToken!);
+
+      //현재 장바구니 개수를 배지 스토어에 반영 (초기 세팅)
+      useCartBadgeStore.setState({ count: cartRes.item.length });
+
+      const alreadyExists = cartRes.item.some(item => item.product._id === product._id);
+
       await addToCart(Number(product._id), quantity, accessToken!);
+
+      // 새로운 상품일 때만 카운트 +1
+      if (!alreadyExists) {
+        useCartBadgeStore.setState(state => ({ count: state.count + 1 }));
+      }
       alert('장바구니에 상품이 추가되었습니다!');
     } catch {
       alert('장바구니 추가에 실패했습니다. 다시 시도해 주세요.');
     }
   };
+
   return (
     <>
       {/* Breadcrumb */}
