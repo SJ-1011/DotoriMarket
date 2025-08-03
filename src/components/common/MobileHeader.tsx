@@ -12,12 +12,14 @@ import { CHARACTER_CATEGORIES, LIVING_CATEGORIES, STATIONERY_CATEGORIES } from '
 import { useLoginStore } from '@/stores/loginStore';
 import { useRouter } from 'next/navigation';
 import NotificationIcon from './NotificationIcon';
+import { useCartBadgeStore } from '@/stores/cartBadgeStore';
 
 export default function MobileHeader() {
   const { isLogin, logout } = useLoginStore();
   const router = useRouter();
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [selectMenu, setSelectMenu] = useState<'category' | 'board' | 'myInfo'>('category');
+  const { count } = useCartBadgeStore();
 
   // 메뉴 종류
   const menuContent = {
@@ -78,8 +80,9 @@ export default function MobileHeader() {
               <Link href="/search">
                 <SearchIcon className="w-6 h-6" aria-label="상품 검색" />
               </Link>
-              <Link href="/cart">
-                <CartIcon pathProps={{ stroke: '#A97452' }} svgProps={{ className: 'w-6 h-6' }} aria-label="마이페이지" />
+              <Link href="/cart" className="relative">
+                <CartIcon pathProps={{ stroke: '#A97452' }} svgProps={{ className: 'w-6 h-6' }} aria-label="장바구니" />
+                {count > 0 && <span className="absolute -top-1 -right-1 bg-red text-white font-bold text-[10px] w-[15px] h-[15px] flex items-center justify-center rounded-full">{count}</span>}
               </Link>
             </div>
           </div>

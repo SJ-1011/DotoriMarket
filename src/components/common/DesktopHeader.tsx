@@ -14,6 +14,7 @@ import SearchIconHeader from '../icon/SearchIconHeader';
 import CloseIcon from '../icon/CloseIcon';
 import { getProducts } from '@/utils/getProducts';
 import { Product } from '@/types/Product';
+import { useCartBadgeStore } from '@/stores/cartBadgeStore';
 
 export default function DesktopHeader() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function DesktopHeader() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef<HTMLLIElement>(null); // 검색 영역 참조
   const inputRef = useRef<HTMLInputElement>(null); // 검색 입력창 참조
+  const { count } = useCartBadgeStore();
 
   // 상품 목록 가져오기
   useEffect(() => {
@@ -201,9 +203,10 @@ export default function DesktopHeader() {
           <ul className="flex flex-row flex-nowrap gap-4 justify-end">
             {!isSearchOpen && (
               <>
-                <li>
-                  <Link href="/cart" aria-label="장바구니">
+                <li className="relative">
+                  <Link href="/cart" aria-label="장바구니" className="relative">
                     <CartIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ stroke: 'white' }} />
+                    {count > 0 && <span className="absolute -top-1 -right-1 bg-red font-bold text-white text-[10px] w-[15px] h-[15px] flex items-center justify-center rounded-full">{count}</span>}
                   </Link>
                 </li>
                 <li>
