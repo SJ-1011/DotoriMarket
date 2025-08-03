@@ -17,6 +17,7 @@ import Loading from '../loading';
 import { createPaymentNotification } from '@/data/actions/addNotification';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { UserAddress } from '@/types';
+import { useCartBadgeStore } from '@/stores/cartBadgeStore';
 
 export default function OrderWrapper() {
   const { user } = useLoginStore();
@@ -28,6 +29,7 @@ export default function OrderWrapper() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const currentQuery = searchParams.toString();
   const redirectUrl = currentQuery ? `/order?${currentQuery}` : '/order';
+  const { decrease } = useCartBadgeStore();
   const methods = useForm<OrderForm>({
     defaultValues: {
       user: { name: '', phone: '' },
@@ -104,6 +106,7 @@ export default function OrderWrapper() {
         if (idsParam) {
           const selectedIds = idsParam.split(',').map(Number);
           await deleteCartItems(selectedIds, token);
+          decrease(selectedIds.length);
         }
       } catch (err) {
         console.error('선택된 장바구니 삭제 실패', err);
