@@ -17,12 +17,13 @@ import CartSummary from './CartSummary';
 import CartButtons from './CartButtons';
 import { CartResponse } from '@/types/Cart';
 import { getProductById } from '@/utils/getProducts';
+import { useCartBadgeStore } from '@/stores/cartBadgeStore';
 
 export default function CartWrapper() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
   const previousQty = useRef<Record<number, number>>({});
   const debounceTimers = useRef<Record<number, NodeJS.Timeout | null>>({});
-
+  const { decrease } = useCartBadgeStore();
   const { user } = useLoginStore();
   const cartStore = useCartQuantityStore();
   const router = useRouter();
@@ -34,6 +35,7 @@ export default function CartWrapper() {
     const validItems = cartData.item.filter(i => selectedItems.includes(i._id) && i.product.quantity > 0);
     const productOnlyTotal = validItems.reduce((sum, item) => sum + item.product.price * cartStore.getQuantity(item._id), 0);
     const shippingFee = validItems.length > 0 ? cartStore.shippingFee : 0;
+
     return { productOnlyTotal, shippingFee, total: productOnlyTotal + shippingFee };
   }, [cartData, selectedItems, cartStore.quantities]);
 
@@ -121,6 +123,7 @@ export default function CartWrapper() {
       setCartData(prev => (prev ? { ...prev, item: prev.item.filter(i => i._id !== id) } : null));
       cartStore.removeQuantity(id);
       setSelectedItems(prev => prev.filter(i => i !== id));
+      decrease(1);
     } catch (err) {
       console.error('상품 삭제 중 오류:', err);
     }
@@ -133,6 +136,7 @@ export default function CartWrapper() {
       setCartData(prev => (prev ? { ...prev, item: prev.item.filter(i => !selectedItems.includes(i._id)) } : null));
       cartStore.removeQuantities(selectedItems);
       setSelectedItems([]);
+      decrease(selectedItems.length);
     } catch (err) {
       console.error('선택된 상품 삭제 중 오류:', err);
     }
