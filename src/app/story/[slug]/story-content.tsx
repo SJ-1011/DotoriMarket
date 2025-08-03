@@ -34,9 +34,9 @@ export default function StoryContent({ slug }: { slug: StorySlug }) {
 
   return (
     <>
-      <div className="px-6 pt-8">
+      <div className="max-w-[1000px] mx-auto p-4 sm:pt-12">
         <Breadcrumb items={[{ label: '홈', href: '/' }, { label: '도토리숲 이야기' }]} />
-        <h2 className="max-w-[800px] mx-auto text-primary font-bold text-xl mb-8">에디터 비하인드 스토리</h2>
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#A97452] py-2">에디터 비하인드 스토리</h2>
       </div>
 
       {/* Cover Section */}
