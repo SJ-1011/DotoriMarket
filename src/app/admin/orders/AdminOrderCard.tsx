@@ -4,6 +4,7 @@ import type { AdminOrder, OrderStateCode } from '@/types/AdminOrder';
 import Image from 'next/image';
 import { ORDER_STATE_LABEL } from '@/types/AdminOrder';
 import { useRouter } from 'next/navigation';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface Props {
   order: AdminOrder;
@@ -35,7 +36,7 @@ export default function AdminOrderCard({ order, timeAgo, removePostalCode, onCha
         {/* 상품 이미지 */}
         {firstProduct?.image?.path && (
           <div className="w-20 h-20 border rounded overflow-hidden flex-shrink-0 border-primary-light">
-            <Image src={`${process.env.NEXT_PUBLIC_API_URL}/${firstProduct.image.path}`} alt={firstProduct.name} unoptimized width={80} height={80} className="object-cover w-full h-full" />
+            <Image src={`${getFullImageUrl(firstProduct.image.path)}`} alt={firstProduct.name} width={80} height={80} className="object-cover w-full h-full" />
           </div>
         )}
 
