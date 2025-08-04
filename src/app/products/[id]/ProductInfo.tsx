@@ -2,8 +2,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Product } from '@/types/Product';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 export default function ProductInfo({ product }: { product: Product }) {
   const [width, setWidth] = useState(0);
@@ -15,6 +14,20 @@ export default function ProductInfo({ product }: { product: Product }) {
     setWidth(randomWidth);
     setHeight(randomHeight);
   }, []);
+
+  // 이미지 배열 처리 개선
+  const getImageArray = () => {
+    if (!product.mainImages) return [];
+
+    if (Array.isArray(product.mainImages)) {
+      return product.mainImages.filter(img => img && img.path);
+    }
+
+    return Object.values(product.mainImages).filter(img => img && img.path);
+  };
+
+  const imageList = getImageArray();
+  const images = imageList.map(img => img.path);
 
   return (
     <section className="max-w-full px-4 py-6 bg-background">
@@ -38,11 +51,14 @@ export default function ProductInfo({ product }: { product: Product }) {
 
         {/* 이미지 */}
         <div className="flex flex-col items-center gap-8 mt-8">
-          {product.mainImages.map((image, index) => {
-            const imgSrc = `${API_URL}/${image.path.replace(/^\/+/, '')}`;
+          {images.length === 0 && <div className="w-full max-w-[500px] h-[345px] flex items-center justify-center bg-gray-100 text-gray-400">이미지가 없습니다.</div>}
+
+          {images.map((image, index) => {
+            const imgSrc = getFullImageUrl(image);
+            if (!imgSrc) return null;
             return (
               <div key={index} className="w-full max-w-[500px]">
-                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={500} height={345} style={{ objectFit: 'contain' }} unoptimized sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
+                <Image src={imgSrc} alt={`상품 이미지`} width={500} height={345} style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
               </div>
             );
           })}
@@ -59,11 +75,14 @@ export default function ProductInfo({ product }: { product: Product }) {
 
         {/* 이미지 */}
         <div className="flex flex-col items-center gap-8 mt-8">
-          {product.mainImages.map((image, index) => {
-            const imgSrc = `${API_URL}/${image.path.replace(/^\/+/, '')}`;
+          {images.length === 0 && <div className="w-full max-w-[500px] h-[345px] flex items-center justify-center bg-gray-100 text-gray-400">이미지가 없습니다.</div>}
+
+          {images.map((image, index) => {
+            const imgSrc = getFullImageUrl(image);
+            if (!imgSrc) return null;
             return (
               <div key={index} className="w-full max-w-[500px]">
-                <Image src={imgSrc} alt={image.originalname || image.name || `상품 이미지 ${index + 1}`} width={500} height={345} style={{ objectFit: 'contain' }} unoptimized sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
+                <Image src={imgSrc} alt={`상품 이미지`} width={500} height={345} style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 100vw, 500px" priority={index === 0} />
               </div>
             );
           })}

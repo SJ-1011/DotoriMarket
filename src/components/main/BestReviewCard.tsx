@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Review } from '@/types/Review';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface BestReviewCardProps {
   review: Review;
@@ -9,8 +10,6 @@ interface BestReviewCardProps {
 }
 
 export default function BestReviewCard({ review, variant = 'slider', className = '' }: BestReviewCardProps) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
-
   const productId = review.product?._id;
 
   if (!productId) {
@@ -21,15 +20,15 @@ export default function BestReviewCard({ review, variant = 'slider', className =
     const img = review.user.image;
     if (!img) return null;
     if (typeof img === 'string') {
-      return `${API_URL}/${img}`;
+      return getFullImageUrl(img);
     }
     if (typeof img === 'object' && 'path' in img) {
-      return `${API_URL}/${img.path}`;
+      return getFullImageUrl(img.path);
     }
     return null;
   })();
 
-  const imageUrl = review.images?.[0] ?? null;
+  const imageUrl = getFullImageUrl(review.images?.[0] || '');
 
   const ReviewTextOverlay = (
     <div className="absolute bottom-0 w-full bg-black/60 text-white text-xs p-2 space-y-1 pointer-events-none select-none">
