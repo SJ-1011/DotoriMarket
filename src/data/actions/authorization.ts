@@ -10,7 +10,9 @@ type RefreshToken =
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
-
+/**
+ * 토큰 재발행 함수
+ */
 export async function refreshToken(user: LoginUser): Promise<RefreshToken> {
   try {
     const res = await fetch(`${API_URL}/auth/refresh`, {
