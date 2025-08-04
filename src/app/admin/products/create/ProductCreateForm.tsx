@@ -55,6 +55,9 @@ function convertSubCategoryToCode(bigCategory: string, smallCategory: string): s
 }
 
 export default function ProductCreateForm() {
+  const { isLogin, isAdmin, isLoading } = useLoginStore();
+  const router = useRouter();
+
   const [saving, setSaving] = useState(false);
   const [data, setData] = useState<FormData>({
     name: '',
@@ -77,8 +80,16 @@ export default function ProductCreateForm() {
     }
   }, [data.mainImage]);
 
-  const router = useRouter();
   const { user } = useLoginStore();
+  useEffect(() => {
+    if (!isLoading && (!isLogin || !isAdmin)) {
+      router.push('/unauthorized');
+    }
+  }, [isLoading, isLogin, isAdmin, router]);
+
+  if (isLoading) {
+    return <div>권한 확인 중...</div>;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;

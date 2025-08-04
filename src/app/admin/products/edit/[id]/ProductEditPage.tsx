@@ -9,6 +9,7 @@ import { Order } from '@/types/Order';
 import { Review } from '@/types/Review';
 import { getOrders } from '@/utils/getOrders';
 import { getReviews } from '@/utils/getReviews';
+import { useRouter } from 'next/navigation';
 
 interface ProductEditPageProps {
   product: Product;
@@ -22,6 +23,9 @@ export default function ProductEditPage({ product }: ProductEditPageProps) {
 
   const user = useLoginStore(state => state.user);
   const accessToken = user?.token?.accessToken;
+
+  const { isLogin, isAdmin, isLoading } = useLoginStore();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchUserOrders() {
@@ -53,6 +57,16 @@ export default function ProductEditPage({ product }: ProductEditPageProps) {
     }
     fetchProductReviews();
   }, [product._id]);
+
+  useEffect(() => {
+    if (!isLoading && (!isLogin || !isAdmin)) {
+      router.push('/unauthorized');
+    }
+  }, [isLoading, isLogin, isAdmin, router]);
+
+  if (isLoading) {
+    return <div>권한 확인 중...</div>;
+  }
 
   return (
     <>
