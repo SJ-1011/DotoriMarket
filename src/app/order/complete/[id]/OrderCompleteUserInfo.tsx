@@ -1,4 +1,4 @@
-export default function OrderCompleteUserInfo({ name, phone, address, memo, details }: { name: string; phone: string; address: string; memo: string; details: string }) {
+export default function OrderCompleteUserInfo({ name, phone, address, memo, details }: { name: string; phone: string; address: string; memo: string; details?: string }) {
   const displayAddress = address.replace(/^\d{5}\s*/, '');
 
   return (
