@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useActionState, useCallback } from 'react';
 import Image from 'next/image';
-import { PostReply } from '@/types/Post';
+import { Post, PostReply } from '@/types/Post';
 import { getReplies, getPost } from '@/utils/getPosts';
 import { getUserById } from '@/utils/getUsers';
 import { createReplyNotification } from '@/data/actions/addNotification';
 import MypageIcon from '@/components/icon/MypageIcon';
-import { createReply, deleteReply } from '@/data/actions/post';
+import { createReply, deletePost, deleteReply } from '@/data/actions/post';
 import { ApiRes } from '@/types/api';
 import { useLoginStore } from '@/stores/loginStore';
 
@@ -17,14 +17,16 @@ interface ImageModalProps {
   images: string[]; // 단일 imageSrc 대신 이미지 배열
   imageAlt: string;
   postId: number;
+  postUserId?: string | number;
 }
 
-export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }: ImageModalProps) {
+export default function ImageModal({ isOpen, onClose, images, imageAlt, postId, postUserId }: ImageModalProps) {
   const [comments, setComments] = useState<PostReply[]>([]);
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // 현재 이미지 인덱스
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null); // 활성화된 드롭다운
+  const [postDropdownActive, setPostDropdownActive] = useState(false); // 게시글 드롭다운
 
   const user = useLoginStore(state => state.user);
   const isLogin = useLoginStore(state => state.isLogin);
@@ -76,6 +78,17 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
     return res;
   }, null);
 
+  const [deletePostState, deletePostFormAction, isDeletePostPending] = useActionState(async (prevState: ApiRes<Post> | null, formData: FormData) => {
+    const res = await deletePost(prevState, formData);
+
+    // 삭제 성공 시 모달 닫기
+    if (res?.ok === 1) {
+      onClose();
+    }
+
+    return res;
+  }, null);
+
   // 이전/다음 이미지로 이동
   const goToPrevious = useCallback(() => {
     setCurrentImageIndex(prev => (prev > 0 ? prev - 1 : prev));
@@ -106,23 +119,25 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (activeDropdown !== null) {
+      if (activeDropdown !== null || postDropdownActive) {
         const target = e.target as Element;
         if (!target.closest('[data-dropdown]')) {
           setActiveDropdown(null);
+          setPostDropdownActive(false);
         }
       }
     };
 
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, [activeDropdown]);
+  }, [activeDropdown, postDropdownActive]);
 
   // 모달이 열릴 때마다 첫 번째 이미지로 초기화
   useEffect(() => {
     if (isOpen) {
       setCurrentImageIndex(0);
       setActiveDropdown(null); // 드롭다운도 초기화
+      setPostDropdownActive(false); // 게시글 드롭다운도 초기화
     }
   }, [isOpen]);
 
@@ -163,17 +178,63 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
     setActiveDropdown(activeDropdown === commentId ? null : commentId);
   };
 
+  const handlePostDropdownToggle = () => {
+    setPostDropdownActive(!postDropdownActive);
+  };
+
+  // 현재 사용자가 게시글 작성자인지 확인
+  const isPostOwner = user && postUserId && (user._id === postUserId || user._id === Number(postUserId));
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur" onClick={onClose}>
       <div className="flex flex-col sm:flex-row bg-transparent rounded-lg overflow-hidden shadow-2xl max-w-[90vw] max-h-[90vh]" onClick={e => e.stopPropagation()}>
         {/* 이미지 영역 */}
-        <div className="bg-black flex items-center justify-center  w-full h-[320px] sm:w-[600px] sm:h-[600px] max-w-[100vw] sm:max-w-[80vw] max-h-[40vh] sm:max-h-[80vh] relative">
+        <div className="bg-black flex items-center justify-center w-full h-[320px] sm:w-[600px] sm:h-[600px] max-w-[100vw] sm:max-w-[80vw] max-h-[40vh] sm:max-h-[80vh] relative">
           {/* 현재 이미지 */}
           <div className="w-full h-full relative">
             <Image src={images[currentImageIndex]} alt={`${imageAlt} ${currentImageIndex + 1}`} fill className="object-cover" unoptimized priority />
           </div>
+
+          {/* 게시글 3점 메뉴 버튼 */}
+          <div className="absolute top-4 right-4 z-20" data-dropdown>
+            <button onClick={handlePostDropdownToggle} className="p-2 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-all" aria-label="게시글 옵션">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+              </svg>
+            </button>
+
+            {/* 게시글 드롭다운 메뉴 */}
+            {postDropdownActive && (
+              <div className="absolute right-0 top-12 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[80px]">
+                {/* 내 게시글인 경우 삭제 옵션 표시 */}
+                {isPostOwner && (
+                  <form action={deletePostFormAction} className="m-0">
+                    <input type="hidden" name="_id" value={postId} />
+                    <input type="hidden" name="boardType" value="community" />
+                    <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
+                    <button
+                      type="submit"
+                      disabled={isDeletePostPending}
+                      className="w-full px-3 py-2 text-left text-red-600 hover:bg-gray-50 disabled:opacity-50 text-sm"
+                      onClick={e => {
+                        if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
+                      {isDeletePostPending ? '삭제 중...' : '삭제'}
+                    </button>
+                  </form>
+                )}
+                <button onClick={() => setPostDropdownActive(false)} className="w-full px-3 py-2 text-left text-gray-700 hover:bg-gray-50 text-sm">
+                  취소
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* 이전 버튼 */}
           {currentImageIndex > 0 && (
             <button onClick={goToPrevious} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 transition-all z-10" aria-label="이전 이미지">
@@ -298,6 +359,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
             {loginError && <p className="text-red-500 text-sm mt-1">로그인이 필요합니다.</p>}
             {state?.ok === 0 && <p className="text-red-500 text-sm mt-1">{state.message || '댓글 작성 실패'}</p>}
             {deleteState?.ok === 0 && <p className="text-red-500 text-sm mt-1">{deleteState.message || '댓글 삭제 실패'}</p>}
+            {deletePostState?.ok === 0 && <p className="text-red-500 text-sm mt-1">{deletePostState.message || '게시글 삭제 실패'}</p>}
           </div>
         </div>
       </div>
