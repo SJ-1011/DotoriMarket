@@ -53,10 +53,10 @@ export default function MessageModal({ target, user, isOpen, setIsOpen }: Messag
         <p className="mb-2">{target.name}님께 쪽지 보내기</p>
         <textarea name="message" id="message" value={message} onChange={e => setMessage(e.target.value)} className="w-full border rounded p-2 my-2" rows={5} placeholder="메시지를 입력하세요" />
         <div className="flex gap-2 mt-2">
-          <button type="submit" className="bg-primary text-white px-4 py-2 rounded">
+          <button type="submit" className="bg-primary text-white px-4 py-2 rounded cursor-pointer">
             전송
           </button>
-          <button type="button" onClick={handleCancel} className="bg-gray-300 px-4 py-2 rounded">
+          <button type="button" onClick={handleCancel} className="bg-gray-300 px-4 py-2 rounded cursor-pointer">
             취소
           </button>
         </div>
