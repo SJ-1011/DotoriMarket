@@ -10,7 +10,6 @@ interface LoginStore {
   logout: () => void;
   fetchUser: () => void;
   isAdmin: boolean;
-
 }
 
 export const useLoginStore = create<LoginStore>()(
@@ -18,8 +17,6 @@ export const useLoginStore = create<LoginStore>()(
     (set, get) => ({
       user: null,
       isLogin: false,
-      login: (user: LoginUser) => set({ user, isLogin: true }),
-      logout: () => set({ user: null, isLogin: false }),
       fetchUser: async () => {
         const prevUser = get().user;
         if (prevUser) {

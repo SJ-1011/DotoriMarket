@@ -306,7 +306,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             </ul>
           )}
         </div>
-        {loading ? <Loading /> : paginatedProducts?.length && <ProductGrid>{likedProducts ? <ProductItemCard products={paginatedProducts} likedProducts={likedProducts}></ProductItemCard> : <ProductItemCard products={paginatedProducts}></ProductItemCard>}</ProductGrid>}
+        {loading ? <Loading /> : paginatedProducts?.length && <ProductGrid>{likedProducts ? <ProductItemCard products={paginatedProducts} likedProducts={likedProducts} showCheckbox={true} selectedIds={selectedIds} onSelect={toggleSelect}></ProductItemCard> : <ProductItemCard products={paginatedProducts}></ProductItemCard>}</ProductGrid>}
         <div className="hidden sm:block">
           <Pagination
             currentPage={currentPage}
