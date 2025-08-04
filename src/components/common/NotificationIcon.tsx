@@ -10,6 +10,7 @@ import CloseIcon from '../icon/CloseIcon';
 import { useNotificationStore } from '@/stores/notificationStore';
 import Link from 'next/link';
 import { User } from '@/types';
+import { Product } from '@/types/Product';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function NotificationIcon({ isMobile = false }: { isMobile?: boolean }) {
@@ -130,7 +131,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
     };
   }, [user]);
 
-  const getImageSrc = (user: User) => {
+  const getUserImageSrc = (user: User) => {
     const fallback = '/character/chiikawa.png';
 
     if (typeof user.image === 'string' && user.image.startsWith('uploadFiles')) {
@@ -156,6 +157,11 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
       }
     }
 
+    return fallback;
+  };
+  const getProductImageSrc = (product: Product) => {
+    const fallback = '/character/chiikawa.png';
+    if (product.image?.path) return product.image.path;
     return fallback;
   };
 
@@ -192,17 +198,17 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                           <li key={index} className="flex flex-col flex-nowrap relative p-4 bg-white rounded-2xl w-full">
                             <div className="flex flex-row flex-nowrap items-center gap-3">
                               <div className="min-w-18 min-h-18">
-                                {item.type === 'payment' && <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product?.name} 상품 이미지`} width={72} height={72} className="rounded-full border border-gray" />}
+                                {item.type === 'payment' && <Image src={getProductImageSrc(item.extra.product!)} alt={`${item.extra.product?.name} 상품 이미지`} width={72} height={72} className="rounded-full border border-gray" />}
                                 {item.type === 'reply' && (
                                   <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                     {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                    <Image src={getImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                    <Image src={getUserImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                   </div>
                                 )}
                                 {item.type === 'message' && (
                                   <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                     {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                    <Image src={getImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                    <Image src={getUserImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                   </div>
                                 )}
                               </div>
@@ -254,9 +260,14 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                                 )}
                               </div>
                             </div>
-                            <button type="button" className="absolute top-5 right-5" onClick={() => handleReadOne(item._id.toString())}>
-                              <CloseIcon />
-                            </button>
+
+                            {item.type === 'message' ? (
+                              <></>
+                            ) : (
+                              <button type="button" className="absolute top-5 right-5" onClick={() => handleReadOne(item._id.toString())}>
+                                <CloseIcon />
+                              </button>
+                            )}
                             {openedMessageId === item._id.toString() && item.type === 'message' && (
                               <div className="flex flex-col flex-nowrap p-4 gap-2 bg-background mt-4">
                                 <p className="font-bold">쪽지 상세보기</p>
@@ -322,17 +333,17 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                           <div className="flex flex-row flex-nowrap items-center gap-3">
                             {/* 이미지 영역 */}
                             <div className="min-w-18 min-h-18">
-                              {item.type === 'payment' && <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product?.name} 상품 이미지`} width={72} height={72} className="rounded-full border border-gray" />}
+                              {item.type === 'payment' && <Image src={getProductImageSrc(item.extra.product!)} alt={`${item.extra.product?.name} 상품 이미지`} width={72} height={72} className="rounded-full border border-gray" />}
                               {item.type === 'reply' && (
                                 <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                   {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                  <Image src={getImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                  <Image src={getUserImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                 </div>
                               )}
                               {item.type === 'message' && (
                                 <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                   {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                  <Image src={getImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                  <Image src={getUserImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                 </div>
                               )}
                             </div>
@@ -385,9 +396,13 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                               )}
                             </div>
                           </div>
-                          <button type="button" className="absolute top-5 right-5" onClick={() => handleReadOne(item._id.toString())}>
-                            <CloseIcon />
-                          </button>
+                          {item.type === 'message' ? (
+                            <></>
+                          ) : (
+                            <button type="button" className="absolute top-5 right-5" onClick={() => handleReadOne(item._id.toString())}>
+                              <CloseIcon />
+                            </button>
+                          )}
                           {openedMessageId === item._id.toString() && item.type === 'message' && (
                             <div className="flex flex-col flex-nowrap p-4 gap-2 bg-background mt-4">
                               <p className="font-bold">쪽지 상세보기</p>
