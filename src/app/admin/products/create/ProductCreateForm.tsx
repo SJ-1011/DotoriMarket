@@ -107,7 +107,7 @@ export default function ProductCreateForm() {
       return;
     }
 
-    if (!data.name.trim() || !data.price || !data.shippingFees || !data.quantity || !data.mainImage || !data.categoryMain || !data.categorySub) {
+    if (!data.name.trim() || data.price <= 0 || data.quantity <= 0 || !data.mainImage || !data.categoryMain || !data.categorySub) {
       alert('모든 필드를 입력해 주세요.');
       return;
     }
@@ -145,42 +145,100 @@ export default function ProductCreateForm() {
     }
   };
 
+  // 취소 함수
+  const handleCancel = () => {
+    setData({
+      name: '',
+      price: 0,
+      shippingFees: 3000,
+      quantity: 1,
+      mainImage: undefined,
+      categoryMain: 'PC01',
+      categorySub: '',
+    });
+    setPreviewUrl(null);
+  };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <label className="block text-sm font-semibold mb-2">상품명</label>
-        <input name="name" value={data.name} onChange={handleChange} required className="w-full border px-4 py-2 rounded" placeholder="상품명을 입력하세요" />
+    <div className="space-y-8 mb-16">
+      <div className="group">
+        <label className="flex items-center gap-2 text-sm font-semibold mb-3 text-gray-700">상품명</label>
+        <input name="name" value={data.name} onChange={handleChange} required className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl bg-gray-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 placeholder-gray-400" placeholder="상품명을 입력하세요" />
       </div>
 
-      <div>
-        <label className="block text-sm font-semibold mb-2">판매가 (원)</label>
-        <input name="price" type="number" value={data.price} onChange={handleChange} required className="w-full border px-4 py-2 rounded" min={0} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="group">
+          <label className="flex items-center gap-2 text-sm font-semibold mb-3 text-gray-700">판매가</label>
+          <div className="relative">
+            <input name="price" type="number" value={data.price} onChange={handleChange} required className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl bg-gray-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300" min={0} />
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">원</span>
+          </div>
+        </div>
+
+        <div className="group">
+          <label className="flex items-center gap-2 text-sm font-semibold mb-3 text-gray-700">배송비</label>
+          <div className="relative">
+            <input name="shippingFees" type="number" value={data.shippingFees} onChange={handleChange} className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl bg-gray-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300" min={0} />
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">원</span>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-semibold mb-2">배송비 (원)</label>
-        <input name="shippingFees" type="number" value={data.shippingFees} onChange={handleChange} required className="w-full border px-4 py-2 rounded" min={0} />
-      </div>
-
-      <div>
-        <label className="block text-sm font-semibold mb-2">카테고리</label>
+      <div className="group">
+        <label className="flex items-center gap-2 text-sm font-semibold mb-3 text-gray-700">카테고리</label>
         <CategorySelector initialMain={data.categoryMain} initialSub={data.categorySub} onChange={handleCategoryChange} />
       </div>
 
-      <div>
-        <label className="block text-sm font-semibold mb-2">수량</label>
-        <input name="quantity" type="number" value={data.quantity} onChange={handleChange} required className="w-full border px-4 py-2 rounded" min={1} />
+      <div className="group">
+        <label className="flex items-center gap-2 text-sm font-semibold mb-3 text-gray-700">수량</label>
+        <div className="relative w-full md:w-48">
+          <input name="quantity" type="number" value={data.quantity} onChange={handleChange} required className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl bg-gray-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300" min={1} />
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">개</span>
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-semibold mb-2">대표 이미지</label>
-        <input type="file" name="mainImage" accept="image/*" onChange={handleChange} required className="w-full" />
-        {previewUrl && <img src={previewUrl} alt="대표 이미지 미리보기" className="mt-2 max-h-48 object-contain border rounded" />}
+      <div className="group">
+        <label className="flex items-center gap-2 text-sm font-semibold mb-3 text-gray-700">대표 이미지</label>
+
+        <div className="relative border-2 border-dashed border-primary-light rounded-2xl p-8 transition-all duration-300 bg-gray-50/30 hover:border-primary hover:bg-primary/5">
+          <input type="file" name="mainImage" accept="image/*" onChange={handleChange} required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+
+          {previewUrl ? (
+            <div className="text-center">
+              <img src={previewUrl} alt="대표 이미지 미리보기" className="mx-auto max-h-48 object-contain rounded-xl shadow-md mb-4" />
+              <p className="text-sm text-primary font-medium">이미지가 업로드되었습니다</p>
+              <p className="text-xs text-gray-500 mt-1">다른 이미지로 바꾸려면 클릭하세요</p>
+            </div>
+          ) : (
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </div>
+              <p className="text-lg font-medium text-gray-700 mb-2">이미지를 업로드해주세요</p>
+              <p className="text-sm text-gray-500">클릭해서 파일을 선택하세요</p>
+              <p className="text-xs text-gray-400 mt-2">JPG, PNG, GIF 파일만 지원됩니다</p>
+            </div>
+          )}
+        </div>
       </div>
 
-      <button onClick={handleSave} disabled={saving} className="w-full py-3 bg-primary text-white rounded-md font-medium hover:bg-primary-dark disabled:opacity-50">
-        {saving ? '저장 중...' : '저장하기'}
-      </button>
+      <div className="pt-4 flex gap-4">
+        <button onClick={handleCancel} disabled={saving} className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-md font-semibold hover:bg-gray-200 focus:ring-4 focus:ring-gray-200 disabled:opacity-50 transition-all duration-300 cursor-pointer">
+          취소
+        </button>
+        <button onClick={handleSave} disabled={saving} className="flex-1 py-3 bg-primary text-white rounded-md font-semibold hover:bg-primary-dark focus:ring-4 focus:ring-primary/20 disabled:opacity-50 transition-all duration-300 cursor-pointer">
+          {saving ? (
+            <span className="flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              저장 중...
+            </span>
+          ) : (
+            '저장하기'
+          )}
+        </button>
+      </div>
     </div>
   );
 }
