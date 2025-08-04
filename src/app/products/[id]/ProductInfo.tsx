@@ -15,7 +15,18 @@ export default function ProductInfo({ product }: { product: Product }) {
     setHeight(randomHeight);
   }, []);
 
-  const imageList = Object.values(product.mainImages ?? {}).filter(img => !!img?.path);
+  // 이미지 배열 처리 개선
+  const getImageArray = () => {
+    if (!product.mainImages) return [];
+
+    if (Array.isArray(product.mainImages)) {
+      return product.mainImages.filter(img => img && img.path);
+    }
+
+    return Object.values(product.mainImages).filter(img => img && img.path);
+  };
+
+  const imageList = getImageArray();
   const images = imageList.map(img => img.path);
 
   return (

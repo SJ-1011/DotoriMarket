@@ -16,6 +16,44 @@ interface FormData {
   categorySub?: string;
 }
 
+// 카테고리 이름을 코드로 변환하는 매핑
+const CATEGORY_NAME_TO_CODE: Record<string, Record<string, string>> = {
+  PC01: {
+    '스튜디오 지브리': '01',
+    '디즈니/픽사': '02',
+    산리오: '03',
+    미피: '04',
+    핑구: '05',
+    '짱구는 못말려': '06',
+    치이카와: '07',
+    스누피: '08',
+  },
+  PC03: {
+    필기류: '01',
+    스티커: '02',
+    마스킹테이프: '03',
+    '다이어리/달력': '04',
+    '포스터/엽서': '05',
+    '메모지/노트': '06',
+  },
+  PC04: {
+    키링: '01',
+    '미용&악세사리': '02',
+  },
+};
+
+function convertSubCategoryToCode(bigCategory: string, smallCategory: string): string {
+  const categoryMap = CATEGORY_NAME_TO_CODE[bigCategory];
+  if (!categoryMap) return smallCategory;
+
+  const code = categoryMap[smallCategory];
+  if (code) {
+    return `${bigCategory}${code}`;
+  }
+
+  return smallCategory;
+}
+
 export default function ProductCreateForm() {
   const [saving, setSaving] = useState(false);
   const [data, setData] = useState<FormData>({
@@ -29,13 +67,10 @@ export default function ProductCreateForm() {
   });
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // 이미지 선택 시 미리보기 URL 생성
   useEffect(() => {
     if (data.mainImage) {
       const url = URL.createObjectURL(data.mainImage);
       setPreviewUrl(url);
-
-      // 컴포넌트 언마운트 시 URL 객체 해제
       return () => URL.revokeObjectURL(url);
     } else {
       setPreviewUrl(null);
@@ -71,18 +106,17 @@ export default function ProductCreateForm() {
       alert('로그인이 필요합니다.');
       return;
     }
-    if (!data.mainImage) {
-      alert('대표 이미지를 선택해주세요.');
-      return;
-    }
-    if (!data.categoryMain || !data.categorySub) {
-      alert('카테고리를 선택해주세요.');
+
+    if (!data.name.trim() || !data.price || !data.shippingFees || !data.quantity || !data.mainImage || !data.categoryMain || !data.categorySub) {
+      alert('모든 필드를 입력해 주세요.');
       return;
     }
 
     setSaving(true);
 
     try {
+      const convertedSubCategory = convertSubCategoryToCode(data.categoryMain, data.categorySub);
+
       const res = await addProduct(
         {
           name: data.name,
@@ -91,7 +125,7 @@ export default function ProductCreateForm() {
           content: '상품 설명이 없습니다.',
           shippingFees: data.shippingFees,
           extra: {
-            category: [data.categoryMain, data.categorySub],
+            category: [data.categoryMain, convertedSubCategory],
           },
           mainImage: data.mainImage,
         },
@@ -115,17 +149,17 @@ export default function ProductCreateForm() {
     <div className="space-y-6">
       <div>
         <label className="block text-sm font-semibold mb-2">상품명</label>
-        <input name="name" value={data.name} onChange={handleChange} className="w-full border px-4 py-2 rounded" placeholder="상품명을 입력하세요" />
+        <input name="name" value={data.name} onChange={handleChange} required className="w-full border px-4 py-2 rounded" placeholder="상품명을 입력하세요" />
       </div>
 
       <div>
         <label className="block text-sm font-semibold mb-2">판매가 (원)</label>
-        <input name="price" type="number" value={data.price} onChange={handleChange} className="w-full border px-4 py-2 rounded" min={0} />
+        <input name="price" type="number" value={data.price} onChange={handleChange} required className="w-full border px-4 py-2 rounded" min={0} />
       </div>
 
       <div>
         <label className="block text-sm font-semibold mb-2">배송비 (원)</label>
-        <input name="shippingFees" type="number" value={data.shippingFees} onChange={handleChange} className="w-full border px-4 py-2 rounded" min={0} />
+        <input name="shippingFees" type="number" value={data.shippingFees} onChange={handleChange} required className="w-full border px-4 py-2 rounded" min={0} />
       </div>
 
       <div>
@@ -135,12 +169,12 @@ export default function ProductCreateForm() {
 
       <div>
         <label className="block text-sm font-semibold mb-2">수량</label>
-        <input name="quantity" type="number" value={data.quantity} onChange={handleChange} className="w-full border px-4 py-2 rounded" min={1} />
+        <input name="quantity" type="number" value={data.quantity} onChange={handleChange} required className="w-full border px-4 py-2 rounded" min={1} />
       </div>
 
       <div>
         <label className="block text-sm font-semibold mb-2">대표 이미지</label>
-        <input type="file" name="mainImage" accept="image/*" onChange={handleChange} className="w-full" />
+        <input type="file" name="mainImage" accept="image/*" onChange={handleChange} required className="w-full" />
         {previewUrl && <img src={previewUrl} alt="대표 이미지 미리보기" className="mt-2 max-h-48 object-contain border rounded" />}
       </div>
 

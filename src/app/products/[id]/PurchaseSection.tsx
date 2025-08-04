@@ -167,9 +167,20 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
     }
   };
 
-  const imageArray = Array.isArray(product.mainImages) ? product.mainImages : Object.values(product.mainImages || {}); // 객체인 경우 값만 추출
+  // 이미지 배열 처리 개선
+  const getImageArray = () => {
+    if (!product.mainImages) return [];
 
-  const mainImageUrl = getFullImageUrl(imageArray[0]?.path);
+    if (Array.isArray(product.mainImages)) {
+      return product.mainImages.filter(img => img && img.path);
+    }
+
+    return Object.values(product.mainImages).filter(img => img && img.path);
+  };
+
+  const imageArray = getImageArray();
+  const mainImageUrl = imageArray.length > 0 ? getFullImageUrl(imageArray[0].path) : null;
+
   return (
     <>
       {/* Breadcrumb */}
@@ -181,7 +192,17 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
         <div className="flex flex-col sm:flex-row gap-8">
           <div className="sm:w-1/2 relative">
             {/* 이미지 영역 */}
-            <div className="relative w-full pb-[100%]">{mainImageUrl ? <Image src={mainImageUrl} alt={product.name} fill className="object-contain" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" priority /> : <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">이미지 없음</div>}</div>
+            <div className="relative">
+              <div className="relative w-full pb-[100%]">
+                {mainImageUrl ? (
+                  <Image src={mainImageUrl} alt={product.name} fill className="object-contain w-full h-full" unoptimized />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                    <span className="text-gray-400">이미지 없음</span>
+                  </div>
+                )}
+              </div>
+            </div>
             {/* 배송 정보 */}
             <div className="text-sm text-gray-500 mt-2">
               <p>
