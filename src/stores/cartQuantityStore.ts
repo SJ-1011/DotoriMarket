@@ -14,7 +14,7 @@ interface QuantityState {
 
 export const useCartQuantityStore = create<QuantityState>((set, get) => ({
   quantities: {},
-  shippingFee: 0, // ✅ 기본 배송비
+  shippingFee: 0, // 기본 배송비
 
   setShippingFee: (fee: number) => set({ shippingFee: fee }),
 

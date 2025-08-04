@@ -6,6 +6,7 @@ import StoryCardList from '@/components/main/StoryCardList';
 import NewProductsSection from '@/components/main/NewProductsSection';
 import DotBackgroundWrapper from '@/components/common/DotBackgroundWrapper';
 import PopularSection from '@/components/main/PopularSection';
+import ScrollToTopButton from '@/components/common/ScrollToTopButton';
 
 export default async function Home() {
   return (
@@ -44,6 +45,8 @@ export default async function Home() {
             <SectionTitle title="도토리섬 이야기" />
             <StoryCardList />
           </div>
+
+          <ScrollToTopButton />
         </section>
       </DotBackgroundWrapper>
     </main>

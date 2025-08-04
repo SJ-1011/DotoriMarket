@@ -12,10 +12,12 @@ import type { OrderForm } from '@/types/Order';
 import { getProductById } from '@/utils/getProducts';
 import { createOrder } from '@/data/actions/createOrder';
 import { deleteCartItems } from '@/data/actions/deleteCartItems';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 import Loading from '../loading';
 import { createPaymentNotification } from '@/data/actions/addNotification';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { UserAddress } from '@/types';
+import { useCartBadgeStore } from '@/stores/cartBadgeStore';
 
 export default function OrderWrapper() {
   const { user } = useLoginStore();
@@ -27,6 +29,7 @@ export default function OrderWrapper() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const currentQuery = searchParams.toString();
   const redirectUrl = currentQuery ? `/order?${currentQuery}` : '/order';
+  const { decrease } = useCartBadgeStore();
   const methods = useForm<OrderForm>({
     defaultValues: {
       user: { name: '', phone: '' },
@@ -83,9 +86,9 @@ export default function OrderWrapper() {
         const firstProduct = cartItems[0]?.product;
         if (firstProduct) {
           const image = {
-            path: firstProduct.image.path,
+            path: getFullImageUrl(firstProduct.image.path) ?? '/default.png',
             name: firstProduct.image.name,
-            originalname: firstProduct.image.originalname,
+            originalname: '',
           };
 
           const notifRes = await createPaymentNotification(firstProduct, image, user);
@@ -103,6 +106,7 @@ export default function OrderWrapper() {
         if (idsParam) {
           const selectedIds = idsParam.split(',').map(Number);
           await deleteCartItems(selectedIds, token);
+          decrease(selectedIds.length);
         }
       } catch (err) {
         console.error('선택된 장바구니 삭제 실패', err);
@@ -129,7 +133,18 @@ export default function OrderWrapper() {
           // 장바구니 주문
           const selectedIds = idsParam.split(',').map(Number);
           const cartRes = await getCarts(token);
-          const selectedItems = cartRes.item.filter(item => selectedIds.includes(item._id));
+          const selectedItems = cartRes.item
+            .filter(item => selectedIds.includes(item._id))
+            .map(item => ({
+              ...item,
+              product: {
+                ...item.product,
+                image: {
+                  ...item.product.image,
+                  path: getFullImageUrl(item.product.image.path) ?? '/default.png',
+                },
+              },
+            }));
 
           const productsTotal = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
           const shippingFee = cartRes.cost.shippingFees;
@@ -157,7 +172,13 @@ export default function OrderWrapper() {
           const tempItem: CartItem = {
             _id: -1,
             quantity: qty,
-            product: { ...product, image: product.mainImages?.[0] ?? { path: '/default.png', name: '', originalname: '' } },
+            product: {
+              ...product,
+              image: {
+                ...(product.mainImages?.[0] ?? { name: '', path: '' }),
+                path: getFullImageUrl(product.mainImages?.[0]?.path) ?? '/default.png',
+              },
+            },
           };
 
           setCartItems([tempItem]);

@@ -57,9 +57,15 @@ export default function MypageInfo() {
               안녕하세요!🐿️
             </p>
             <div className="flex flex-col flex-nowrap gap-2">
-              <Link href="/cart" className="w-full text-center bg-primary text-white p-4 rounded-2xl mb-2">
-                장바구니
-              </Link>
+              {user.type === 'admin' ? (
+                <Link href="/mypage/edit-admin" className="w-full text-center bg-primary text-white p-4 rounded-2xl mb-2">
+                  관리자 정보 변경
+                </Link>
+              ) : (
+                <Link href="/cart" className="w-full text-center bg-primary text-white p-4 rounded-2xl mb-2">
+                  장바구니
+                </Link>
+              )}
               <Link href="/mypage/logout" className="w-full text-center border border-primary p-4 rounded-2xl">
                 로그아웃
               </Link>
@@ -79,7 +85,6 @@ export default function MypageInfo() {
           <ul className="flex flex-row flex-wrap sm:flex-nowrap justify-center w-full pb-4 sm:px-12 gap-4">
             <li className="flex flex-col flex-nowrap justify-center gap-2 items-center w-[6rem] lg:w-[8rem]">
               <Link href="/category/all" className="flex flex-col flex-nowrap text-xs lg:text-sm sm:w-[6rem] lg:w-[8rem] shadow-[0_0_5px_rgba(0,0,0,0.1)] aspect-square  p-2 sm:p-4 bg-white rounded-2xl sm:rounded-4xl justify-center items-center sm:gap-1 lg:gap-4">
-
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-10">
                   <path strokeLinecap="round" strokeLinejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
                 </svg>
@@ -87,7 +92,7 @@ export default function MypageInfo() {
               </Link>
             </li>
             <li className="flex flex-col flex-nowrap justify-center gap-2 items-center w-[8rem]">
-              <Link href="/mypage/admin/orders" className="flex flex-col flex-nowrap text-xs lg:text-sm w-[8rem] shadow-[0_0_5px_rgba(0,0,0,0.1)] aspect-square  p-2 sm:p-4 bg-white rounded-2xl sm:rounded-4xl justify-center items-center gap-4 sm:gap-1 lg:gap-4">
+              <Link href="/admin/orders" className="flex flex-col flex-nowrap text-xs lg:text-sm w-[8rem] shadow-[0_0_5px_rgba(0,0,0,0.1)] aspect-square  p-2 sm:p-4 bg-white rounded-2xl sm:rounded-4xl justify-center items-center gap-4 sm:gap-1 lg:gap-4">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-10">
                   <path
                     strokeLinecap="round"

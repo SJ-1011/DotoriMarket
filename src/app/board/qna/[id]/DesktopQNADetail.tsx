@@ -16,8 +16,6 @@ interface DesktopProps {
   reply?: PostReply[];
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProps) {
   const user = useLoginStore(state => state.user);
   const isAuthor = user?.token?.accessToken === post.accessToken;
@@ -121,7 +119,7 @@ export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProp
         <div className="mb-12 flex flex-col flex-nowrap gap-4">
           {post.extra?.productName && (
             <div className="flex flex-row flex-nowrap w-full p-8 border border-primary items-center gap-8">
-              <Image src={`${API_URL}/${post.extra?.imagePath}`} alt={`${post.extra?.productName} 상품 이미지`} width={100} height={100} />
+              <Image src={`${post.extra?.imagePath}`} alt={`${post.extra?.productName} 상품 이미지`} width={100} height={100} />
               <div className="flex flex-col flex-nowrap">
                 <p className="text-base font-bold">문의 상품</p>
                 <p>{post.extra?.productName}</p>

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { getProducts } from '@/utils/getProducts';
 import type { Product } from '@/types/Product';
 import Image from 'next/image';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 interface ProductSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -127,15 +126,14 @@ export default function ProductSearchModal({ isOpen, onClose, onSelectProduct }:
               {filteredProducts.map(product => (
                 <div key={product._id} className="grid grid-cols-12 gap-4 py-4 border-b items-center hover:bg-gray-50">
                   <div className="col-span-2">
-                    {product.mainImages && product.mainImages.length > 0 ? (
-                      <Image src={`${API_URL}/${product.mainImages[0].path}`} alt={product.name} width={150} height={150} unoptimized={true} />
+                    {product.mainImages ? (
+                      <Image src={`${product.mainImages[0]?.path}`} alt={product.name} width={150} height={150} unoptimized={true} />
                     ) : (
                       <div className="w-16 h-16 bg-gray-200 rounded border flex items-center justify-center">
                         <span className="text-gray-400 text-xs sm:text-sm lg:text-base">이미지 없음</span>
                       </div>
                     )}
                   </div>
-
                   <div className="col-span-6">
                     <div className="font-medium mb-1">{product.name}</div>
                     <div className="text-sm text-gray-600 mb-1">가격: {product.price?.toLocaleString()}원</div>

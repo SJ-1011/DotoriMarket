@@ -18,7 +18,6 @@ interface MobileProps {
   reply?: PostReply[];
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function MobileQNADetail({ post, posts, id, reply }: MobileProps) {
   const user = useLoginStore(state => state.user);
   const isAuthor = user?.token?.accessToken === post.accessToken;
@@ -116,7 +115,7 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
         <div className="mb-12 flex flex-col flex-nowrap gap-4">
           {post.extra?.productName && (
             <div className="flex flex-row flex-nowrap w-full p-4 border border-primary items-center gap-4">
-              <Image src={`${API_URL}/${post.extra?.imagePath}`} alt={`${post.extra?.productName} 상품 이미지`} width={100} height={100} />
+              <Image src={`${post.extra?.imagePath}`} alt={`${post.extra?.productName} 상품 이미지`} width={100} height={100} />
               <div className="flex flex-col flex-nowrap">
                 <p className="text-base font-bold">문의 상품</p>
                 <p>{post.extra?.productName}</p>

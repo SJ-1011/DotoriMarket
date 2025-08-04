@@ -19,9 +19,8 @@ interface Props {
   bookmarkId?: number; // 상위에서 전달받는 북마크 ID (있으면 좋아요된 상태)
 }
 
-export default function CommunityPostCard({ post, apiUrl, clientId, bookmarkId: initialBookmarkId }: Props) {
+export default function CommunityPostCard({ post, clientId, bookmarkId: initialBookmarkId }: Props) {
   const user = useLoginStore(state => state.user);
-
   // 좋아요 여부 및 bookmarkId 상태
   const [isLiked, setIsLiked] = useState(!!initialBookmarkId);
   const [bookmarkId, setBookmarkId] = useState<number | undefined>(initialBookmarkId);
@@ -101,7 +100,7 @@ export default function CommunityPostCard({ post, apiUrl, clientId, bookmarkId: 
           <div className="flex items-center mb-2">
             <div className="relative w-6 h-6 rounded-full overflow-hidden mr-2">
               {post.user.image?.path ? (
-                <Image src={`${apiUrl}/${post.user.image.path}`} alt={post.user?.name ?? '기본 프로필'} fill style={{ objectFit: 'cover' }} />
+                <Image src={`${post.user.image.path}`} alt={post.user?.name ?? '기본 프로필'} fill style={{ objectFit: 'cover' }} />
               ) : (
                 // 기본 SVG 또는 아이콘 컴포넌트
                 <MypageIcon svgProps={{ className: 'w-5 h-5' }} />

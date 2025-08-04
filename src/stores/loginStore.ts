@@ -1,3 +1,4 @@
+import { refreshToken } from '@/data/actions/authorization';
 import { LoginUser } from '@/types';
 import { getUserById } from '@/utils/getUsers';
 import { create } from 'zustand';
@@ -9,6 +10,7 @@ interface LoginStore {
   login: (user: LoginUser) => void;
   logout: () => void;
   fetchUser: () => void;
+  refreshUser: () => void;
   isAdmin: boolean;
 }
 
@@ -27,14 +29,8 @@ export const useLoginStore = create<LoginStore>()(
               ...prevUser,
               image: res.item.image,
             };
-            console.log('새로운 이미지:', newUser);
 
             set({ user: newUser });
-            console.log('새로운 진짜 이미지:', get().user);
-          } else if (!res.ok) {
-            console.log('안뜬 이유:', res.message);
-          } else {
-            console.log('사진문제');
           }
         }
       },
@@ -46,6 +42,27 @@ export const useLoginStore = create<LoginStore>()(
           isAdmin: user.type === 'admin',
         }),
       logout: () => set({ user: null, isLogin: false, isAdmin: false }),
+      refreshUser: async () => {
+        alert('토큰 발행중');
+        const prevUser = get().user;
+        if (prevUser) {
+          const res = await refreshToken(prevUser);
+
+          if (res.ok) {
+            const newUser = {
+              ...prevUser,
+              token: {
+                ...prevUser.token,
+                accessToken: res.accessToken,
+              },
+            };
+            console.log('새로운 유저:', newUser);
+            set({ user: newUser });
+          } else {
+            console.log('실패.....???');
+          }
+        }
+      },
     }),
     {
       name: 'login-storage',
