@@ -37,7 +37,7 @@ export default function CategorySelector({ initialMain, initialSub, onChange }: 
     if (sub) {
       onChange(main, sub);
     }
-  }, [sub]); // <-- sub만 의존성에 넣어야 최신 sub 값 기준으로 호출됨
+  }, [sub]);
 
   return (
     <div className="flex gap-3">
