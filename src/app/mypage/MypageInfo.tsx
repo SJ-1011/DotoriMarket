@@ -57,9 +57,15 @@ export default function MypageInfo() {
               안녕하세요!🐿️
             </p>
             <div className="flex flex-col flex-nowrap gap-2">
-              <Link href="/cart" className="w-full text-center bg-primary text-white p-4 rounded-2xl mb-2">
-                장바구니
-              </Link>
+              {user.type === 'admin' ? (
+                <Link href="/mypage/edit-admin" className="w-full text-center bg-primary text-white p-4 rounded-2xl mb-2">
+                  관리자 정보 변경
+                </Link>
+              ) : (
+                <Link href="/cart" className="w-full text-center bg-primary text-white p-4 rounded-2xl mb-2">
+                  장바구니
+                </Link>
+              )}
               <Link href="/mypage/logout" className="w-full text-center border border-primary p-4 rounded-2xl">
                 로그아웃
               </Link>
