@@ -51,7 +51,7 @@ export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProp
       const formData = new FormData();
       formData.append('_id', String(post._id));
       formData.append('accessToken', user?.token.accessToken ?? '');
-
+      formData.append('boardType', 'qna');
       const result = await deletePost(null, formData);
 
       if (result?.ok) {

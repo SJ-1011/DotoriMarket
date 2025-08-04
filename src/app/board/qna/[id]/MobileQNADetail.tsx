@@ -55,6 +55,7 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
       const formData = new FormData();
       formData.append('_id', String(post._id));
       formData.append('accessToken', user?.token.accessToken ?? '');
+      formData.append('boardType', 'qna');
       const result = await deletePost(null, formData);
       if (result?.ok) {
         alert('삭제가 완료되었습니다.');
