@@ -20,32 +20,24 @@ interface CategorySelectorProps {
 export default function CategorySelector({ initialMain, initialSub, onChange }: CategorySelectorProps) {
   const [main, setMain] = useState(initialMain || 'PC01');
   const [sub, setSub] = useState(initialSub || '');
+
+  // main 초기화
   useEffect(() => {
     setMain(initialMain || 'PC01');
   }, [initialMain]);
 
-  useEffect(() => {
-    if (initialSub) {
-      setSub(initialSub);
-    } else {
-      const firstSub = CATEGORY_DETAIL_MAP[main]?.[0] || '';
-      setSub(firstSub);
-    }
-  }, [initialSub]);
-
+  // main 변경 시 서브 카테고리 기본값 설정
   useEffect(() => {
     const firstSub = CATEGORY_DETAIL_MAP[main]?.[0] || '';
-    if (!CATEGORY_DETAIL_MAP[main]?.includes(sub)) {
-      setSub(firstSub);
-    }
+    setSub(firstSub);
   }, [main]);
 
-  // sub가 변경될 때만 부모에 알림
+  // sub가 바뀐 후에만 onChange 호출
   useEffect(() => {
     if (sub) {
       onChange(main, sub);
     }
-  }, [sub, main]);
+  }, [sub]); // <-- sub만 의존성에 넣어야 최신 sub 값 기준으로 호출됨
 
   return (
     <div className="flex gap-2 items-center">
