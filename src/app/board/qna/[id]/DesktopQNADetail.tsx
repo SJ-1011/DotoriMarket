@@ -117,13 +117,13 @@ export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProp
 
       <section className="p-8 whitespace-pre-line text-sm lg:text-base">
         <div className="mb-12 flex flex-col flex-nowrap gap-4">
-          {post.extra?.productName && (
+          {(post.extra?.productName || post.extra?.orderProductName) && (
             <div className="flex flex-row flex-nowrap w-full p-8 border border-primary items-center gap-8">
-              <Image src={`${post.extra?.imagePath}`} alt={`${post.extra?.productName} 상품 이미지`} width={100} height={100} />
+              <Image src={post.extra.qnatype === 'product' ? post.extra.imagePath : post.extra.orderProductImage} alt={`${post.extra.qnatype === 'product' ? post.extra.productName : post.extra.orderProductName} 상품 이미지`} width={100} height={100} />
               <div className="flex flex-col flex-nowrap">
                 <p className="text-base font-bold">문의 상품</p>
-                <p>{post.extra?.productName}</p>
-                <Link href={`/`} className="bg-primary text-white p-2 w-fit mt-4">
+                <p>{post.extra.qnatype === 'product' ? post.extra.productName : post.extra.orderProductName}</p>
+                <Link href={`/products/${post.extra.qnatype === 'product' ? post.extra.productId : post.extra.orderProductId}`} className="bg-primary text-white p-2 w-fit mt-4">
                   상품 보러가기
                 </Link>
               </div>
