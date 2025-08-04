@@ -246,7 +246,7 @@ export default function StatsClient() {
                             <td className="px-6 py-4">
                               <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-[#E5D5C8] shadow-sm">
                                 <img
-                                  src={item.product.image?.path ? `${process.env.NEXT_PUBLIC_API_URL}/${item.product.image.path}` : '/placeholder.png'}
+                                  src={item.product.image?.path ? `${item.product.image.path}` : '/placeholder.png'}
                                   alt={item.product.name}
                                   className="w-full h-full object-cover"
                                   onError={e => {
