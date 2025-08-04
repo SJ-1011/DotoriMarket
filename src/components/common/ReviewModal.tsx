@@ -257,10 +257,10 @@ export default function ReviewModal({ productId, productName, isOpen, onClose, o
 
         {/* 버튼 */}
         <div className="flex justify-end gap-3">
-          <button onClick={onClose} disabled={submitting} className="px-4 py-1.5 border hover:bg-gray-100">
+          <button onClick={onClose} disabled={submitting} className="px-4 py-1.5 border hover:bg-gray-100 cursor-pointer">
             취소
           </button>
-          <button onClick={handleSubmit} disabled={!accessToken || submitting} className="px-4 py-1.5 bg-black text-white hover:bg-gray-800 disabled:opacity-50">
+          <button onClick={handleSubmit} disabled={!accessToken || submitting} className="px-4 py-1.5 bg-black text-white hover:bg-gray-800 cursor-pointer disabled:opacity-50">
             {submitting ? (reviewToEdit ? '수정 중...' : '등록 중...') : reviewToEdit ? '수정' : '등록'}
           </button>
         </div>

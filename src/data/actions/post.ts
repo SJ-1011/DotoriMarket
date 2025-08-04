@@ -259,6 +259,7 @@ export async function testReply(content: string, accessToken: string, post: numb
 export async function deletePost(state: ApiRes<Post> | null, formData: FormData): ApiResPromise<Post> {
   const _id = formData.get('_id');
   const accessToken = formData.get('accessToken');
+  const boardType = formData.get('boardType') || 'qna'; // 기본값은 qna
 
   let res: Response;
   let data: ApiRes<{ ok: 0 | 1 }>;
@@ -281,10 +282,10 @@ export async function deletePost(state: ApiRes<Post> | null, formData: FormData)
   }
 
   if (data.ok) {
-    revalidatePath('/board/qna'); // 게시글 목록 페이지 갱신
+    revalidatePath(`/board/${boardType}`); // 게시글 목록 페이지 갱신
 
     // 상세 페이지로 리다이렉트 (목록이 아닌)
-    redirect(`/board/qna`);
+    redirect(`/board/${boardType}`);
   } else {
     return data;
   }

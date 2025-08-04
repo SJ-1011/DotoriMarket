@@ -137,6 +137,7 @@ export default function CommunityPostCard({ post, clientId, bookmarkId: initialB
         images={post.image} // 이미지 배열 전달
         imageAlt={post.title}
         postId={Number(post._id)}
+        postUserId={post.user._id}
       />
     </>
   );
