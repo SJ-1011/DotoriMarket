@@ -7,6 +7,7 @@ import { persist } from 'zustand/middleware';
 interface LoginStore {
   user: LoginUser | null;
   isLogin: boolean;
+  isLoading: boolean;
   login: (user: LoginUser) => void;
   logout: () => void;
   fetchUser: () => void;
@@ -19,6 +20,7 @@ export const useLoginStore = create<LoginStore>()(
     (set, get) => ({
       user: null,
       isLogin: false,
+      isLoading: true,
       fetchUser: async () => {
         const prevUser = get().user;
         if (prevUser) {
@@ -67,6 +69,11 @@ export const useLoginStore = create<LoginStore>()(
     {
       name: 'login-storage',
       partialize: state => ({ user: state.user, isLogin: state.isLogin, isAdmin: state.isAdmin }),
+      onRehydrateStorage: () => state => {
+        if (state) {
+          state.isLoading = false;
+        }
+      },
     },
   ),
 );
