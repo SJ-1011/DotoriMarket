@@ -99,7 +99,7 @@ export default function CommunityPostCard({ post, clientId, bookmarkId: initialB
           {/* 작성자 프로필 */}
           <div className="flex items-center mb-2">
             <div className="relative w-6 h-6 rounded-full overflow-hidden mr-2">
-              {post.user.image?.path ? (
+              {typeof post.user.image === 'object' && post.user.image?.path ? (
                 <Image src={`${post.user.image.path}`} alt={post.user?.name ?? '기본 프로필'} fill style={{ objectFit: 'cover' }} />
               ) : (
                 // 기본 SVG 또는 아이콘 컴포넌트
