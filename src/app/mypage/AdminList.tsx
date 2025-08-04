@@ -65,11 +65,7 @@ export default function AdminList() {
   }, []);
 
   const getUserImageSrc = (user: User) => {
-    const fallback = '/character/chiikawa.png';
-
-    if (typeof user.image === 'string' && user.image.startsWith('uploadFiles')) {
-      return fallback;
-    }
+    const fallback = '/default-profile.webp';
 
     // 외부 이미지가 문자열이면 바로 반환
     if (typeof user?.image === 'string') {
@@ -97,19 +93,23 @@ export default function AdminList() {
     <>
       {isMobile && (
         <article className="w-full pb-24">
-          <p className="p-8 text-center text-primary font-bold text-2xl">도토리섬 관리자 정보</p>
-          <ul className="w-full flex flex-col flex-nowrap gap-4 p-4">
+          {/* 타이틀 */}
+          <div className="flex flex-col flex-nowrap px-4 sm:px-0 pb-4">
+            <h2 className="font-bold text-lg sm:text-xl lg:text-2xl text-secondary-green">도토리섬 관리자 정보</h2>
+            <p>도토리섬 관리자들의 정보입니다.</p>
+          </div>{' '}
+          <ul className="w-full flex flex-col flex-nowrap gap-8 p-10">
             {adminList
               .slice()
               .reverse()
               .map(admin => (
-                <li key={admin._id} className="flex flex-row flex-nowrap gap-4 border border-primary rounded-2xl p-4">
-                  <div>
-                    <Image src={getUserImageSrc(admin)} alt={`${admin.name}님의 프로필 사진`} width={75} height={75} className="rounded-full" />
+                <li key={admin._id} className="flex flex-row flex-nowrap gap-4 items-center shadow-[0px_0px_10px_rgba(0,0,0,0.2)] rounded-2xl p-4">
+                  <div className="relative w-[75px] h-[75px] rounded-full overflow-hidden border border-gray">
+                    <Image src={getUserImageSrc(admin)} alt={`${admin.name}님의 프로필 사진`} fill className="object-cover" />
                   </div>
                   <div>
                     <p className="">ID: {admin._id}</p>
-                    <p className="text-lg font-bold pb-1">{admin.name}</p>
+                    <p className="font-bold pb-1">{admin.name}</p>
                     <p className="">{admin.phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3')}</p>
                   </div>
                   <div className="ml-auto pr-8 flex justify-center items-center">
@@ -129,8 +129,12 @@ export default function AdminList() {
       )}
       {!isMobile && (
         <article className="w-full pb-24">
+          {/* 타이틀 */}
+          <div className="flex flex-col flex-nowrap px-4 sm:px-0 pb-4">
+            <h2 className="font-bold text-lg sm:text-xl lg:text-2xl text-secondary-green">도토리섬 관리자 정보</h2>
+            <p>도토리섬 관리자들의 정보입니다.</p>
+          </div>
           <table className="w-full">
-            <caption className="p-8 text-primary font-bold text-2xl">도토리섬 관리자 정보</caption>
             <thead className="text-sm lg:text-base">
               <tr className="border-t-2 border-primary-dark bg-primary-light">
                 <th className="p-4 border-r-1 border-white">ID</th>

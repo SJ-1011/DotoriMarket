@@ -79,7 +79,7 @@ export default function MypageInfo() {
           <Skeleton width="w-full" height="h-full" rounded="rounded-2xl" className="mb-2 w-[350px] h-[192.5px] sm:w-[400px] sm:h-[220px] lg:w-[500px] lg:h-[275px] mx-auto" />
         </div>
       ) : user.type === 'admin' ? (
-        <div className="flex flex-col flex-nowrap gap-12 w-[98%] sm:w-[600px] lg:flex-1 bg-white rounded-2xl shadow-[0_0_10px_rgba(0,0,0,0.1)] p-12">
+        <div className="flex flex-col flex-nowrap gap-12 w-full sm:w-[600px] lg:flex-1 bg-white sm:rounded-2xl shadow-[0_0_10px_rgba(0,0,0,0.1)] p-12">
           <p className="text-primary-dark font-bold text-xl text-nowrap">도토리섬 사이트 관리</p>
 
           <ul className="flex flex-row flex-wrap sm:flex-nowrap justify-center w-full pb-4 sm:px-12 gap-4">
