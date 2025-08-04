@@ -27,6 +27,7 @@ interface ProductQuestionsProps {
 
 export default function ProductQuestions({ productId, productName }: ProductQuestionsProps) {
   const currentUser = useLoginStore(state => state.user);
+  const isAdmin = useLoginStore(state => state.isAdmin);
 
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -144,26 +145,29 @@ export default function ProductQuestions({ productId, productName }: ProductQues
       {totalPages > 1 && !loading && <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={page => setCurrentPage(page)} />}
 
       <div className="mt-8 flex justify-center gap-4">
-        <button
-          className="cursor-pointer bg-black text-white px-4 py-2 hover:bg-gray-800 text-sm"
-          onClick={() => {
-            const query = new URLSearchParams({ productId: String(productId) });
-            window.location.href = `/board/qna/new?${query}`;
-          }}
-        >
-          상품 문의하기
-        </button>
-
-        <button
-          className="cursor-pointer border px-4 py-2 text-sm hover:bg-gray-100"
-          onClick={() => {
-            const toggled = !showMyQuestionsOnly;
-            setShowMyQuestionsOnly(toggled);
-            setCurrentPage(1);
-          }}
-        >
-          {showMyQuestionsOnly ? '전체 문의 보기' : '내가 남긴 문의 보기'}
-        </button>
+        {!isAdmin && (
+          <>
+            <button
+              className="cursor-pointer bg-black text-white px-4 py-2 hover:bg-gray-800 text-sm"
+              onClick={() => {
+                const query = new URLSearchParams({ productId: String(productId) });
+                window.location.href = `/board/qna/new?${query}`;
+              }}
+            >
+              상품 문의하기
+            </button>
+            <button
+              className="cursor-pointer border px-4 py-2 text-sm hover:bg-gray-100"
+              onClick={() => {
+                const toggled = !showMyQuestionsOnly;
+                setShowMyQuestionsOnly(toggled);
+                setCurrentPage(1);
+              }}
+            >
+              {showMyQuestionsOnly ? '전체 문의 보기' : '내가 남긴 문의 보기'}
+            </button>
+          </>
+        )}
       </div>
     </section>
   );

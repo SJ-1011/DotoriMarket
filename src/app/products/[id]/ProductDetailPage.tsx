@@ -60,7 +60,7 @@ export default function ProductDetailPage({ product }: { product: Product }) {
       <div className="max-w-[800px] mx-auto px-4 pt-4 bg-white">
         <PurchaseSection product={product} reviews={reviews} loadingReviews={loadingReviews} />
       </div>
-      <div className="w-full max-w-[800px] mx-auto">
+      <div className="w-full max-w-[800px] mx-auto relative">
         <ProductTabSection activeTab={activeTab} setActiveTab={setActiveTab} product={product} order={order} />
         {product.extra?.category?.[0] && <RelatedProducts currentProductId={Number(product._id)} categoryCode={product.extra.category[0]} />}
       </div>

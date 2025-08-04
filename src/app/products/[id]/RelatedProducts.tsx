@@ -20,7 +20,6 @@ const categoryMap: Record<string, string> = {
 export default function RelatedProducts({ currentProductId, categoryCode }: RelatedProductsProps) {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
-
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -33,7 +32,7 @@ export default function RelatedProducts({ currentProductId, categoryCode }: Rela
       const res = await getProductsCategory(mapped);
       if (!res.ok || !Array.isArray(res.item)) return;
 
-      const others = res.item.filter(p => Number(p._id) !== currentProductId);
+      const others = res.item.filter(p => Number(p._id) !== currentProductId && p.active === true);
       const shuffled = others.sort(() => 0.5 - Math.random());
       const selected = shuffled.slice(0, 8);
 

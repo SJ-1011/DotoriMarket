@@ -3,8 +3,7 @@ import Image from 'next/image';
 import ReviewImages from './ReviewImages';
 import { LoginUser } from '@/types';
 import { maskUserId } from '@/utils/mask';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface Review {
   _id: number;
@@ -34,11 +33,10 @@ export default function ReviewItem({ review, currentUser, expanded, toggleExpand
   const imageSrc = (() => {
     const img = review.user.image;
     if (!img) return null;
-    if (typeof img === 'string') return `${API_URL}/${img}`;
-    if (typeof img === 'object' && 'path' in img) return `${API_URL}/${img.path}`;
+    if (typeof img === 'string') return getFullImageUrl(img);
+    if (typeof img === 'object' && 'path' in img) return getFullImageUrl(img.path);
     return null;
   })();
-
   const isMyReview = currentUser?._id && String(review.user._id) === String(currentUser._id);
 
   const [showMenu, setShowMenu] = useState(false);

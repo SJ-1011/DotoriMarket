@@ -9,10 +9,13 @@ interface LikedProduct extends Product {
 interface ProductItemCardProps {
   products: Product[] | null;
   likedProducts?: LikedProduct[] | null;
+  showCheckbox?: boolean;
+  selectedIds?: number[];
+  onSelect?: (id: number) => void;
   type?: 'large' | null;
 }
 
-export default function ProductItemCard({ products, likedProducts, type }: ProductItemCardProps) {
+export default function ProductItemCard({ products, likedProducts, type, showCheckbox = false, selectedIds = [], onSelect }: ProductItemCardProps) {
   if (type === 'large') {
     return (
       <>
@@ -35,7 +38,7 @@ export default function ProductItemCard({ products, likedProducts, type }: Produ
           products.map(product => {
             const liked = likedProducts?.find(likedProduct => likedProduct._id === product._id);
             const bookmarkId = liked ? liked.bookmarkId : 0;
-            return <ProductCard key={product._id} product={product} bookmarkId={bookmarkId} />;
+            return <ProductCard key={product._id} product={product} bookmarkId={bookmarkId} showCheckbox={showCheckbox} isSelected={selectedIds.includes(Number(product._id))} onSelect={onSelect} />;
           })}
       </>
     );

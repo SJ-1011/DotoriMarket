@@ -1,7 +1,5 @@
-'use client';
-
-import OrderHistory from './OrderHistory';
+import MypageSection from './MypageSection';
 
 export default function MyPage() {
-  return <OrderHistory />;
+  return <MypageSection />;
 }

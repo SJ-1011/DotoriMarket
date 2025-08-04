@@ -90,3 +90,35 @@ export async function createReplyNotification(post: Post, targetUser: User, crea
     return { ok: 0, message: '일시적인 네트워크 문제로 등록에 실패했습니다.' };
   }
 }
+
+export async function createMessage(content: string, targetUser: User, createUser: LoginUser) {
+  const body = {
+    type: 'message',
+    target_id: targetUser._id,
+    content: `${createUser.name}님이 쪽지를 보내셨습니다.`,
+    extra: {
+      sendUser: createUser,
+      message: content,
+    },
+  };
+
+  try {
+    const res = await fetch(`${API_URL}/notifications`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Client-Id': CLIENT_ID,
+        Authorization: `Bearer ${createUser.token.accessToken}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+
+    console.log(`${targetUser.name}에게 알림 추가 성공!`);
+    return data;
+  } catch (error) {
+    console.error(error);
+    return { ok: 0, message: '일시적인 네트워크 문제로 등록에 실패했습니다.' };
+  }
+}
