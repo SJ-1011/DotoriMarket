@@ -3,7 +3,6 @@
 export interface ProductImage {
   path: string;
   name: string;
-  originalname: string;
 }
 
 export interface ProductExtra {
@@ -24,7 +23,7 @@ export interface Product {
   name: string;
   quantity: number;
   buyQuantity: number;
-  mainImages: ProductImage[];
+  mainImages: ProductImage;
   image?: ProductImage;
   content: string;
   createdAt: string;

@@ -15,6 +15,7 @@ import ShareIcon from '@/components/icon/ShareIcon';
 import { useRouter, usePathname } from 'next/navigation';
 import type { Review } from '@/types/Review';
 import { addToCart } from '@/data/actions/addToCart';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface PurchaseSectionProps {
   product: Product & { bookmarkId?: number };
@@ -29,23 +30,29 @@ const CATEGORY_MAPPINGS = {
   PC04: LIVING_CATEGORIES,
 } as const;
 
-const CATEGORY_CODE_LENGTH = 4;
-
 // 서브카테고리 정보를 가져오는 함수
 function getSubCategoryInfo(categoryCode: string, smallCategoryCode: string, bigCategory: { label: string; href: string }) {
   const categories = CATEGORY_MAPPINGS[categoryCode as keyof typeof CATEGORY_MAPPINGS];
 
-  if (!categories || !smallCategoryCode.startsWith(categoryCode)) {
+  if (!categories) {
     return { label: '', href: '' };
   }
 
-  const subCode = smallCategoryCode.slice(CATEGORY_CODE_LENGTH);
-  const idx = Number(subCode) - 1;
+  let index = -1;
 
-  if (!Number.isNaN(idx) && idx >= 0 && idx < categories.length) {
+  if (smallCategoryCode.startsWith(categoryCode)) {
+    const codeNumber = smallCategoryCode.slice(categoryCode.length);
+    index = parseInt(codeNumber) - 1;
+  } else if (/^\d+$/.test(smallCategoryCode)) {
+    index = parseInt(smallCategoryCode) - 1;
+  } else {
+    index = categories.findIndex(cat => cat === smallCategoryCode);
+  }
+
+  if (index >= 0 && index < categories.length) {
     return {
-      label: categories[idx],
-      href: `${bigCategory.href}/${String(idx + 1).padStart(2, '0')}`,
+      label: categories[index],
+      href: `${bigCategory.href}/${String(index + 1).padStart(2, '0')}`,
     };
   }
 
@@ -57,24 +64,16 @@ function getBreadcrumbItems(product: Product) {
   const categoryCode = product.extra?.category?.[0] ?? '';
   const smallCategoryCode = product.extra?.category?.[1] ?? '';
   const bigCategory = CATEGORY_MAP[categoryCode] ?? { label: '카테고리', href: '#' };
-
   const subCategory = getSubCategoryInfo(categoryCode, smallCategoryCode, bigCategory);
 
   return [{ label: '홈', href: '/' }, { label: bigCategory.label, href: bigCategory.href }, ...(subCategory.label ? [{ label: subCategory.label, href: subCategory.href }] : []), { label: product.name, href: `/products/${product._id}` }];
 }
 
-// 이미지 URL 생성 함수
-const getFullImageUrl = (imagePath: string): string => {
-  if (imagePath.startsWith('http')) {
-    return imagePath;
-  }
-  return `https://fesp-api.koyeb.app/market/${imagePath}`;
-};
-
 export default function PurchaseSection({ product, reviews, loadingReviews }: PurchaseSectionProps) {
   // 로그인 사용자 정보 및 토큰
   const user = useLoginStore(state => state.user);
   const accessToken = user?.token?.accessToken;
+  const isAdmin = useLoginStore(state => state.isAdmin);
 
   // 초기 북마크 아이디
   const initialBookmarkId = product.bookmarkId;
@@ -142,6 +141,11 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
     }
   };
 
+  // 관리자용: 수정하기 버튼 이동
+  const handleEditClick = () => {
+    router.push(`/admin/products/edit/${product._id}`);
+  };
+
   // 장바구니 버튼
   const handleAddToCart = async () => {
     if (!user) {
@@ -162,6 +166,21 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
       alert('장바구니 추가에 실패했습니다. 다시 시도해 주세요.');
     }
   };
+
+  // 이미지 배열 처리 개선
+  const getImageArray = () => {
+    if (!product.mainImages) return [];
+
+    if (Array.isArray(product.mainImages)) {
+      return product.mainImages.filter(img => img && img.path);
+    }
+
+    return Object.values(product.mainImages).filter(img => img && img.path);
+  };
+
+  const imageArray = getImageArray();
+  const mainImageUrl = imageArray.length > 0 ? getFullImageUrl(imageArray[0].path) : null;
+
   return (
     <>
       {/* Breadcrumb */}
@@ -172,18 +191,22 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
       <div className="max-w-6xl mx-auto p-4">
         <div className="flex flex-col sm:flex-row gap-8">
           <div className="sm:w-1/2 relative">
-            {/* 상품 이미지 */}
-            {product.mainImages?.length > 0 && (
-              <div className="relative">
-                <div className="relative w-full pb-[100%]">
-                  <Image src={getFullImageUrl(product.mainImages[0].path)} alt={product.name} fill className="object-contain w-full h-full" unoptimized />
-                </div>
+            {/* 이미지 영역 */}
+            <div className="relative">
+              <div className="relative w-full pb-[100%]">
+                {mainImageUrl ? (
+                  <Image src={mainImageUrl} alt={product.name} fill className="object-contain w-full h-full" unoptimized />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                    <span className="text-gray-400">이미지 없음</span>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
             {/* 배송 정보 */}
             <div className="text-sm text-gray-500 mt-2">
               <p>
-                배송비: {product.shippingFees.toLocaleString()}원 <span className="text-sm text-gray-500">(3만원 이상 무료)</span>
+                배송비: {product.shippingFees.toLocaleString()}원 <span className="text-sm">(3만원 이상 무료)</span>
               </p>
             </div>
           </div>
@@ -240,27 +263,37 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
               total price <span className="text-lg font-bold">{finalPrice.toLocaleString()}원</span> ({quantity}개)
             </div>
 
-            {/* 구매 버튼 */}
-            <div className="space-y-3">
-              <button onClick={handleClick} disabled={isSoldOut} className={`w-full py-4 rounded-md font-medium transition disabled:opacity-50 ${isSoldOut ? 'bg-gray-300 cursor-not-allowed pointer-events-none text-black' : 'bg-primary text-white hover:bg-primary-dark cursor-pointer'}`}>
-                {isSoldOut ? '품절' : '바로 구매하기'}
-              </button>
+            {/* 구매 버튼 및 관리자 수정 버튼 */}
+            {!isAdmin ? (
+              <div className="space-y-3">
+                <button onClick={handleClick} disabled={isSoldOut} className={`w-full py-4 rounded-md font-medium transition disabled:opacity-50 ${isSoldOut ? 'bg-gray-300 cursor-not-allowed pointer-events-none text-black' : 'bg-primary text-white hover:bg-primary-dark cursor-pointer'}`}>
+                  {isSoldOut ? '품절' : '바로 구매하기'}
+                </button>
 
-              <div className="flex gap-3">
-                {/* 장바구니 */}
-                <button onClick={handleAddToCart} className="cursor-pointer flex-1 border border-primary text-primary py-3 rounded-md font-medium">
-                  장바구니
-                </button>
-                {/* 관심상품 등록 버튼 */}
-                <button type="button" onClick={toggle} className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition" aria-label={isLiked ? '북마크 취소' : '북마크 추가'}>
-                  {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 text-red-500' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 text-gray-400' }} />}
-                </button>
-                <button className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition relative" aria-label="공유하기" onClick={handleShare}>
-                  <ShareIcon className="w-5 h-5 text-gray-500" />
-                  {copied && <span className="fixed bottom-16 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-3 py-1 z-50">링크가 복사되었습니다.</span>}{' '}
-                </button>
+                <div className="flex gap-3">
+                  {/* 장바구니 */}
+                  <button onClick={handleAddToCart} className="cursor-pointer flex-1 border border-primary text-primary py-3 rounded-md font-medium">
+                    장바구니
+                  </button>
+
+                  {/* 관심상품 등록 버튼 */}
+                  <button type="button" onClick={toggle} className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition" aria-label={isLiked ? '북마크 취소' : '북마크 추가'}>
+                    {isLiked ? <Favorite svgProps={{ className: 'w-4 h-4 text-red-500' }} /> : <FavoriteBorder svgProps={{ className: 'w-4 h-4 text-gray-400' }} />}
+                  </button>
+
+                  {/* 공유하기 버튼 */}
+                  <button className="cursor-pointer w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition relative" aria-label="공유하기" onClick={handleShare}>
+                    <ShareIcon className="w-5 h-5 text-gray-500" />
+                    {copied && <span className="fixed bottom-16 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-3 py-1 z-50">링크가 복사되었습니다.</span>}
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              // 관리자 전용 수정 버튼
+              <button onClick={handleEditClick} className="py-4 w-full cursor-pointer text-white bg-secondary-green rounded-md hover:bg-[#6c8c53cc] transition whitespace-nowrap">
+                수정하기
+              </button>
+            )}
           </div>
         </div>
       </div>

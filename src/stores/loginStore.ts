@@ -9,6 +9,8 @@ interface LoginStore {
   login: (user: LoginUser) => void;
   logout: () => void;
   fetchUser: () => void;
+  isAdmin: boolean;
+
 }
 
 export const useLoginStore = create<LoginStore>()(
@@ -39,10 +41,18 @@ export const useLoginStore = create<LoginStore>()(
           }
         }
       },
+      isAdmin: false,
+      login: (user: LoginUser) =>
+        set({
+          user,
+          isLogin: true,
+          isAdmin: user.type === 'admin',
+        }),
+      logout: () => set({ user: null, isLogin: false, isAdmin: false }),
     }),
     {
       name: 'login-storage',
-      partialize: state => ({ user: state.user, isLogin: state.isLogin }),
+      partialize: state => ({ user: state.user, isLogin: state.isLogin, isAdmin: state.isAdmin }),
     },
   ),
 );

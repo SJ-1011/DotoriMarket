@@ -1,8 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface ReviewImagesProps {
   images: string[];
@@ -16,12 +15,18 @@ export default function ReviewImages({ images, reviewId, expanded, toggleExpand,
   if (!expanded) {
     return (
       <div className="flex flex-wrap gap-2 relative">
-        {images.slice(0, 2).map((imgSrc, idx) => (
-          <Image key={idx} src={`${API_URL}/${imgSrc}`} alt={`리뷰 사진 ${idx + 1}`} width={100} height={100} className="rounded object-cover w-[100px] h-[100px] cursor-pointer" unoptimized onClick={() => openImageModal(images, idx)} />
-        ))}
+        {images.slice(0, 2).map((imgSrc, idx) => {
+          const fullUrl = getFullImageUrl(imgSrc);
+          if (!fullUrl) return null;
+          return <Image key={idx} src={fullUrl} alt={`리뷰 사진 ${idx + 1}`} width={100} height={100} className="rounded object-cover w-[100px] h-[100px] cursor-pointer" unoptimized onClick={() => openImageModal(images, idx)} />;
+        })}
         {images.length > 2 && (
           <div className="relative w-[100px] h-[100px] rounded overflow-hidden cursor-pointer" onClick={() => toggleExpand(reviewId)}>
-            <Image src={`${API_URL}/${images[2]}`} alt="리뷰 사진 더보기" width={100} height={100} className="object-cover w-[100px] h-[100px]" unoptimized style={{ filter: 'brightness(0.3)' }} />
+            {(() => {
+              const fullUrl = getFullImageUrl(images[2]);
+              if (!fullUrl) return null;
+              return <Image src={fullUrl} alt="리뷰 사진 더보기" width={100} height={100} className="object-cover w-[100px] h-[100px]" unoptimized style={{ filter: 'brightness(0.3)' }} />;
+            })()}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-white font-semibold text-sm select-none">
               <span>사진 {images.length - 2}장</span>
               <span>더보기</span>
@@ -34,9 +39,11 @@ export default function ReviewImages({ images, reviewId, expanded, toggleExpand,
 
   return (
     <div className="flex flex-wrap gap-2">
-      {images.map((imgSrc, idx) => (
-        <Image key={idx} src={`${API_URL}/${imgSrc}`} alt={`리뷰 사진 전체 보기 ${idx + 1}`} width={100} height={100} className="rounded object-cover w-[100px] h-[100px] cursor-pointer" unoptimized onClick={() => openImageModal(images, idx)} />
-      ))}
+      {images.map((imgSrc, idx) => {
+        const fullUrl = getFullImageUrl(imgSrc);
+        if (!fullUrl) return null;
+        return <Image key={idx} src={fullUrl} alt={`리뷰 사진 전체 보기 ${idx + 1}`} width={100} height={100} className="rounded object-cover w-[100px] h-[100px] cursor-pointer" unoptimized onClick={() => openImageModal(images, idx)} />;
+      })}
     </div>
   );
 }
