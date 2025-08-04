@@ -14,6 +14,7 @@ export default function ResidentCard() {
   const [editing, setEditing] = useState(false);
 
   const fetchLoginUser = useLoginStore(state => state.fetchUser);
+  const refreshUser = useLoginStore(state => state.refreshUser);
 
   const [user, setUser] = useState<null | {
     name: string;
@@ -42,10 +43,19 @@ export default function ResidentCard() {
       setIsLoading(true);
       const res = await getUserById(Number(loginUser._id));
       if (res.ok === 1 && res.item) {
+        let image;
+        if (typeof res.item.image === 'string') {
+          image = res.item.image;
+        } else if (res.item.image?.path) {
+          image = res.item.image.path;
+        } else {
+          image = '/mypage-profile.png';
+        }
+
         setUser({
           name: res.item.name,
           birthday: res.item.birthday ?? '생일을 작성해주세요',
-          image: res.item.image?.path ? `${API_URL}/${res.item.image.path}` : '/mypage-profile.png',
+          image: image,
           intro: res.item.extra?.intro || '',
         });
         setIntroText(res.item.extra?.intro || '');
@@ -89,10 +99,11 @@ export default function ResidentCard() {
     const patchRes = await patchUserImage(loginUser._id, newImage, loginUser.token.accessToken);
 
     if (patchRes.ok === 1) {
+      await refreshUser();
       alert('프로필 이미지가 변경되었습니다!');
 
       console.log('프로필 이미지가 변경되었습니다!');
-      setUser(prev => prev && { ...prev, image: `${API_URL}/${newImage.path}` });
+      setUser(prev => prev && { ...prev, image: `${newImage.path}` });
       try {
         console.log(fetchLoginUser);
         await fetchLoginUser();

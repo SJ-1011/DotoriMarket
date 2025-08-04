@@ -24,7 +24,7 @@ export interface LoginUser {
   phone: string;
   birthday: string;
   token: UserToken;
-  image: UserImage;
+  image: UserImage | string;
   notifications: string[];
   createdAt: string;
   updatedAt: string;
@@ -45,7 +45,7 @@ export interface User {
   address: string;
   type: string;
   loginType: string;
-  image: UserImage | null;
+  image: UserImage | string | null;
   createdAt: string;
   updatedAt: string;
   extra?: UserExtra;

@@ -9,6 +9,7 @@ import { patchNotification, patchNotificationId } from '@/data/actions/patchNoti
 import CloseIcon from '../icon/CloseIcon';
 import { useNotificationStore } from '@/stores/notificationStore';
 import Link from 'next/link';
+import { User } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function NotificationIcon({ isMobile = false }: { isMobile?: boolean }) {
@@ -129,6 +130,35 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
     };
   }, [user]);
 
+  const getImageSrc = (user: User) => {
+    const fallback = '/character/chiikawa.png';
+
+    if (typeof user.image === 'string' && user.image.startsWith('uploadFiles')) {
+      return fallback;
+    }
+
+    // 외부 이미지가 문자열이면 바로 반환
+    if (typeof user?.image === 'string') {
+      console.log('typeof string:', user.image);
+      return user.image;
+    }
+
+    // image가 객체이고 null이 아님일 때만 접근
+    if (typeof user?.image === 'object' && user.image !== null) {
+      if (user.image.originalname && user.image.path && API_URL) {
+        console.log('API_URL:', user.image);
+        return `${API_URL}/${user.image.path}`;
+      }
+
+      if (user.image.path) {
+        console.log('이미지 path:', user.image);
+        return user.image.path;
+      }
+    }
+
+    return fallback;
+  };
+
   // 모바일 버전
   if (isMobile) {
     return (
@@ -166,13 +196,13 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                                 {item.type === 'reply' && (
                                   <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                     {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                    <Image src={item.user.image ? `${API_URL}/${item.user.image.path}` : `/character/chiikawa.png`} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                    <Image src={getImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                   </div>
                                 )}
                                 {item.type === 'message' && (
                                   <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                     {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                    <Image src={item.user.image ? `${API_URL}/${item.user.image.path}` : `/character/chiikawa.png`} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                    <Image src={getImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                   </div>
                                 )}
                               </div>
@@ -296,13 +326,13 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                               {item.type === 'reply' && (
                                 <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                   {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                  <Image src={item.user.image ? `${API_URL}/${item.user.image.path}` : `/character/chiikawa.png`} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                  <Image src={getImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                 </div>
                               )}
                               {item.type === 'message' && (
                                 <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                   {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                  <Image src={item.user.image ? `${API_URL}/${item.user.image.path}` : `/character/chiikawa.png`} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                  <Image src={getImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                 </div>
                               )}
                             </div>
