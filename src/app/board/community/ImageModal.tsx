@@ -218,7 +218,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
               <ul className="space-y-4">
                 {comments.map(comment => (
                   <li key={comment._id} className="flex items-start gap-3 relative">
-                    {comment.user.image ? (
+                    {typeof comment.user.image === 'object' && comment.user.image?.path ? (
                       <div className="w-7 h-7 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                         <Image src={`${comment.user.image.path}`} alt={`${comment.user.name} 프로필`} width={28} height={28} className="object-cover w-full h-full" unoptimized />
                       </div>
