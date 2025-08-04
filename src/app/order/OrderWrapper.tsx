@@ -195,13 +195,14 @@ export default function OrderWrapper() {
           setUserInfo({
             name: defaultAddress.name,
             recipient: defaultAddress.recipient,
-            phone: user.phone,
+            phone: defaultAddress.mobile,
             address: defaultAddress.value,
             details: defaultAddress.detailAddress || '',
           });
+          const fullAddress = `${defaultAddress.value} ${defaultAddress.detailAddress || ''}`;
 
-          methods.setValue('address', { name: defaultAddress.name, value: defaultAddress.value });
-          methods.setValue('user', { name: defaultAddress.recipient, phone: user.phone });
+          methods.setValue('address', { name: defaultAddress.name, value: fullAddress });
+          methods.setValue('user', { name: defaultAddress.recipient, phone: defaultAddress.mobile });
         }
       } catch (err) {
         console.error('주문 데이터 로딩 실패:', err);
