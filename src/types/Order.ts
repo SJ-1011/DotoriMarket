@@ -40,6 +40,7 @@ export interface OrderResponse extends Order {
   address: {
     name: string;
     value: string;
+    details: string;
   };
   user: {
     name: string;

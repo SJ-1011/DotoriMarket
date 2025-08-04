@@ -2,6 +2,7 @@ import type { AdminOrder } from '@/types/AdminOrder';
 import Image from 'next/image';
 import { ORDER_STATE_LABEL } from '@/types/AdminOrder';
 import { useRouter } from 'next/navigation';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface Props {
   orders: AdminOrder[];
@@ -14,7 +15,7 @@ export default function AdminOrdersTable({ orders, timeAgo, removePostalCode, on
   const router = useRouter();
 
   const goToDetail = (id: number) => {
-    router.push(`/mypage/admin/orders/${id}`);
+    router.push(`/admin/orders/${id}`);
   };
 
   return (
@@ -42,7 +43,7 @@ export default function AdminOrdersTable({ orders, timeAgo, removePostalCode, on
                 <td className="p-2 lg:p-3 text-gray">{timeAgo(order.createdAt)}</td>
 
                 {/* 상품 이미지만 */}
-                <td className="p-2 lg:p-3">{product?.image?.path && <Image src={`${process.env.NEXT_PUBLIC_API_URL}/${product.image.path}`} alt="상품 이미지" unoptimized width={36} height={36} className="rounded border inline-block lg:w-[42px] lg:h-[42px]" />}</td>
+                <td className="p-2 lg:p-3">{product?.image?.path && <Image src={getFullImageUrl(product.image.path) ?? '/fallback.png'} alt="상품 이미지" width={80} height={80} className="rounded inline-block w-[36px] h-[36px] lg:w-[42px] lg:h-[42px] object-cover" />}</td>
 
                 <td className="p-2 lg:p-3 font-bold">{order.cost.total.toLocaleString()}원</td>
                 <td className="p-2 lg:p-3">{order.user?.name}</td>
