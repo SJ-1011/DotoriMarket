@@ -32,10 +32,14 @@ interface ReviewItemProps {
 export default function ReviewItem({ review, currentUser, expanded, toggleExpand, openImageModal, onEditClick, onDeleteClick }: ReviewItemProps) {
   const imageSrc = (() => {
     const img = review.user.image;
-    if (!img) return null;
-    if (typeof img === 'string') return getFullImageUrl(img);
-    if (typeof img === 'object' && 'path' in img) return getFullImageUrl(img.path);
-    return null;
+    if (!img) return '/default-profile.webp';
+    if (typeof img === 'string') {
+      return img.startsWith('/') ? img : getFullImageUrl(img);
+    }
+    if (typeof img === 'object' && 'path' in img) {
+      return img.path.startsWith('/') ? img.path : getFullImageUrl(img.path);
+    }
+    return '/default-profile.webp';
   })();
   const isMyReview = currentUser?._id && String(review.user._id) === String(currentUser._id);
 
