@@ -119,6 +119,7 @@ export default function DesktopHeader() {
   }, []);
 
   const categoryAddress = {
+    전체상품: 'all',
     신상품: 'new',
     인기상품: 'popular',
     캐릭터: 'character',
@@ -134,6 +135,9 @@ export default function DesktopHeader() {
 
   useEffect(() => {
     switch (detailOpen) {
+      case'전체상품':
+        setCategoryData(['전체상품 보러가기']);
+        break;
       case '신상품':
         setCategoryData(['신상품 보러가기']);
         break;
@@ -304,7 +308,7 @@ export default function DesktopHeader() {
         {isCategoryOpen && (
           <nav ref={popoverRef} aria-label="세부 카테고리 메뉴" className="absolute z-20 left-1/2 -translate-x-1/2 top-full w-[30rem] lg:w-[40rem] text-sm lg:text-base mx-auto bg-[#E5CBB7] flex flex-row border-b border-x border-primary" onMouseEnter={handleDropdownHover} onMouseLeave={handleDropdownLeave}>
             <ul className="flex flex-col flex-nowrap text-center">
-              {['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품', 'COMMUNITY'].map(category => (
+              {['전체상품','신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품', 'COMMUNITY'].map(category => (
                 <li key={category} className={`p-4 cursor-pointer ${detailOpen === category ? 'bg-background' : ''}`} onClick={() => setDetailOpen(category)} onMouseEnter={() => setDetailOpen(category)}>
                   {category}
                 </li>

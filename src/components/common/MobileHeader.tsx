@@ -23,7 +23,7 @@ export default function MobileHeader() {
 
   // 메뉴 종류
   const menuContent = {
-    category: ['신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품'],
+    category: ['전체상품','신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품'],
     board: ['공지사항', '자유게시판', '문의게시판'],
     myInfo: ['마이페이지', '내가 쓴 글', '배송 주소록 관리', '장바구니', '관심 상품', '회원 정보 수정', '로그아웃'],
   };
@@ -40,6 +40,7 @@ export default function MobileHeader() {
 
   // TODO 링크 연결하기
   const menuLink = {
+    전체상품:'category/all',
     신상품: 'category/new',
     인기상품: 'category/popular',
     미니어처: 'category/miniature',
