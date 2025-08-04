@@ -165,7 +165,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
             <div className="w-full max-w-xl p-4 border-2 border-[#A97452] rounded-2xl bg-[#F5EEE6]">
               <div className="flex items-center gap-4">
                 {selectedProduct.mainImages && selectedProduct.mainImages.length > 0 ? (
-                  <Image src={`${API_URL}/${selectedProduct.mainImages[0].path}`} alt={selectedProduct.name} width={100} height={100} unoptimized={true} className="w-20 h-20 object-cover rounded border" />
+                  <Image src={`${selectedProduct.mainImages[0].path}`} alt={selectedProduct.name} width={100} height={100} unoptimized={true} className="w-20 h-20 object-cover rounded border" />
                 ) : (
                   <div className="w-20 h-20 bg-gray-200 rounded border flex items-center justify-center">
                     <span className="text-gray-400 text-xs">이미지 없음</span>
@@ -188,7 +188,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
             <div className="w-full max-w-xl p-4 border-2 border-[#A97452] rounded-2xl bg-[#F5EEE6]">
               <div className="flex items-center gap-4">
                 {selectedOrderProduct.image?.path ? (
-                  <Image src={`${API_URL}/${selectedOrderProduct.image.path}`} alt={selectedOrderProduct.name} width={100} height={100} unoptimized className="w-20 h-20 object-cover rounded border" />
+                  <Image src={`${selectedOrderProduct.image.path}`} alt={selectedOrderProduct.name} width={100} height={100} unoptimized className="w-20 h-20 object-cover rounded border" />
                 ) : (
                   <div className="w-20 h-20 bg-gray-200 rounded border flex items-center justify-center">
                     <span className="text-gray-400 text-xs">이미지 없음</span>
