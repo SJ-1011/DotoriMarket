@@ -11,8 +11,6 @@ import { createReply, deleteReply } from '@/data/actions/post';
 import { ApiRes } from '@/types/api';
 import { useLoginStore } from '@/stores/loginStore';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 interface ImageModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -222,7 +220,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId }
                   <li key={comment._id} className="flex items-start gap-3 relative">
                     {comment.user.image ? (
                       <div className="w-7 h-7 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                        <Image src={`${API_URL}/${comment.user.image.path}`} alt={`${comment.user.name} 프로필`} width={28} height={28} className="object-cover w-full h-full" unoptimized />
+                        <Image src={`${comment.user.image.path}`} alt={`${comment.user.name} 프로필`} width={28} height={28} className="object-cover w-full h-full" unoptimized />
                       </div>
                     ) : (
                       <div className="w-7 h-7 rounded-full flex items-center justify-center bg-gray-200 flex-shrink-0">

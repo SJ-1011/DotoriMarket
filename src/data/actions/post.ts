@@ -50,7 +50,7 @@ export async function createPost(state: ApiRes<Post> | null, formData: FormData)
         console.log('[createPost] 업로드된 파일 정보:', uploadedFiles);
 
         // 업로드된 파일들의 전체 URL 경로를 생성하여 image 배열에 저장
-        const uploadedPaths = uploadedFiles.map(item => `${API_URL}/${item.path}`);
+        const uploadedPaths = uploadedFiles.map(item => `${item.path}`);
         console.log(`업로드된 이미지 경로들:`, uploadedPaths);
 
         // Post의 image 필드에 경로 배열 저장
