@@ -22,6 +22,12 @@ export async function createUser(_: ApiRes<User> | null, formData: FormData): Pr
       console.log('파일 업로드 실패:', fileRes);
       return fileRes;
     }
+  } else {
+    image = {
+      path: '/default-profile.webp',
+      name: 'default-profile.webp',
+      originalname: 'default-profile.webp',
+    };
   }
   const body = {
     type: (formData.get('type') as string) || 'user',
