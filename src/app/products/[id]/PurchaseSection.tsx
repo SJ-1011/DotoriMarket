@@ -2,7 +2,7 @@
 
 import type { Product } from '@/types/Product';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Breadcrumb from '@/components/common/Breadcrumb';
 import { CATEGORY_MAP, CHARACTER_CATEGORIES, STATIONERY_CATEGORIES, LIVING_CATEGORIES } from '@/constants/categories';
 import { useToggleBookmark } from '@/hooks/useToggleBookmark';
@@ -16,9 +16,10 @@ import { useRouter, usePathname } from 'next/navigation';
 import type { Review } from '@/types/Review';
 import { addToCart } from '@/data/actions/addToCart';
 import { getFullImageUrl } from '@/utils/getFullImageUrl';
+import { getBookmarkStatus } from '@/utils/getBookmarkStatus';
 
 interface PurchaseSectionProps {
-  product: Product & { bookmarkId?: number };
+  product: Product & { myBookmarkId?: number };
   reviews: Review[];
   loadingReviews: boolean;
 }
@@ -76,7 +77,22 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
   const isAdmin = useLoginStore(state => state.isAdmin);
 
   // 초기 북마크 아이디
-  const initialBookmarkId = product.bookmarkId;
+  const [initialBookmarkId, setInitialBookmarkId] = useState<number | undefined>(product.myBookmarkId);
+  useEffect(() => {
+    if (!accessToken) return;
+
+    async function fetchBookmark() {
+      const productId = String(product._id);
+      const res = await getBookmarkStatus(productId, accessToken!);
+      if (res.ok && res.item) {
+        setInitialBookmarkId(res.item._id);
+      } else {
+        setInitialBookmarkId(undefined);
+      }
+    }
+
+    fetchBookmark();
+  }, [product._id, accessToken]);
 
   // 좋아요 토글 훅
   const { isLiked, toggle } = useToggleBookmark(initialBookmarkId, Number(product._id), accessToken);
