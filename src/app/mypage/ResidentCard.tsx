@@ -12,6 +12,9 @@ import Skeleton from '@/components/common/Skeleton';
 export default function ResidentCard() {
   const userState = useUserStore(state => state.user);
   const [editing, setEditing] = useState(false);
+
+  const fetchLoginUser = useLoginStore(state => state.fetchUser);
+
   const [user, setUser] = useState<null | {
     name: string;
     birthday: string;
@@ -87,7 +90,15 @@ export default function ResidentCard() {
 
     if (patchRes.ok === 1) {
       alert('프로필 이미지가 변경되었습니다!');
+
+      console.log('프로필 이미지가 변경되었습니다!');
       setUser(prev => prev && { ...prev, image: `${API_URL}/${newImage.path}` });
+      try {
+        console.log(fetchLoginUser);
+        await fetchLoginUser();
+      } catch {
+        console.log('스토어에 저장이 안댐');
+      }
     } else {
       alert('이미지 변경 실패');
     }
