@@ -229,7 +229,6 @@ export default function ProductCreateForm() {
               </div>
               <p className="text-lg font-medium text-gray-700 mb-2">이미지를 업로드해주세요</p>
               <p className="text-sm text-gray-500">클릭해서 파일을 선택하세요</p>
-              <p className="text-xs text-gray-400 mt-2">JPG, PNG, GIF 파일만 지원됩니다</p>
             </div>
           )}
         </div>

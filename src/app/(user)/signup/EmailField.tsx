@@ -17,12 +17,12 @@ export default function EmailField({ onCheck, message }: EmailFieldProps) {
   return (
     <div className="flex flex-col flex-nowrap gap-2">
       <label htmlFor="email">이메일</label>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-2">
         <input
           id="email"
           type="email"
           placeholder="이메일을 입력하세요"
-          className={`flex-grow p-4 border rounded-xl bg-white ${errors.email ? 'border-red-500' : 'border-primary '}`}
+          className={`flex-grow p-4 border rounded-xl bg-white ${errors.email ? 'border-red-500' : 'border-primary'}`}
           {...register('email', {
             required: '이메일을 입력해주세요.',
             pattern: {
