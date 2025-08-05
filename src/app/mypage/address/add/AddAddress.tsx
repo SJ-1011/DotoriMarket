@@ -43,7 +43,7 @@ export interface AddressFormState {
 export default function AddAddress() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/order';
+  const redirect = searchParams.get('redirect');
   const user = useLoginStore(state => state.user);
 
   const methods = useForm<AddressFormState>({
@@ -89,7 +89,12 @@ export default function AddAddress() {
       if (!result.ok) throw new Error('배송지 추가에 실패했습니다.');
 
       alert('배송지가 추가되었습니다.');
-      router.push(redirect);
+
+      if (redirect) {
+        router.push(redirect);
+      } else {
+        router.push('/mypage/address');
+      }
     } catch (err) {
       console.error('배송지 추가 실패:', err);
       alert(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
