@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import ResidentCard from './ResidentCard';
 import { useUserStore } from '@/stores/userStore';
 import Skeleton from '@/components/common/Skeleton';
+import Logout from './Logout';
 
 export default function MypageInfo() {
   const [name, setName] = useState('회원');
@@ -66,9 +67,7 @@ export default function MypageInfo() {
                   장바구니
                 </Link>
               )}
-              <Link href="/mypage/logout" className="w-full text-center border border-primary p-4 rounded-2xl">
-                로그아웃
-              </Link>
+              <Logout />
             </div>
           </>
         )}
