@@ -130,7 +130,7 @@ export default function StatsClient() {
     <div className="space-y-8">
       {/* 로딩 오버레이 */}
       {loading && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex flex-col items-center justify-center">
+        <div className="fixed inset-0 z-50 bg-[rgba(0,0,0,0.3)] flex flex-col items-center justify-center">
           <div className="bg-white p-8 rounded-2xl shadow-2xl text-center">
             <div className="w-12 h-12 border-4 border-[#A97452] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <span className="text-[#4A5568] font-semibold text-lg">데이터를 불러오는 중...</span>
@@ -219,7 +219,7 @@ export default function StatsClient() {
             <div className="bg-gradient-to-r from-[#A97452] to-[#966343] text-white p-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-base sm:text-xl font-bold">📊 조회 결과</h2>
-                <span className="text-sm sm:text-base bg-[#A97452] bg-opacity-20 px-4 py-2 rounded-full  font-medium">총 {statisticsData.length}개 항목</span>
+                <span className="text-sm sm:text-base bg-[rgba(169,116,82,0.2)] px-4 py-2 rounded-full  font-medium">총 {statisticsData.length}개 항목</span>
               </div>
             </div>
 

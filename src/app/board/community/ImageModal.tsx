@@ -188,7 +188,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId, 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)] backdrop-blur" onClick={onClose}>
       <div className="flex flex-col sm:flex-row bg-transparent rounded-lg overflow-hidden shadow-2xl max-w-[90vw] max-h-[90vh]" onClick={e => e.stopPropagation()}>
         {/* 이미지 영역 */}
         <div className="bg-black flex items-center justify-center w-full h-[320px] sm:w-[600px] sm:h-[600px] max-w-[100vw] sm:max-w-[80vw] max-h-[40vh] sm:max-h-[80vh] relative">
@@ -199,7 +199,7 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId, 
 
           {/* 게시글 3점 메뉴 버튼 */}
           <div className="absolute top-4 right-4 z-20" data-dropdown>
-            <button onClick={handlePostDropdownToggle} className="p-2 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-all" aria-label="게시글 옵션">
+            <button onClick={handlePostDropdownToggle} className="p-2 bg-[rgba(0,0,0,0.5)] text-white rounded-full hover:bg-opacity-70 transition-all" aria-label="게시글 옵션">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
               </svg>
