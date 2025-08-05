@@ -20,7 +20,7 @@ export default function Pagination({ totalPages, currentPage, onPageChange }: Pa
   return (
     <div className="flex justify-center items-center gap-2 mb-6 min-h-[60px] sm:gap-3">
       {/* 이전 버튼 */}
-      <button disabled={currentPage === 1} onClick={() => onPageChange(Math.max(currentPage - 1, 1))} className="relative disabled:opacity-50 w-10 h-10 sm:w-12 sm:h-12">
+      <button disabled={currentPage === 1} onClick={() => onPageChange(Math.max(currentPage - 1, 1))} className=" cursor-pointer relative disabled:opacity-50 w-10 h-10 sm:w-12 sm:h-12">
         <Image src="/page-dotori.png" alt="이전" fill style={{ objectFit: 'contain' }} />
         <span className="absolute top-1/2 left-2.5 -translate-y-1/2 font-bold text-sm text-white select-none pointer-events-none sm:left-4 sm:text-base">{'◀'}</span>
       </button>
@@ -47,7 +47,7 @@ export default function Pagination({ totalPages, currentPage, onPageChange }: Pa
       })}
 
       {/* 다음 버튼 */}
-      <button disabled={currentPage === totalPages} onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))} className="relative disabled:opacity-50 w-10 h-10 sm:w-12 sm:h-12">
+      <button disabled={currentPage === totalPages} onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))} className="cursor-pointer relative disabled:opacity-50 w-10 h-10 sm:w-12 sm:h-12">
         <Image src="/page-dotori.png" alt="다음" fill style={{ objectFit: 'contain' }} />
         <span className="absolute top-1/2 right-3 -translate-y-1/2 font-bold text-sm text-white select-none pointer-events-none sm:right-4 sm:text-base">{'▶'}</span>
       </button>
