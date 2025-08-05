@@ -3,7 +3,7 @@
 export interface ProductImage {
   path: string;
   name: string;
-  originalname: string;
+  originalname?: string;
 }
 
 export interface ProductExtra {

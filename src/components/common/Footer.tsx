@@ -10,7 +10,9 @@ export default function Footer() {
       <div className="max-w-[75rem] mx-auto">
         {/* logo */}
         <div className="mb-2 sm:mb-4 lg:mb-6">
-          <Image src="/logo.png" alt="도토리섬 로고" width={70} height={70} className="w-18 h-18 sm:w-22 sm:h-22 lg:w-24 lg:h-24" priority />
+          <Link href="/" className="inline-block">
+            <Image src="/logo.png" alt="도토리섬 로고" width={70} height={70} className="w-18 h-18 sm:w-22 sm:h-22 lg:w-24 lg:h-24" priority />
+          </Link>
         </div>
         <div
           className="grid grid-cols-1 gap-4

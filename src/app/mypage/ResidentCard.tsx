@@ -12,6 +12,10 @@ import Skeleton from '@/components/common/Skeleton';
 export default function ResidentCard() {
   const userState = useUserStore(state => state.user);
   const [editing, setEditing] = useState(false);
+
+  const fetchLoginUser = useLoginStore(state => state.fetchUser);
+  const refreshUser = useLoginStore(state => state.refreshUser);
+
   const [user, setUser] = useState<null | {
     name: string;
     birthday: string;
@@ -39,10 +43,19 @@ export default function ResidentCard() {
       setIsLoading(true);
       const res = await getUserById(Number(loginUser._id));
       if (res.ok === 1 && res.item) {
+        let image;
+        if (typeof res.item.image === 'string') {
+          image = res.item.image;
+        } else if (res.item.image?.path) {
+          image = res.item.image.path;
+        } else {
+          image = '/mypage-profile.png';
+        }
+
         setUser({
           name: res.item.name,
           birthday: res.item.birthday ?? '생일을 작성해주세요',
-          image: res.item.image?.path ? `${API_URL}/${res.item.image.path}` : '/mypage-profile.png',
+          image: image,
           intro: res.item.extra?.intro || '',
         });
         setIntroText(res.item.extra?.intro || '');
@@ -86,8 +99,17 @@ export default function ResidentCard() {
     const patchRes = await patchUserImage(loginUser._id, newImage, loginUser.token.accessToken);
 
     if (patchRes.ok === 1) {
+      await refreshUser();
       alert('프로필 이미지가 변경되었습니다!');
-      setUser(prev => prev && { ...prev, image: `${API_URL}/${newImage.path}` });
+
+      console.log('프로필 이미지가 변경되었습니다!');
+      setUser(prev => prev && { ...prev, image: `${newImage.path}` });
+      try {
+        console.log(fetchLoginUser);
+        await fetchLoginUser();
+      } catch {
+        console.log('스토어에 저장이 안댐');
+      }
     } else {
       alert('이미지 변경 실패');
     }
@@ -181,12 +203,16 @@ export default function ResidentCard() {
             </div>
 
             {/* 바코드 */}
-            <div className="absolute bottom-0 right-10 w-30 h-5 lg:w-40 lg:h-7">
+            <div className="absolute bottom-0.5 left-5  w-30 h-5 lg:w-40 lg:h-7">
               <Image loader={imageLoader} src="/mypage-barcode.png" alt="Barcode" className="object-cover" fill />
             </div>
 
             {/* 작은 텍스트 */}
-            <div className="absolute left-5 text-[#95aa81] text-[0.5rem] bottom-2 lg:lg:bottom-3">CONSOLE.10G</div>
+            <div className="absolute left-5 text-[#95aa81] text-[0.5rem] lg:text-[0.6rem] bottom-6 lg:lg:bottom-8.5">CONSOLE.10G</div>
+
+            <div className="absolute bottom-0 right-10 w-10 h-10 lg:w-13 lg:h-13">
+              <Image src="/dotoriQR.png" alt="Dotori QR" fill className="object-cover" />
+            </div>
           </div>
         </div>
       )}

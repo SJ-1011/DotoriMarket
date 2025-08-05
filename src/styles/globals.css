@@ -59,12 +59,34 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'SejongGeulggot';
+  src: url('/font/SejongGeulggot.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'RiaSans';
+  src: url('/font/RiaSans-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   font-family: 'Pretendard Variable';
 }
 
 .font-test {
   font-family: 'HakgyoansimChilpanjiugaeTTF-B';
+}
+
+.font-custom {
+  font-family: 'SejongGeulggot';
+}
+
+.font-logo {
+  font-family: 'RiaSans';
 }
 
 .sr-only {
@@ -100,8 +122,6 @@ body {
 
 /* 내부 컨텐츠 최대 너비 제한 */
 .dot-bg-inner {
-  max-width: 800px;
-  margin: 0 auto;
   box-sizing: border-box;
 }
 
@@ -126,4 +146,17 @@ body {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none !important; /* Chrome, Safari, Edge */
+}
+
+.slide-in {
+  animation: slideToCenter 0.5s ease-out forwards;
+}
+
+@keyframes slideToCenter {
+  0% {
+    right: 0px; /* 화면 밖에서 시작 */
+  }
+  100% {
+    transform: translate(-2%, 0);
+  }
 }

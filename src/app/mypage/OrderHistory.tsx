@@ -7,8 +7,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 function CalculationDays(createdAt: string): string {
   const parsedCreatedAt = new Date(createdAt.replace(/\.| /g, match => (match === '.' ? '-' : 'T')));
   const now = new Date();
@@ -175,7 +173,7 @@ export default function OrderHistory() {
                             <div className="flex flex-col sm:flex-row flex-nowrap sm:items-center gap-4 sm:gap-0">
                               <div className="flex flex-row flex-nowrap items-center gap-4">
                                 <div className="w-[70px] sm:w-[100px] aspect-square">
-                                  <Image src={`${API_URL}/${product.image?.path}`} alt={`${order.products[0].name} 결제 이미지`} className="border border-primary rounded-lg" width={100} height={100} />
+                                  <Image src={product.image ? product.image.path : ''} alt={`${order.products[0].name} 결제 이미지`} className="border border-primary rounded-lg" width={100} height={100} />
                                 </div>
                                 <div className="flex flex-col flex-nowrap gap-1">
                                   <p className="sm:text-base lg:text-lg font-bold">{CalculationDays(order.createdAt)}</p>
@@ -193,7 +191,7 @@ export default function OrderHistory() {
                                 <Link href={`/board/qna/new`} className="w-full text-center sm:px-4 lg:px-8 py-2 border border-primary text-primary">
                                   상품 문의하기
                                 </Link>
-                                <Link href={`/mypage`} className="w-full text-center sm:px-4 lg:px-8 py-2 border border-primary text-primary">
+                                <Link href={`/products/${product._id}`} className="w-full text-center sm:px-4 lg:px-8 py-2 border border-primary text-primary">
                                   리뷰 작성하기
                                 </Link>
                               </div>

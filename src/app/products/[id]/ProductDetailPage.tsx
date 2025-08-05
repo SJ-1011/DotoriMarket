@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import type { Product } from '@/types/Product';
 import PurchaseSection from './PurchaseSection';
 import ProductTabSection from './TabSection';
+import RelatedProducts from './RelatedProducts';
 import DotBackgroundWrapper from '@/components/common/DotBackgroundWrapper';
 import { Order } from '@/types/Order';
 import { useLoginStore } from '@/stores/loginStore';
@@ -59,8 +60,9 @@ export default function ProductDetailPage({ product }: { product: Product }) {
       <div className="max-w-[800px] mx-auto px-4 pt-4 bg-white">
         <PurchaseSection product={product} reviews={reviews} loadingReviews={loadingReviews} />
       </div>
-      <div className="w-full max-w-[800px] mx-auto">
+      <div className="w-full max-w-[800px] mx-auto relative">
         <ProductTabSection activeTab={activeTab} setActiveTab={setActiveTab} product={product} order={order} />
+        {product.extra?.category?.[0] && <RelatedProducts currentProductId={Number(product._id)} categoryCode={product.extra.category[0]} />}
       </div>
     </DotBackgroundWrapper>
   );

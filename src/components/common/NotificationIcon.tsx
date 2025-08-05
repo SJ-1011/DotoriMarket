@@ -5,9 +5,12 @@ import BellIcon from '../icon/BellIcon';
 import { useEffect, useRef, useState } from 'react';
 import TriangleIcon from '../icon/TriangleIcon';
 import { useLoginStore } from '@/stores/loginStore';
-import { patchNotification } from '@/data/actions/patchNotification';
+import { patchNotification, patchNotificationId } from '@/data/actions/patchNotification';
 import CloseIcon from '../icon/CloseIcon';
 import { useNotificationStore } from '@/stores/notificationStore';
+import Link from 'next/link';
+import { User } from '@/types';
+import { Product } from '@/types/Product';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function NotificationIcon({ isMobile = false }: { isMobile?: boolean }) {
@@ -18,6 +21,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
   const deleteNotification = useNotificationStore(state => state.deleteNotification);
 
   const [open, setOpen] = useState(false);
+  const [openedMessageId, setOpenedMessageId] = useState<string | null>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   // 알림 종류
@@ -25,18 +29,34 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
     payment: '결제 알림',
     qna: '문의글 알림',
     reply: '댓글 알림',
+    message: '쪽지 알림',
   } as const;
 
   // 모두 읽음 버튼
   const handleRead = async () => {
     if (user) {
       try {
-        const res = await patchNotification(user);
+        await patchNotification(user);
         deleteNotification();
 
-        console.log(res.ok);
+        console.log('알림을 모두 읽었습니다.');
       } catch {
         console.log('데이터 읽음 처리 실패');
+      }
+    }
+  };
+
+  // 선택 읽음 버튼
+  const handleReadOne = async (id: string) => {
+    if (user) {
+      try {
+        await patchNotificationId(user, id);
+
+        await fetchNotification();
+
+        console.log(`알림 ${id}번째를 읽었습니다.`);
+      } catch {
+        console.log('알림 읽음 처리 실패');
       }
     }
   };
@@ -111,6 +131,36 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
     };
   }, [user]);
 
+  const getUserImageSrc = (user: User) => {
+    const fallback = '/default-profile.webp';
+
+    // 외부 이미지가 문자열이면 바로 반환
+    if (typeof user?.image === 'string') {
+      console.log('typeof string:', user.image);
+      return user.image;
+    }
+
+    // image가 객체이고 null이 아님일 때만 접근
+    if (typeof user?.image === 'object' && user.image !== null) {
+      if (user.image.originalname && user.image.path && API_URL) {
+        console.log('API_URL:', user.image);
+        return `${API_URL}/${user.image.path}`;
+      }
+
+      if (user.image.path) {
+        console.log('이미지 path:', user.image);
+        return user.image.path;
+      }
+    }
+
+    return fallback;
+  };
+  const getProductImageSrc = (product: Product) => {
+    const fallback = '/character/chiikawa.png';
+    if (product.image?.path) return product.image.path;
+    return fallback;
+  };
+
   // 모바일 버전
   if (isMobile) {
     return (
@@ -120,7 +170,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
           {notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
         </button>
         {open && (
-          <div className="fixed inset-0 bg-white flex flex-col z-50">
+          <div className="fixed inset-0 bg-white flex flex-col z-[9999]">
             {/* 상단 헤더 */}
             <div className="flex justify-between items-center p-4 border-b border-primary">
               <p className="font-bold text-lg">알림</p>
@@ -141,18 +191,89 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                     .map((item, index) => {
                       if (!item.isRead)
                         return (
-                          <li key={index} className="flex items-center gap-3 p-4 bg-white rounded-2xl w-full">
-                            <div className="min-w-18 min-h-18">
-                              <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product} 상품 이미지`} width={72} height={72} className="rounded-full" />
+                          <li key={index} className="flex flex-col flex-nowrap relative p-4 bg-white rounded-2xl w-full">
+                            <div className="flex flex-row flex-nowrap items-center gap-3">
+                              <div className="min-w-18 min-h-18">
+                                {item.type === 'payment' && (
+                                  <div className="w-[72px] h-[72px] rounded-full overflow-hidden border border-gray relative">
+                                    <Image src={getProductImageSrc(item.extra.product!)} alt={`${item.extra.product?.name} 상품 이미지`} fill className="object-cover" />
+                                  </div>
+                                )}
+                                {item.type === 'reply' && (
+                                  <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
+                                    {/* <div className="text-xs text-primary">새 댓글</div> */}
+                                    <Image src={getUserImageSrc(item.user)} alt={`${item.user.name}님의 프로필 사진`} fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                  </div>
+                                )}
+                                {item.type === 'message' && (
+                                  <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
+                                    {/* <div className="text-xs text-primary">새 댓글</div> */}
+                                    <Image src={getUserImageSrc(item.user)} alt={`${item.user.name}님의 프로필 사진`} fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="w-full">
+                                <p className="font-bold">{menu[item.type]}</p>
+                                {/* 결제 알림 */}
+                                {item.type === 'payment' && (
+                                  <>
+                                    <span className="flex flex-row flex-nowrap items-center text-sm">
+                                      [
+                                      <Link
+                                        href={`/products/${item.extra.product?._id}`}
+                                        onClick={() => {
+                                          setOpen(!open);
+                                        }}
+                                        className="text-primary-dark max-w-[14rem] truncate"
+                                      >
+                                        {item.extra.product?.name}
+                                      </Link>
+                                      ]
+                                    </span>
+                                    <span className="block text-sm">{item.content}</span>
+                                    <span className="block text-sm">{item.createdAt}</span>
+                                  </>
+                                )}
+                                {/* 댓글 알림 */}
+                                {item.type === 'reply' && (
+                                  <>
+                                    <span className="flex flex-row flex-nowrap items-center text-sm">
+                                      [
+                                      <Link href={`/board/${item.extra.post?.type}/${item.extra.post?._id}`} onClick={() => setOpen(!open)} className="text-primary-dark max-w-[14rem] truncate">
+                                        {item.extra.post?.title}
+                                      </Link>
+                                      ]
+                                    </span>
+                                    <span className="block text-sm">{item.content}</span>
+                                    <span className="block text-sm">{item.createdAt}</span>
+                                  </>
+                                )}
+                                {/* 메시지 알림 */}
+                                {item.type === 'message' && (
+                                  <>
+                                    <button type="button" onClick={() => setOpenedMessageId(openedMessageId === item._id.toString() ? null : item._id.toString())} className="flex flex-row flex-nowrap cursor-pointer items-center text-sm">
+                                      [<p className="text-primary-dark max-w-[14rem] truncate">{item.extra.message}</p>]
+                                    </button>
+                                    <span className="block text-sm">{item.content}</span>
+                                    <span className="block text-sm">{item.createdAt}</span>
+                                  </>
+                                )}
+                              </div>
                             </div>
-                            <div className="w-full">
-                              <p className="font-bold">{menu[item.type]}</p>
-                              <span className="flex items-center text-sm">
-                                [<span className="text-primary-dark max-w-[14rem] truncate">{item.extra.product}</span>]
-                              </span>
-                              <span className="block text-sm">{item.content}</span>
-                              <span className="block text-sm">{item.createdAt}</span>
-                            </div>
+
+                            {item.type === 'message' ? (
+                              <></>
+                            ) : (
+                              <button type="button" className="absolute top-5 right-5 cursor-pointer" onClick={() => handleReadOne(item._id.toString())}>
+                                <CloseIcon />
+                              </button>
+                            )}
+                            {openedMessageId === item._id.toString() && item.type === 'message' && (
+                              <div className="flex flex-col flex-nowrap p-4 gap-2 bg-background mt-4">
+                                <p className="font-bold">쪽지 상세보기</p>
+                                <p>{item.extra.message}</p>
+                              </div>
+                            )}
                           </li>
                         );
                     })
@@ -174,7 +295,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
   return (
     <li className="relative">
       <button type="button" className="cursor-pointer relative" aria-label="알림" onClick={() => setOpen(prev => !prev)}>
-        <BellIcon svgProps={{ className: 'w-6 h-6' }} />
+        <BellIcon svgProps={{ className: 'w-6 h-6' }} pathProps={{ fill: 'white' }} />
         {notification?.length > 0 && <div className="w-1 h-1 bg-red rounded-full absolute top-0 right-0"></div>}
       </button>
       {/* 말풍선 */}
@@ -208,38 +329,90 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                   .map((item, index) => {
                     if (!item.isRead)
                       return (
-                        <li key={index} className="flex flex-row flex-nowrap items-center gap-3 p-4 bg-white rounded-2xl w-full">
-                          <div className="min-w-18 min-h-18">
-                            {item.type === 'payment' && <Image src={item.extra.image ? `${API_URL}/${item.extra.image[0].path}` : `/character/chiikawa.png`} alt={`${item.extra.product} 상품 이미지`} width={72} height={72} className="rounded-full" />}
-                            {item.type === 'reply' && (
-                              <div className="flex flex-row flex-nowrap justify-center items-center w-[72px] h-[72px] border border-primary rounded-full">
-                                <div className="text-xs text-primary">새 댓글</div>
-                              </div>
-                            )}
+                        <li key={index} className="flex flex-col flex-nowrap relative p-4 bg-white rounded-2xl w-full">
+                          <div className="flex flex-row flex-nowrap items-center gap-3">
+                            {/* 이미지 영역 */}
+                            <div className="min-w-18 min-h-18">
+                              {item.type === 'payment' && (
+                                <div className="w-[72px] h-[72px] rounded-full overflow-hidden border border-gray relative">
+                                  <Image src={getProductImageSrc(item.extra.product!)} alt={`${item.extra.product?.name} 상품 이미지`} fill className="object-cover" />
+                                </div>
+                              )}
+                              {item.type === 'reply' && (
+                                <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
+                                  {/* <div className="text-xs text-primary">새 댓글</div> */}
+                                  <Image src={getUserImageSrc(item.user)} alt={`${item.user.name}님의 프로필 사진`} fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                </div>
+                              )}
+                              {item.type === 'message' && (
+                                <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
+                                  {/* <div className="text-xs text-primary">새 댓글</div> */}
+                                  <Image src={getUserImageSrc(item.user)} alt={`${item.user.name}님의 프로필 사진`} fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                </div>
+                              )}
+                            </div>
+                            {/* 메시지 영역 */}
+                            <div className="w-full">
+                              <p className="font-bold">{menu[item.type]}</p>
+                              {/* 결제 알림 */}
+                              {item.type === 'payment' && (
+                                <>
+                                  <span className="flex flex-row flex-nowrap items-center text-sm">
+                                    [
+                                    <Link
+                                      href={`/products/${item.extra.product?._id}`}
+                                      onClick={() => {
+                                        setOpen(!open);
+                                      }}
+                                      className="text-primary-dark max-w-[14rem] truncate"
+                                    >
+                                      {item.extra.product?.name}
+                                    </Link>
+                                    ]
+                                  </span>
+                                  <span className="block text-sm">{item.content}</span>
+                                  <span className="block text-sm">{item.createdAt}</span>
+                                </>
+                              )}
+                              {/* 댓글 알림 */}
+                              {item.type === 'reply' && (
+                                <>
+                                  <span className="flex flex-row flex-nowrap items-center text-sm">
+                                    [
+                                    <Link href={`/board/${item.extra.post?.type}/${item.extra.post?._id}`} onClick={() => setOpen(!open)} className="text-primary-dark max-w-[14rem] truncate">
+                                      {item.extra.post?.title}
+                                    </Link>
+                                    ]
+                                  </span>
+                                  <span className="block text-sm">{item.content}</span>
+                                  <span className="block text-sm">{item.createdAt}</span>
+                                </>
+                              )}
+                              {/* 메시지 알림 */}
+                              {item.type === 'message' && (
+                                <>
+                                  <button type="button" onClick={() => setOpenedMessageId(openedMessageId === item._id.toString() ? null : item._id.toString())} className="flex flex-row flex-nowrap cursor-pointer items-center text-sm">
+                                    [<p className="text-primary-dark max-w-[14rem] truncate">{item.extra.message}</p>]
+                                  </button>
+                                  <span className="block text-sm">{item.content}</span>
+                                  <span className="block text-sm">{item.createdAt}</span>
+                                </>
+                              )}
+                            </div>
                           </div>
-                          <div className="w-full">
-                            <p className="font-bold">{menu[item.type]}</p>
-                            {/* 결제 알림 */}
-                            {item.type === 'payment' && (
-                              <>
-                                <span className="flex flex-row flex-nowrap items-center text-sm">
-                                  [<span className="text-primary-dark max-w-[14rem] truncate">{item.extra.product}</span>]
-                                </span>
-                                <span className="block text-sm">{item.content}</span>
-                                <span className="block text-sm">{item.createdAt}</span>
-                              </>
-                            )}
-                            {/* 댓글 알림 */}
-                            {item.type === 'reply' && (
-                              <>
-                                <span className="flex flex-row flex-nowrap items-center text-sm">
-                                  [<span className="text-primary-dark max-w-[14rem] truncate">{item.extra.post?.title}</span>]
-                                </span>
-                                <span className="block text-sm">{item.content}</span>
-                                <span className="block text-sm">{item.createdAt}</span>
-                              </>
-                            )}
-                          </div>
+                          {item.type === 'message' ? (
+                            <></>
+                          ) : (
+                            <button type="button" className="absolute top-5 right-5" onClick={() => handleReadOne(item._id.toString())}>
+                              <CloseIcon />
+                            </button>
+                          )}
+                          {openedMessageId === item._id.toString() && item.type === 'message' && (
+                            <div className="flex flex-col flex-nowrap p-4 gap-2 bg-background mt-4">
+                              <p className="font-bold">쪽지 상세보기</p>
+                              <p>{item.extra.message}</p>
+                            </div>
+                          )}
                         </li>
                       );
                   })

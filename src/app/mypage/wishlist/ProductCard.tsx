@@ -10,12 +10,10 @@ import { deleteBookmark } from '@/data/actions/deleteBookmark';
 import { addBookmark } from '@/data/actions/addBookmark';
 import { useLoginStore } from '@/stores/loginStore';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 export default function ProductCard({ product, bookmarkId: initialBookmarkId }: { product: Product; bookmarkId: number }) {
   const router = useRouter();
   const user = useLoginStore(state => state.user);
-  const thumbnail = `${API_URL}/${product.mainImages[0]?.path}`;
+  const thumbnail = product.mainImages[0].path;
   const [isLiked, setIsLiked] = useState(!!initialBookmarkId);
   const [bookmarkId, setBookmarkId] = useState(initialBookmarkId);
 

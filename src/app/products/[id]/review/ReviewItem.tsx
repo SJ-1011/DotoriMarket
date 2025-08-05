@@ -3,8 +3,7 @@ import Image from 'next/image';
 import ReviewImages from './ReviewImages';
 import { LoginUser } from '@/types';
 import { maskUserId } from '@/utils/mask';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 interface Review {
   _id: number;
@@ -33,12 +32,15 @@ interface ReviewItemProps {
 export default function ReviewItem({ review, currentUser, expanded, toggleExpand, openImageModal, onEditClick, onDeleteClick }: ReviewItemProps) {
   const imageSrc = (() => {
     const img = review.user.image;
-    if (!img) return null;
-    if (typeof img === 'string') return `${API_URL}/${img}`;
-    if (typeof img === 'object' && 'path' in img) return `${API_URL}/${img.path}`;
-    return null;
+    if (!img) return '/default-profile.webp';
+    if (typeof img === 'string') {
+      return img.startsWith('/') ? img : getFullImageUrl(img);
+    }
+    if (typeof img === 'object' && 'path' in img) {
+      return img.path.startsWith('/') ? img.path : getFullImageUrl(img.path);
+    }
+    return '/default-profile.webp';
   })();
-
   const isMyReview = currentUser?._id && String(review.user._id) === String(currentUser._id);
 
   const [showMenu, setShowMenu] = useState(false);

@@ -6,8 +6,6 @@ import { useLoginStore } from '@/stores/loginStore';
 import { getOrders } from '@/utils/getOrders';
 import type { Order } from '@/types/Order';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 interface OrderModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -66,7 +64,7 @@ export default function OrderModal({ isOpen, onClose, onSelectOrderProduct }: Or
                   {order.products.map(product => (
                     <div key={product._id} className="flex items-center justify-between gap-4 border-b py-4">
                       <div className="flex items-center gap-4">
-                        <Image src={`${API_URL}/${product.image?.path}`} alt={product.name} width={64} height={64} unoptimized className="w-16 h-16 object-cover rounded border" />
+                        <Image src={`${product.image?.path}`} alt={product.name} width={64} height={64} unoptimized className="w-16 h-16 object-cover rounded border" />
                         <div>
                           <p className="font-semibold text-sm sm:text-base">{product.name}</p>
                           <p className="text-xs text-gray-500">수량: {product.quantity}개</p>

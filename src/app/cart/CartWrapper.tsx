@@ -16,17 +16,18 @@ import CartMobileList from './CartMobileList';
 import CartSummary from './CartSummary';
 import CartButtons from './CartButtons';
 import { CartResponse } from '@/types/Cart';
+import { getProductById } from '@/utils/getProducts';
+import { useCartBadgeStore } from '@/stores/cartBadgeStore';
 
 export default function CartWrapper() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
   const previousQty = useRef<Record<number, number>>({});
   const debounceTimers = useRef<Record<number, NodeJS.Timeout | null>>({});
-
+  const { decrease } = useCartBadgeStore();
   const { user } = useLoginStore();
   const cartStore = useCartQuantityStore();
   const router = useRouter();
   const { selectedItems, setSelectedItems, toggleAll, toggleItem } = useCartSelection(cartData);
-  const getImageUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
 
   // 선택된 상품 총합 계산
   const selectedPriceInfo = useMemo(() => {
@@ -34,16 +35,45 @@ export default function CartWrapper() {
     const validItems = cartData.item.filter(i => selectedItems.includes(i._id) && i.product.quantity > 0);
     const productOnlyTotal = validItems.reduce((sum, item) => sum + item.product.price * cartStore.getQuantity(item._id), 0);
     const shippingFee = validItems.length > 0 ? cartStore.shippingFee : 0;
+
     return { productOnlyTotal, shippingFee, total: productOnlyTotal + shippingFee };
   }, [cartData, selectedItems, cartStore.quantities]);
 
   // 장바구니 데이터 초기 fetch + Zustand 초기화
   useEffect(() => {
     if (!user?.token?.accessToken) return;
+
     (async () => {
       const data = await getCarts(user.token.accessToken);
-      setCartData(data);
-      cartStore.resetQuantities(Object.fromEntries(data.item.map(p => [p._id, p.quantity])));
+
+      // 상품별 배송비 가져오기
+      const updatedItems = await Promise.all(
+        data.item.map(async cartItem => {
+          try {
+            const productRes = await getProductById(cartItem.product._id);
+            const shippingFee = productRes.ok ? productRes.item.shippingFees : 0;
+
+            return {
+              ...cartItem,
+              product: {
+                ...cartItem.product,
+                shippingFees: shippingFee,
+              },
+            };
+          } catch {
+            return {
+              ...cartItem,
+              product: {
+                ...cartItem.product,
+                shippingFees: 0,
+              },
+            };
+          }
+        }),
+      );
+
+      setCartData({ ...data, item: updatedItems });
+      cartStore.resetQuantities(Object.fromEntries(updatedItems.map(p => [p._id, p.quantity])));
       cartStore.setShippingFee(data.cost.shippingFees);
     })();
   }, [user?.token?.accessToken]);
@@ -93,6 +123,7 @@ export default function CartWrapper() {
       setCartData(prev => (prev ? { ...prev, item: prev.item.filter(i => i._id !== id) } : null));
       cartStore.removeQuantity(id);
       setSelectedItems(prev => prev.filter(i => i !== id));
+      decrease(1);
     } catch (err) {
       console.error('상품 삭제 중 오류:', err);
     }
@@ -105,6 +136,7 @@ export default function CartWrapper() {
       setCartData(prev => (prev ? { ...prev, item: prev.item.filter(i => !selectedItems.includes(i._id)) } : null));
       cartStore.removeQuantities(selectedItems);
       setSelectedItems([]);
+      decrease(selectedItems.length);
     } catch (err) {
       console.error('선택된 상품 삭제 중 오류:', err);
     }
@@ -135,9 +167,9 @@ export default function CartWrapper() {
 
   return (
     <div className="p-4 max-w-[900px] mx-auto">
-      <CartTable items={cartData.item} selectedItems={selectedItems} toggleItem={toggleItem} toggleAll={toggleAll} increaseQty={increaseQty} decreaseQty={decreaseQty} handleDeleteItem={handleDeleteItem} getQuantity={cartStore.getQuantity} getImageUrl={getImageUrl} />
+      <CartTable items={cartData.item} selectedItems={selectedItems} toggleItem={toggleItem} toggleAll={toggleAll} increaseQty={increaseQty} decreaseQty={decreaseQty} handleDeleteItem={handleDeleteItem} getQuantity={cartStore.getQuantity} />
       <CartButtons handleDeleteSelected={handleDeleteSelected} />
-      <CartMobileList items={cartData.item} selectedItems={selectedItems} toggleItem={toggleItem} increaseQty={increaseQty} decreaseQty={decreaseQty} handleDeleteItem={handleDeleteItem} getQuantity={cartStore.getQuantity} getImageUrl={getImageUrl} />
+      <CartMobileList items={cartData.item} selectedItems={selectedItems} toggleItem={toggleItem} increaseQty={increaseQty} decreaseQty={decreaseQty} handleDeleteItem={handleDeleteItem} getQuantity={cartStore.getQuantity} />
       <CartSummary productOnlyTotal={selectedPriceInfo.productOnlyTotal} shippingFee={selectedPriceInfo.shippingFee} total={selectedPriceInfo.total} handlePurchase={handlePurchase} />
     </div>
   );

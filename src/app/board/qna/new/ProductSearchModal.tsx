@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { getProducts } from '@/utils/getProducts';
 import type { Product } from '@/types/Product';
 import Image from 'next/image';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 interface ProductSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -88,13 +87,13 @@ export default function ProductSearchModal({ isOpen, onClose, onSelectProduct }:
         </div>
 
         {/* 검색 폼 */}
-        <div className="p-6 border-b">
+        <div className="p-2 sm:p-6 border-b">
           <form onSubmit={handleSearch} className="flex gap-2">
             <select className="border border-gray-300 rounded px-3 py-2  text-xs sm:text-sm lg:text-base">
               <option value="product">상품명</option>
             </select>
             <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="상품명을 입력하세요" className="text-xs sm:text-sm lg:text-base flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-[#A97452] focus:ring-2 focus:ring-[#A97452]" />
-            <button type="submit" className="px-6 py-2 bg-[#A97452] text-white rounded hover:bg-[#966343] transition-colors  text-xs sm:text-sm lg:text-base">
+            <button type="submit" className="px-4 sm:px-6 py-2 bg-[#A97452] text-white rounded hover:bg-[#966343] transition-colors  text-xs sm:text-sm lg:text-base">
               검색하기
             </button>
           </form>
@@ -118,8 +117,8 @@ export default function ProductSearchModal({ isOpen, onClose, onSelectProduct }:
 
               {/* 테이블 헤더 */}
               <div className="grid grid-cols-12 gap-4 pb-2 border-b font-semibold text-xs sm:text-sm lg:text-base text-gray-600">
-                <div className="col-span-2">상품 이미지</div>
-                <div className="col-span-6">상품 정보</div>
+                <div className="col-span-2 whitespace-nowrap text-center">상품 이미지</div>
+                <div className="col-span-6 text-center">상품 정보</div>
                 <div className="col-span-3 text-center">선택</div>
               </div>
 
@@ -127,19 +126,18 @@ export default function ProductSearchModal({ isOpen, onClose, onSelectProduct }:
               {filteredProducts.map(product => (
                 <div key={product._id} className="grid grid-cols-12 gap-4 py-4 border-b items-center hover:bg-gray-50">
                   <div className="col-span-2">
-                    {product.mainImages && product.mainImages.length > 0 ? (
-                      <Image src={`${API_URL}/${product.mainImages[0].path}`} alt={product.name} width={150} height={150} unoptimized={true} />
+                    {product.mainImages ? (
+                      <Image src={`${product.mainImages[0]?.path}`} alt={product.name} width={150} height={150} unoptimized={true} />
                     ) : (
                       <div className="w-16 h-16 bg-gray-200 rounded border flex items-center justify-center">
                         <span className="text-gray-400 text-xs sm:text-sm lg:text-base">이미지 없음</span>
                       </div>
                     )}
                   </div>
-
                   <div className="col-span-6">
-                    <div className="font-medium mb-1">{product.name}</div>
-                    <div className="text-sm text-gray-600 mb-1">가격: {product.price?.toLocaleString()}원</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm sm:text-base   font-medium mb-1">{product.name}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 mb-1">가격: {product.price?.toLocaleString()}원</div>
+                    <div className="text-xs sm:text-sm text-gray-500">
                       재고: {product.quantity}개 | 배송비: {product.shippingFees?.toLocaleString()}원
                     </div>
                   </div>

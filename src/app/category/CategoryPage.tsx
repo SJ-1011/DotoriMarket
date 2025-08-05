@@ -8,9 +8,10 @@ import Link from 'next/link';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import Loading from '@/app/loading';
-import Image from 'next/image';
 import FilterIcon from '@/components/icon/FilterIcon';
 import Pagination from '@/components/common/Pagination';
+import { deleteProduct } from '@/data/actions/deleteProduct';
+import toast from 'react-hot-toast';
 
 interface CategoryPageProps {
   category: string;
@@ -35,6 +36,7 @@ interface detailArray {
  */
 export default function CategoryPage({ category, title, detailArray, detail, categoryName }: CategoryPageProps) {
   const user = useLoginStore(state => state.user);
+  const isAdmin = user?.type === 'admin';
   const [products, setProducts] = useState<Product[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [likedProducts, setLikedProducts] = useState<LikedProduct[]>([]);
@@ -43,8 +45,12 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
   const popoverRef = useRef<HTMLUListElement>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
-  const itemsPerPage = 24;
+  const itemsPerPage = 12;
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
+  };
 
   useEffect(() => {
     const checkMobile = () => {
@@ -128,7 +134,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
           const res = await getProducts();
           if (res.ok) {
             setProducts(res.item);
-            setTotalPage(Math.ceil(res.item.length / 24));
+            setTotalPage(Math.ceil(res.item.length / itemsPerPage));
           }
         }
         // 카테고리 상품 조회
@@ -138,6 +144,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
           else res = await getProductsCategory(category);
           if (res.ok) {
             setProducts(res.item);
+            setTotalPage(Math.ceil(res.item.length / itemsPerPage));
           }
         }
       } catch {
@@ -177,6 +184,42 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
     fetchLiked();
   }, [user]);
 
+  // 관리자용: 선택 상품 삭제
+  const handleDeleteSelected = async () => {
+    if (selectedIds.length === 0) {
+      toast.error('삭제할 상품을 선택해주세요.');
+      return;
+    }
+
+    // 선택한 상품 이름 추출
+    const selectedProductNames = products?.filter(product => selectedIds.includes(Number(product._id))).map(product => product.name) ?? [];
+    const maxDisplayCount = 5; // 최대 5개만 표시
+    const displayNames = selectedProductNames.length > maxDisplayCount ? selectedProductNames.slice(0, maxDisplayCount).join(', ') + ' 외 ' + (selectedProductNames.length - maxDisplayCount) + '개' : selectedProductNames.join(', ');
+
+    if (!confirm(`선택한 상품: ${displayNames}\n\n삭제하시겠습니까?`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await Promise.all(selectedIds.map(id => deleteProduct(id.toString(), user!.token.accessToken!)));
+      toast.success('선택한 상품이 삭제되었습니다.');
+
+      // 삭제 후 상품 목록 다시 가져오기
+      const res = category === 'all' ? await getProducts() : detail ? await getProductsCategory(category, detail) : await getProductsCategory(category);
+      if (res.ok) {
+        setProducts(res.item);
+        setTotalPage(Math.ceil(res.item.length / itemsPerPage));
+        setSelectedIds([]);
+      }
+    } catch (error) {
+      toast.error('상품 삭제 중 오류가 발생했습니다.');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // 정렬
   const sortState = [
     { label: '최신순', value: 'latest' },
@@ -186,7 +229,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
   ];
 
   return (
-    <main className="flex flex-col-reverse sm:flex-row px-4 sm:max-w-[664px] lg:max-w-[1000px] mx-auto py-4 sm:py-12">
+    <main className="flex flex-col-reverse sm:flex-row p-4 sm:max-w-[664px] lg:max-w-[1000px] mx-auto sm:py-12">
       <section className="w-full text-xs sm:text-sm lg:text-base">
         {/* 페이지 제목 */}
         <nav aria-label="Breadcrumb">
@@ -263,17 +306,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             </ul>
           )}
         </div>
-        {loading ? (
-          <Loading />
-        ) : paginatedProducts?.length ? (
-          <ProductGrid>{likedProducts ? <ProductItemCard products={paginatedProducts} likedProducts={likedProducts}></ProductItemCard> : <ProductItemCard products={paginatedProducts}></ProductItemCard>}</ProductGrid>
-        ) : (
-          <div className="flex flex-col flex-nowrap justify-center items-center gap-4 w-full mx-auto">
-            <Image src="/sad-dotori.png" alt="상품 없음" width={247} height={249}></Image>
-            <p>해당하는 상품이 없습니다.</p>
-          </div>
-        )}
-
+        {loading ? <Loading /> : paginatedProducts?.length && <ProductGrid>{likedProducts ? <ProductItemCard products={paginatedProducts} likedProducts={likedProducts} showCheckbox={true} selectedIds={selectedIds} onSelect={toggleSelect}></ProductItemCard> : <ProductItemCard products={paginatedProducts}></ProductItemCard>}</ProductGrid>}
         <div className="hidden sm:block">
           <Pagination
             currentPage={currentPage}
@@ -283,6 +316,18 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
             }}
           />
         </div>
+
+        {/* 관리자용 삭제/추가 버튼 */}
+        {isAdmin && (
+          <div className="flex gap-2 justify-end mt-12 mb-16">
+            <button onClick={handleDeleteSelected} className="px-3 py-1.5 bg-black cursor-pointer text-white rounded-xs text-sm">
+              선택 상품 삭제
+            </button>
+            <Link href="/admin/products/create" className="px-3 py-1.5 cursor-pointer bg-transparent border text-black rounded-xs text-sm">
+              상품 추가
+            </Link>
+          </div>
+        )}
 
         {products && currentPage * itemsPerPage < products.length && (
           <button type="button" onClick={() => setCurrentPage(page => page + 1)} className="w-full border p-4 mb-40 cursor-pointer sm:hidden">

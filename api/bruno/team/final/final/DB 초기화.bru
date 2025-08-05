@@ -1,0 +1,20 @@
+meta {
+  name: DB 초기화
+  type: http
+  seq: 22
+}
+
+post {
+  url: {{url}}/db/init
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  initData: @file(C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\data.json) @contentType(json)
+  attach: @file(C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\chiikawa.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\conan.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\ganadi.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\hamster.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0101_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0101_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0102_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0102_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0103_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0103_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0104_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0104_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0105_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0105_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0106_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0106_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0107_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0107_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0108_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0108_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0201_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0201_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0301_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0301_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0302_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0302_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0303_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0303_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0304_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0304_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0305_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0305_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0306_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0306_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0401_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0401_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0402_01.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\PC0402_02.webp|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\sample-bugatti.png|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\user-muzi.png|C:\febc13\Final-project\Final-10-console.10g\api\dbinit\team\uploadFiles\user-neo.png)
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,6 +1,6 @@
 import { LoginUser, User } from '@/types';
 import { Post } from '@/types/Post';
-import { ProductImage } from '@/types/Product';
+import { Product, ProductImage } from '@/types/Product';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
@@ -15,7 +15,7 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
  * 결제 완료 알림을 생성하고, 성공 시 POST 이후 반환된 Res객체를 받습니다.
  * 실패 시 에러 메시지를 반환합니다.
  */
-export async function createPaymentNotification(product: string, image: ProductImage, user: LoginUser) {
+export async function createPaymentNotification(product: Product, image: ProductImage, user: LoginUser) {
   const body = {
     type: 'payment',
     target_id: user?._id,
@@ -67,6 +67,38 @@ export async function createReplyNotification(post: Post, targetUser: User, crea
     extra: {
       post: post,
       sendUser: createUser,
+    },
+  };
+
+  try {
+    const res = await fetch(`${API_URL}/notifications`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Client-Id': CLIENT_ID,
+        Authorization: `Bearer ${createUser.token.accessToken}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+
+    console.log(`${targetUser.name}에게 알림 추가 성공!`);
+    return data;
+  } catch (error) {
+    console.error(error);
+    return { ok: 0, message: '일시적인 네트워크 문제로 등록에 실패했습니다.' };
+  }
+}
+
+export async function createMessage(content: string, targetUser: User, createUser: LoginUser) {
+  const body = {
+    type: 'message',
+    target_id: targetUser._id,
+    content: `${createUser.name}님이 쪽지를 보내셨습니다.`,
+    extra: {
+      sendUser: createUser,
+      message: content,
     },
   };
 

@@ -125,11 +125,15 @@ export default function ReviewSlider() {
       {!loading && !error && selectedReviews.length > 0 && !showAll && (
         <div className="relative">
           {/* 좌우 버튼 */}
-          <button onClick={() => scrollByAmount(-200)} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10" aria-label="왼쪽으로 스크롤" type="button">
-            ◀
+          <button onClick={() => scrollByAmount(-200)} className="absolute left-2 top-1/2 -translate-y-1/2 z-10" aria-label="왼쪽으로 스크롤" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="size-12 drop-shadow-[0px_0px_3px_rgba(0,0,0,1)]">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
           </button>
-          <button onClick={() => scrollByAmount(200)} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10" aria-label="오른쪽으로 스크롤" type="button">
-            ▶
+          <button onClick={() => scrollByAmount(200)} className="absolute right-2 top-1/2 -translate-y-1/2 transform -scale-x-100 z-10" aria-label="오른쪽으로 스크롤" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="size-12 drop-shadow-[0px_0px_3px_rgba(0,0,0,1)]">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
           </button>
 
           {/* 드래그 가능 영역 */}

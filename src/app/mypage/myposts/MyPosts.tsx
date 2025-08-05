@@ -175,13 +175,17 @@ export default function MyPosts() {
         </>
       )}
       <div className="hidden sm:block">
-        <Pagination
-          currentPage={currentPage}
-          onPageChange={page => {
-            setCurrentPage(page);
-          }}
-          totalPages={totalPage}
-        />
+        {filteredPosts.length > 0 ? (
+          <Pagination
+            currentPage={currentPage}
+            onPageChange={page => {
+              setCurrentPage(page);
+            }}
+            totalPages={totalPage}
+          />
+        ) : (
+          ''
+        )}
       </div>
       {filteredPosts && currentPage * itemsPerPage < filteredPosts.length && (
         <button type="button" onClick={() => setCurrentPage(page => page + 1)} className="w-full border p-4 mb-40 cursor-pointer sm:hidden">
