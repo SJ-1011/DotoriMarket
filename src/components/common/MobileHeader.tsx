@@ -18,14 +18,16 @@ export default function MobileHeader() {
   const { isLogin, logout } = useLoginStore();
   const router = useRouter();
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const [selectMenu, setSelectMenu] = useState<'category' | 'board' | 'myInfo'>('category');
+  const [selectMenu, setSelectMenu] = useState<'category' | 'board' | 'myInfo' | 'adminInfo'>('category');
   const { count } = useCartBadgeStore();
+  const user = useLoginStore(state => state.user);
 
   // 메뉴 종류
   const menuContent = {
     category: ['전체상품','신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품'],
     board: ['공지사항', '자유게시판', '문의게시판'],
     myInfo: ['마이페이지', '내가 쓴 글', '배송 주소록 관리', '장바구니', '관심 상품', '회원 정보 수정', '로그아웃'],
+    adminInfo: ['관리자 마이페이지', '로그아웃'],
   };
 
   // 더 세부적인 카테고리(캐릭터, 문구, 리빙&소품) 토글하는 함수
@@ -38,18 +40,18 @@ export default function MobileHeader() {
     }
   };
 
-  // TODO 링크 연결하기
   const menuLink = {
     전체상품:'category/all',
     신상품: 'category/new',
     인기상품: 'category/popular',
     미니어처: 'category/miniature',
     마이페이지: 'mypage',
-    '내가 쓴 글': 'mypage',
-    '배송 주소록 관리': 'mypage',
-    장바구니: 'mypage',
-    '관심 상품': 'mypage',
+    '내가 쓴 글': 'mypage/myposts',
+    '배송 주소록 관리': 'mypage/address',
+    장바구니: 'cart',
+    '관심 상품': 'mypage/wishlist',
     '회원 정보 수정': 'mypage/edit-info',
+    '관리자 마이페이지': 'mypage',
     공지사항: 'board/notice',
     자유게시판: 'board/community',
     문의게시판: 'board/qna',
@@ -94,7 +96,7 @@ export default function MobileHeader() {
           <div className="p-4 text-sm flex flex-col flex-nowrap gap-4 h-full overflow-y-auto">
             {/* 로고와 닫기 버튼 */}
             <div className="flex flex-row flex-nowrap justify-between items-center">
-              <Link href="/">
+              <Link href="/" onClick={() => setIsOpenMenu(false)}>
                 <Image aria-label="메인 로고" src="/logo.png" alt="도토리섬 메인으로 이동" width={80} height={80}></Image>
               </Link>
               <button type="button" onClick={() => setIsOpenMenu(false)} className="cursor-pointer">
@@ -119,9 +121,15 @@ export default function MobileHeader() {
               <li className={`cursor-pointer w-1/3 py-2 text-center text-primary font-bold ${selectMenu === 'board' ? 'border-b-2 border-primary' : 'border-b border-primary'}`} onClick={() => setSelectMenu('board')}>
                 게시판
               </li>
-              <li className={`cursor-pointer w-1/3 py-2 text-center text-primary font-bold ${selectMenu === 'myInfo' ? 'border-b-2 border-primary' : 'border-b border-primary'}`} onClick={() => setSelectMenu('myInfo')}>
-                내정보
-              </li>
+              {user?.type === 'admin' ? (
+                <li className={`cursor-pointer w-1/3 py-2 text-center text-primary font-bold ${selectMenu === 'adminInfo' ? 'border-b-2 border-primary' : 'border-b border-primary'}`} onClick={() => setSelectMenu('adminInfo')}>
+                  관리자 전용
+                </li>
+              ) : (
+                <li className={`cursor-pointer w-1/3 py-2 text-center text-primary font-bold ${selectMenu === 'myInfo' ? 'border-b-2 border-primary' : 'border-b border-primary'}`} onClick={() => setSelectMenu('myInfo')}>
+                  내정보
+                </li>
+              )}
             </ul>
             <ul className="flex flex-col flex-nowrap p-4 gap-8 text-primary-dark">
               {menuContent[selectMenu].map((item, i) => {

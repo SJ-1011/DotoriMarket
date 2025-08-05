@@ -179,19 +179,27 @@ export default function AdminGraph() {
   };
   // w-full sm:w-[40rem] lg:w-[50rem] bg-white h-full mx-auto px-10 sm:p-10 sm:pb-80 lg:pb-96 sm:rounded-2xl lg:rounded-3xl
   return (
-    <>
+    <section className="flex flex-col flex-nowrap gap-40">
       <article className="w-full lg:w-[50rem] mx-auto h-[20rem]">
-        <p className="p-8 text-primary font-bold text-2xl text-center">날짜별 회원가입 사용자 수 분석</p>
+        {/* 타이틀 */}
+        <div className="flex flex-col flex-nowrap px-4 sm:px-0 pb-4">
+          <h2 className="font-bold text-lg sm:text-xl lg:text-2xl text-secondary-green">날짜별 회원가입 수 분석</h2>
+          <p>회원가입한 사용자 수의 분포입니다.</p>
+        </div>
         <Line data={dataSignUp} options={optionsSignUp} className="w-full" />
       </article>
 
       <article className="w-full lg:w-[50rem] mx-auto h-[20rem]">
-        <p className="pt-40 p-8 text-primary font-bold text-2xl text-center">지역별 사용자 수 분석</p>
+        {/* 타이틀 */}
+        <div className="flex flex-col flex-nowrap px-4 sm:px-0 pb-4">
+          <h2 className="font-bold text-lg sm:text-xl lg:text-2xl text-secondary-green">지역별 사용자 수 분석</h2>
+          <p>사용자들의 거주지 분포입니다.</p>
+        </div>
         <Line data={dataArea} options={optionsArea} className="w-full" />
       </article>
 
       {/* 총 매출량, 총 판매량, 총 회원 수 왜 안나오는지 논의좀... */}
-      <article className="border border-primary-dark w-[95%] mx-auto flex flex-row flex-nowrap justify-center py-8 my-80">
+      <article className="border border-primary-dark w-[95%] mx-auto flex flex-row flex-nowrap justify-center py-8">
         <div className="flex flex-col flex-nowrap justify-center items-center w-1/3 border-r border-primary-light">
           <p>총 매출액</p>
           <p>{statistics?.totalSales || '0원'}</p>
@@ -205,6 +213,6 @@ export default function AdminGraph() {
           <p>{totalUserCount}</p>
         </div>
       </article>
-    </>
+    </section>
   );
 }

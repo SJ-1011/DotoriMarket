@@ -13,6 +13,7 @@ export default function MypageSection() {
 
   useEffect(() => {
     if (!user) return;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const getData = async () => {
       try {
         const res = await getUserById(user._id);
@@ -39,9 +40,11 @@ export default function MypageSection() {
     );
   if (type === 'admin')
     return (
-      <section className="flex flex-col flex-nowrap w-full h-full sm:w-[40rem] lg:w-[60rem] bg-white mx-auto sm:p-10 pb-12 sm:rounded-2xl lg:rounded-3xl">
-        <AdminList />
-        <AdminGraph />
+      <section className="text-xs sm:text-sm lg:text-base bg-white border-t border-primary-dark min-h-[700px] py-12">
+        <div className="flex flex-col flex-nowrap sm:w-[600px] lg:w-[800px] mx-auto">
+          <AdminList />
+          <AdminGraph />
+        </div>
       </section>
     );
   return <OrderHistory />;

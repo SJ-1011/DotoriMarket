@@ -132,11 +132,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
   }, [user]);
 
   const getUserImageSrc = (user: User) => {
-    const fallback = '/character/chiikawa.png';
-
-    if (typeof user.image === 'string' && user.image.startsWith('uploadFiles')) {
-      return fallback;
-    }
+    const fallback = '/default-profile.webp';
 
     // 외부 이미지가 문자열이면 바로 반환
     if (typeof user?.image === 'string') {
