@@ -194,17 +194,21 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                           <li key={index} className="flex flex-col flex-nowrap relative p-4 bg-white rounded-2xl w-full">
                             <div className="flex flex-row flex-nowrap items-center gap-3">
                               <div className="min-w-18 min-h-18">
-                                {item.type === 'payment' && <Image src={getProductImageSrc(item.extra.product!)} alt={`${item.extra.product?.name} 상품 이미지`} width={72} height={72} className="rounded-full border border-gray" />}
+                                {item.type === 'payment' && (
+                                  <div className="w-[72px] h-[72px] rounded-full overflow-hidden border border-gray relative">
+                                    <Image src={getProductImageSrc(item.extra.product!)} alt={`${item.extra.product?.name} 상품 이미지`} fill className="object-cover" />
+                                  </div>
+                                )}
                                 {item.type === 'reply' && (
                                   <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                     {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                    <Image src={getUserImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                    <Image src={getUserImageSrc(item.user)} alt={`${item.user.name}님의 프로필 사진`} fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                   </div>
                                 )}
                                 {item.type === 'message' && (
                                   <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                     {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                    <Image src={getUserImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                    <Image src={getUserImageSrc(item.user)} alt={`${item.user.name}님의 프로필 사진`} fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                   </div>
                                 )}
                               </div>
@@ -260,7 +264,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                             {item.type === 'message' ? (
                               <></>
                             ) : (
-                              <button type="button" className="absolute top-5 right-5" onClick={() => handleReadOne(item._id.toString())}>
+                              <button type="button" className="absolute top-5 right-5 cursor-pointer" onClick={() => handleReadOne(item._id.toString())}>
                                 <CloseIcon />
                               </button>
                             )}
@@ -329,17 +333,21 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                           <div className="flex flex-row flex-nowrap items-center gap-3">
                             {/* 이미지 영역 */}
                             <div className="min-w-18 min-h-18">
-                              {item.type === 'payment' && <Image src={getProductImageSrc(item.extra.product!)} alt={`${item.extra.product?.name} 상품 이미지`} width={72} height={72} className="rounded-full border border-gray" />}
+                              {item.type === 'payment' && (
+                                <div className="w-[72px] h-[72px] rounded-full overflow-hidden border border-gray relative">
+                                  <Image src={getProductImageSrc(item.extra.product!)} alt={`${item.extra.product?.name} 상품 이미지`} fill className="object-cover" />
+                                </div>
+                              )}
                               {item.type === 'reply' && (
                                 <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                   {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                  <Image src={getUserImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                  <Image src={getUserImageSrc(item.user)} alt={`${item.user.name}님의 프로필 사진`} fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                 </div>
                               )}
                               {item.type === 'message' && (
                                 <div className="flex flex-row flex-nowrap justify-center items-center relative w-[72px] h-[72px]">
                                   {/* <div className="text-xs text-primary">새 댓글</div> */}
-                                  <Image src={getUserImageSrc(item.user)} alt="유저 이미지" fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
+                                  <Image src={getUserImageSrc(item.user)} alt={`${item.user.name}님의 프로필 사진`} fill style={{ objectFit: 'cover' }} className="rounded-full border border-gray" />
                                 </div>
                               )}
                             </div>
