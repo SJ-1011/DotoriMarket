@@ -220,11 +220,11 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
           <p className="ml-2 mt-1 text-sm text-red-500">{state?.ok === 0 && state.errors?.content?.msg}</p>
         </div>
         <div className="flex justify-end my-6 gap-2">
-          <button type="submit" className="px-4 py-2 w-20 sm:w-24 lg:w-28 rounded-xl bg-[#A97452] text-white text-xs sm:text-sm lg:text-base hover:bg-[#966343] transition-colors" disabled={isLoading}>
+          <button type="submit" className="px-4 py-2 w-20 sm:w-24 lg:w-28 rounded-xl bg-[#A97452] text-white text-xs sm:text-sm lg:text-base hover:bg-[#966343] transition-colors cursor-pointer" disabled={isLoading}>
             등록
           </button>
           <Link href={`/board/${boardType}`}>
-            <button className="px-4 py-2 rounded-xl w-20 sm:w-24 lg:w-28 bg-white text-[#A97452] text-xs sm:text-sm lg:text-base hover:bg-[#F5EEE6] transition-colors border-2 border-[#A97452]" disabled={isLoading}>
+            <button className="px-4 py-2 rounded-xl w-20 sm:w-24 lg:w-28 bg-white text-[#A97452] text-xs sm:text-sm lg:text-base hover:bg-[#F5EEE6] transition-colors border-2 border-[#A97452] cursor-pointer" disabled={isLoading}>
               취소
             </button>
           </Link>

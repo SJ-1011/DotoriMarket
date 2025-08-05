@@ -152,17 +152,17 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
                 <Link href={`/board/qna/edit/${post._id}`} className="w-fit py-2 px-3 bg-primary-dark text-white  hover:bg-[#966343] transition-colors">
                   수정하기
                 </Link>
-                <button onClick={handleDelete} className="w-fit py-2 px-3 bg-primary-dark text-white hover:bg-[#966343] transition-colors">
+                <button onClick={handleDelete} className="w-fit py-2 px-3 bg-primary-dark text-white hover:bg-[#966343] transition-colors cursor-pointer">
                   삭제하기
                 </button>
               </>
             )}
             {user?.type === 'admin' && (
-              <button onClick={() => setShowReplyPopup(true)} className="py-2 px-3 bg-primary-dark text-white hover:bg-[#966343]">
+              <button onClick={() => setShowReplyPopup(true)} className="py-2 px-3 bg-primary-dark text-white hover:bg-[#966343] cursor-pointer">
                 답변 달기
               </button>
             )}
-            <Link href="/board/qna" className="py-2 px-3 bg-primary-dark text-white hover:bg-[#966343]">
+            <Link href="/board/qna" className="py-2 px-3 bg-primary-dark text-white hover:bg-[#966343] ">
               목록
             </Link>
           </li>
