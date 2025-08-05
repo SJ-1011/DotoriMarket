@@ -115,8 +115,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
   const breadcrumbItems = getBreadcrumbItems(product);
 
   // 배송비 포함 가격 계산
-  const freeShippingThreshold = 30000;
-  const shippingFeeToUse = totalPrice >= freeShippingThreshold ? 0 : product.shippingFees;
+  const shippingFeeToUse = product.shippingFees;
   const finalPrice = totalPrice + shippingFeeToUse;
 
   // 공유하기 함수
@@ -224,9 +223,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
             </div>
             {/* 배송 정보 */}
             <div className="text-sm text-gray-500 mt-2">
-              <p>
-                배송비: {product.shippingFees.toLocaleString()}원 <span className="text-sm">(3만원 이상 무료)</span>
-              </p>
+              <p>배송비: {product.shippingFees.toLocaleString()}원</p>
             </div>
           </div>
 
