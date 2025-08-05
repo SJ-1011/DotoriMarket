@@ -156,17 +156,17 @@ export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProp
                 <Link href={`/board/qna/edit/${post._id}`} className="py-2 px-8 bg-primary-dark text-white hover:bg-[#966343]">
                   수정하기
                 </Link>
-                <button onClick={handleDelete} className="py-2 px-8 bg-primary-dark text-white hover:bg-[#966343]">
+                <button onClick={handleDelete} className="py-2 px-8 bg-primary-dark text-white hover:bg-[#966343] cursor-pointer">
                   삭제하기
                 </button>
               </>
             )}
             {user?.type === 'admin' && (
-              <button onClick={() => setShowReplyPopup(true)} className="py-2 px-8 bg-primary-dark text-white hover:bg-[#966343]">
+              <button onClick={() => setShowReplyPopup(true)} className="py-2 px-8 bg-primary-dark text-white hover:bg-[#966343] cursor-pointer">
                 답변 달기
               </button>
             )}
-            <Link href="/board/qna" className="py-2 px-8 bg-primary-dark text-white hover:bg-[#966343]">
+            <Link href="/board/qna" className="py-2 px-8 bg-primary-dark text-white hover:bg-[#966343] cursor-pointer">
               목록
             </Link>
           </li>

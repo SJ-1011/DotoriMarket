@@ -279,15 +279,18 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId, 
               <ul className="space-y-4">
                 {comments.map(comment => (
                   <li key={comment._id} className="flex items-start gap-3 relative">
-                    {comment.user.image ? (
-                      <div className="w-7 h-7 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                        <Image src={`${comment.user.image}`} alt={`${comment.user.name} 프로필`} width={28} height={28} className="object-cover w-full h-full" unoptimized />
-                      </div>
-                    ) : (
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center bg-gray-200 flex-shrink-0">
-                        <MypageIcon svgProps={{ className: 'w-5 h-5 text-gray-400' }} />
-                      </div>
-                    )}
+                    <div className="w-7 h-7 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                      {typeof comment.user.image === 'string' ? (
+                        <Image src={comment.user.image} alt={`${comment.user.name} 프로필`} width={28} height={28} className="object-cover w-full h-full" unoptimized />
+                      ) : comment.user.image?.path ? (
+                        <Image src={comment.user.image.path} alt={`${comment.user.name} 프로필`} width={28} height={28} className="object-cover w-full h-full" unoptimized />
+                      ) : (
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center bg-gray-200">
+                          <MypageIcon svgProps={{ className: 'w-5 h-5 text-gray-400' }} />
+                        </div>
+                      )}
+                    </div>
+
                     <div className="flex-grow">
                       <div className="font-semibold text-gray-900">{comment.user.name}</div>
                       <div className="text-gray-700">{comment.content}</div>
@@ -301,10 +304,8 @@ export default function ImageModal({ isOpen, onClose, images, imageAlt, postId, 
                         </svg>
                       </button>
 
-                      {/* 드롭다운 메뉴 */}
                       {activeDropdown === comment._id && (
                         <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-20 min-w-[80px]">
-                          {/* 내 댓글인 경우 삭제 옵션 표시 */}
                           {user && user._id === comment.user._id && (
                             <form action={deleteFormAction} className="m-0">
                               <input type="hidden" name="_id" value={postId} />

@@ -213,7 +213,7 @@ export default function ImagePostForm({ boardType }: { boardType: string }) {
 
         {/* 등록 버튼 */}
         <div className="flex justify-end pt-4">
-          <button type="button" onClick={handleSubmit} disabled={isLoading || previewImages.length === 0} className="px-6 py-2 bg-[#A97452] text-white font-semibold rounded-xl hover:bg-[#966343] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base">
+          <button type="button" onClick={handleSubmit} disabled={isLoading || previewImages.length === 0} className="px-6 py-2 bg-[#A97452] text-white font-semibold rounded-xl hover:bg-[#966343] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base cursor-pointer">
             {isLoading ? '등록 중...' : '게시글 등록'}
           </button>
         </div>

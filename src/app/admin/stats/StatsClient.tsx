@@ -168,7 +168,7 @@ export default function StatsClient() {
           </div>
 
           <div className="flex justify-center pt-4">
-            <button type="submit" disabled={loading || !formData.start || !formData.finish} className="px-8 py-3 bg-[#A97452] text-white font-bold rounded-xl hover:bg-[#966343] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 text-sm sm:text-base shadow-lg">
+            <button type="submit" disabled={loading || !formData.start || !formData.finish} className="px-8 py-3 bg-[#A97452] text-white font-bold rounded-xl hover:bg-[#966343] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 text-sm sm:text-base shadow-lg cursor-pointer">
               {loading ? '조회 중...' : '📈 통계 조회'}
             </button>
           </div>
