@@ -197,19 +197,8 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
     }
   };
 
-  // 이미지 배열 처리 개선
-  const getImageArray = () => {
-    if (!product.mainImages) return [];
-
-    if (Array.isArray(product.mainImages)) {
-      return product.mainImages.filter(img => img && img.path);
-    }
-
-    return Object.values(product.mainImages).filter(img => img && img.path);
-  };
-
-  const imageArray = getImageArray();
-  const mainImageUrl = imageArray.length > 0 ? getFullImageUrl(imageArray[0].path) : null;
+  const imageArray = product.mainImages?.filter(img => !!img.path) || [];
+  const mainImageUrl = imageArray[0] ? getFullImageUrl(imageArray[0].path) : null;
 
   return (
     <>
