@@ -18,14 +18,14 @@ export default function BestReviewCard({ review, variant = 'slider', className =
 
   const profileImage = (() => {
     const img = review.user.image;
-    if (!img) return null;
+    if (!img) return '/default-profile.webp';
     if (typeof img === 'string') {
-      return getFullImageUrl(img);
+      return img.startsWith('/') ? img : getFullImageUrl(img);
     }
     if (typeof img === 'object' && 'path' in img) {
-      return getFullImageUrl(img.path);
+      return img.path.startsWith('/') ? img.path : getFullImageUrl(img.path);
     }
-    return null;
+    return '/default-profile.webp';
   })();
 
   const imageUrl = getFullImageUrl(review.images?.[0] || '');
