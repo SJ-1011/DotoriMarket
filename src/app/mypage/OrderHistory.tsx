@@ -54,7 +54,7 @@ export default function OrderHistory() {
 
         console.log(res.item);
       } catch (error) {
-        alert(error);
+        console.error(error);
       }
     };
     fetchOrders();
