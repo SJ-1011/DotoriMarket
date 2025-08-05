@@ -76,7 +76,7 @@ export default function AdminOrdersWrapper() {
 
   /** 주문 목록 불러오기 */
   const fetchOrders = useCallback(async () => {
-    if (!user?.token?.accessToken) return;
+     if (!user?.token?.accessToken || !isLogin || !isAdmin) return;
     setLoading(true);
     try {
       const res = await getAdminOrders(user.token.accessToken, {
