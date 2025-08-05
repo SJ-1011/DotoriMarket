@@ -155,9 +155,7 @@ export default function AdminProductEditPage({ product }: { product: Product }) 
     setSmallCategory(sub);
   }
 
-  const imageArray = Array.isArray(product.mainImages) ? product.mainImages : Object.values(product.mainImages || {}); // 객체인 경우 값만 추출
-
-  const mainImageUrl = getFullImageUrl(imageArray[0]?.path);
+  const mainImageUrl = getFullImageUrl(product.mainImages[0]?.path);
 
   return (
     <div className="max-w-6xl mx-auto p-4">
