@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import { getProductStatistics } from '@/utils/getStats';
 import { ProductStatistics, DayStatistics, StatisticsParams } from '@/types/stats';
+import { useRouter } from 'next/navigation';
 
 interface PreviewData {
   period: string;
@@ -29,6 +30,18 @@ export default function StatsClient() {
   const [hasSearched, setHasSearched] = useState(false);
 
   const user = useLoginStore(state => state.user);
+  const { isLogin, isAdmin, isLoading } = useLoginStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && (!isLogin || !isAdmin)) {
+      router.push('/unauthorized');
+    }
+  }, [isLoading, isLogin, isAdmin, router]);
+
+  if (isLoading) {
+    return <div>권한 확인 중...</div>;
+  }
 
   // 날짜 포맷 변환: "YYYY-MM-DD" -> "YYYY.MM.DD"
   function formatDotDate(dateStr: string) {
