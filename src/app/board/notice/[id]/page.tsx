@@ -33,7 +33,6 @@ export default function NoticeDetailWrapper() {
       const postRes = await getPost(Number(id));
       if (!postRes.ok) {
         notFound();
-        return;
       }
 
       const noticeRes = await getPosts('notice');

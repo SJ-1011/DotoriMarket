@@ -49,7 +49,7 @@ export default function ProductGrid() {
     if (isDragging) return;
 
     let rafId: number;
-    const speed = 0.5;
+    const speed = 0.4;
 
     const step = () => {
       if (!scrollRef.current) return;
@@ -122,12 +122,14 @@ export default function ProductGrid() {
       {/* 간략보기(자동스크롤+드래그) - 640px 미만 & showAll이 false 일 때만 노출 */}
       {isMobile && !showAll && (
         <div ref={scrollRef} className="flex gap-4 overflow-x-hidden whitespace-nowrap select-none" style={{ cursor: isDragging ? 'grabbing' : 'grab' }} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
-          {mockProducts.map(product => (
-            <div key={product.id} className="inline-flex flex-col items-center w-[120px] sm:w-[160px]  flex-shrink-0">
-              <div className="relative  w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-md overflow-hidden">
+          {mockProducts.map((product, index) => (
+            <div key={product.id} className="inline-flex flex-col items-center w-[120px] sm:w-[160px] flex-shrink-0">
+              <Link href={`/category/character/0${index + 1}`} className="relative w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-md overflow-hidden block">
                 <Image src={product.image} alt={`${product.name} 캐릭터 이미지`} fill className="object-cover" sizes="120px" />
-              </div>
-              <p className="mt-2 text-center text-sm font-medium">{product.name}</p>
+              </Link>
+              <Link href={`/category/character/0${index + 1}`} className="mt-2 text-center text-sm font-medium block">
+                {product.name}
+              </Link>
             </div>
           ))}
         </div>

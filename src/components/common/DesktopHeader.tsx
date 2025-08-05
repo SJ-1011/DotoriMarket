@@ -250,7 +250,7 @@ export default function DesktopHeader() {
                         <div key={product._id} className="flex items-center p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" onClick={() => handleProductSelect(Number(product._id))}>
                           {product.mainImages && product.mainImages[0] && (
                             <div className="w-10 h-10 bg-gray-100 rounded mr-3 flex-shrink-0 overflow-hidden">
-                              <Image src={`${process.env.NEXT_PUBLIC_API_URL}/${product.mainImages[0].path}`} alt={product.name} width={40} height={40} className="w-full h-full object-cover" unoptimized />
+                              <Image src={`${product.mainImages[0].path}`} alt={product.name} width={40} height={40} className="w-full h-full object-cover" unoptimized />
                             </div>
                           )}
                           <div className="flex-grow">

@@ -87,13 +87,13 @@ export default function ProductSearchModal({ isOpen, onClose, onSelectProduct }:
         </div>
 
         {/* 검색 폼 */}
-        <div className="p-6 border-b">
+        <div className="p-2 sm:p-6 border-b">
           <form onSubmit={handleSearch} className="flex gap-2">
             <select className="border border-gray-300 rounded px-3 py-2  text-xs sm:text-sm lg:text-base">
               <option value="product">상품명</option>
             </select>
             <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="상품명을 입력하세요" className="text-xs sm:text-sm lg:text-base flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-[#A97452] focus:ring-2 focus:ring-[#A97452]" />
-            <button type="submit" className="px-6 py-2 bg-[#A97452] text-white rounded hover:bg-[#966343] transition-colors  text-xs sm:text-sm lg:text-base">
+            <button type="submit" className="px-4 sm:px-6 py-2 bg-[#A97452] text-white rounded hover:bg-[#966343] transition-colors  text-xs sm:text-sm lg:text-base">
               검색하기
             </button>
           </form>
@@ -117,8 +117,8 @@ export default function ProductSearchModal({ isOpen, onClose, onSelectProduct }:
 
               {/* 테이블 헤더 */}
               <div className="grid grid-cols-12 gap-4 pb-2 border-b font-semibold text-xs sm:text-sm lg:text-base text-gray-600">
-                <div className="col-span-2">상품 이미지</div>
-                <div className="col-span-6">상품 정보</div>
+                <div className="col-span-2 whitespace-nowrap text-center">상품 이미지</div>
+                <div className="col-span-6 text-center">상품 정보</div>
                 <div className="col-span-3 text-center">선택</div>
               </div>
 
@@ -135,9 +135,9 @@ export default function ProductSearchModal({ isOpen, onClose, onSelectProduct }:
                     )}
                   </div>
                   <div className="col-span-6">
-                    <div className="font-medium mb-1">{product.name}</div>
-                    <div className="text-sm text-gray-600 mb-1">가격: {product.price?.toLocaleString()}원</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm sm:text-base   font-medium mb-1">{product.name}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 mb-1">가격: {product.price?.toLocaleString()}원</div>
+                    <div className="text-xs sm:text-sm text-gray-500">
                       재고: {product.quantity}개 | 배송비: {product.shippingFees?.toLocaleString()}원
                     </div>
                   </div>
