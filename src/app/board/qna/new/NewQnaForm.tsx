@@ -112,7 +112,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
               <button
                 key={item.value}
                 type="button"
-                className={`px-4 py-2 rounded-full font-semibold border-2 text-xs sm:text-sm lg:text-base transition-colors
+                className={`px-4 py-2 rounded-full font-semibold border-2 text-xs sm:text-sm lg:text-base transition-colors cursor-pointer
                   ${selectedType === item.value ? 'bg-[#A97452] text-white border-[#A97452]' : 'bg-white text-[#A97452] border-[#A97452] hover:bg-[#F5EEE6]'}
                 `}
                 onClick={() => setSelectedType(item.value)}
@@ -126,7 +126,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
               <button
                 key={item.value}
                 type="button"
-                className={`px-2 py-2 rounded-full font-semibold border-2 text-xs sm:text-sm lg:text-base transition-colors
+                className={`px-2 py-2 rounded-full font-semibold border-2 text-xs sm:text-sm lg:text-base transition-colors cursor-pointer
                   ${selectedType === item.value ? 'bg-[#A97452] text-white border-[#A97452]' : 'bg-white text-[#A97452] border-[#A97452] hover:bg-[#F5EEE6]'}
                 `}
                 onClick={() => setSelectedType(item.value)}
@@ -153,7 +153,7 @@ export default function NewQnaForm({ boardType }: { boardType: string }) {
         {/* 선택된 유형에 따라 선택 버튼 노출 */}
         {selectLabel && (
           <div className="mb-6 flex justify-center">
-            <button type="button" className="w-full max-w-xl flex justify-between items-center px-6 py-3 border-2 rounded-2xl border-[#A97452] text-[#A97452] bg-white text-xs sm:text-sm lg:text-base font-semibold hover:bg-[#F5EEE6] transition-colors" onClick={handleProductButtonClick}>
+            <button type="button" className="w-full max-w-xl flex justify-between items-center px-6 py-3 border-2 rounded-2xl border-[#A97452] text-[#A97452] bg-white text-xs sm:text-sm lg:text-base font-semibold hover:bg-[#F5EEE6] transition-colors cursor-pointer" onClick={handleProductButtonClick}>
               {selectLabel}
               <span className="text-xs sm:text-sm lg:text-base font-semibold">&#x25BC;</span>
             </button>
