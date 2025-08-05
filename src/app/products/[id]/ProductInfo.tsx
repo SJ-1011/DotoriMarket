@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Product } from '@/types/Product';
+import { Product, ProductImage } from '@/types/Product';
 import { getFullImageUrl } from '@/utils/getFullImageUrl';
 
 export default function ProductInfo({ product }: { product: Product }) {
@@ -16,14 +16,8 @@ export default function ProductInfo({ product }: { product: Product }) {
   }, []);
 
   // 이미지 배열 처리 개선
-  const getImageArray = () => {
-    if (!product.mainImages) return [];
-
-    if (Array.isArray(product.mainImages)) {
-      return product.mainImages.filter(img => img && img.path);
-    }
-
-    return Object.values(product.mainImages).filter(img => img && img.path);
+  const getImageArray = (): ProductImage[] => {
+    return product.mainImages?.filter(img => !!img?.path) || [];
   };
 
   const imageList = getImageArray();
