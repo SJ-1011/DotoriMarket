@@ -1,15 +1,17 @@
 'use client';
-
+import NoticeWriteButton from './NoticeWriteButton';
 import { useState, useEffect } from 'react';
 import { Post } from '@/types/Post';
 import Pagination from '@/components/common/Pagination';
 import Link from 'next/link';
+import { useLoginStore } from '@/stores/loginStore';
 
 interface Props {
   posts: Post[];
 }
 
 export default function NoticeBoardClientWrapper({ posts }: Props) {
+  const user = useLoginStore(state => state.user);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
@@ -54,7 +56,15 @@ export default function NoticeBoardClientWrapper({ posts }: Props) {
     <>
       {/* 검색바 */}
       {!isMobile && (
-        <div className="flex justify-end mb-8">
+        <div className="px-4 flex flex-row flex-nowrap justify-between items-center mb-8">
+          {/* 관리자일 경우만 글쓰기 버튼렌더링 */}
+          {user?.type === 'admin' ? (
+            <NoticeWriteButton />
+          ) : (
+            <div className="w-24 lg:w-28" /> // 자리 맞추기 위해 씀
+          )}
+
+          {/* 오른쪽: 검색창 */}
           <form className="flex items-center gap-2" onSubmit={e => e.preventDefault()}>
             <div className="flex items-center gap-2 border border-[#A97452] rounded-md px-3 py-2 w-48 sm:w-60 lg:w-72 h-8 sm:h-8 lg:h-10 bg-white">
               <input type="text" placeholder="제목으로 검색" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="flex-1 outline-none border-none bg-transparent text-xs sm:text-sm lg:text-base" />
@@ -65,13 +75,13 @@ export default function NoticeBoardClientWrapper({ posts }: Props) {
       {isMobile && (
         <div className="flex flex-col flex-nowrap w-full fixed z-20 bottom-0 bg-white border-t border-primary">
           <div className="flex flex-row flex-nowrap justify-between p-4">
+            {user?.type === 'admin' && <NoticeWriteButton />}
             <button type="button" className="w-full text-sm" onClick={() => setIsSearchOpen(!isSearchOpen)}>
               검색하기
             </button>
           </div>
           {isSearchOpen && (
             <form onSubmit={e => e.preventDefault()} className="flex flex-row flex-nowrap mb-4 gap-2 px-2">
-              {/* 검색 input */}
               <div className="flex p-4 items-center gap-2 border border-[#A97452] w-full bg-white">
                 <input type="text" placeholder="검색어를 입력하세요" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="flex-1 outline-none border-none bg-transparent text-xs sm:text-sm lg:text-base" />
               </div>
