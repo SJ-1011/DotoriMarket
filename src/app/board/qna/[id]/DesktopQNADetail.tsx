@@ -9,6 +9,8 @@ import { ApiRes } from '@/types/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; //답변 완료 후 딜레이 주고 다시 그 경로로 가게 하기 위해(그래야 답변 추가된 화면 뜨니까) 써봅시다
+import { createReplyNotification } from '@/data/actions/addNotification';
+import { getUserById } from '@/utils/getUsers';
 interface DesktopProps {
   post: Post;
   posts: Post[];
@@ -23,6 +25,15 @@ export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProp
   const [showReplyPopup, setShowReplyPopup] = useState(false);
   const [state, formAction, isPending] = useActionState(async (prevState: ApiRes<PostReply> | null, formData: FormData) => {
     const res = await createReply(prevState, formData);
+    const targetUserRes = await getUserById(Number(post.user._id));
+
+    if (targetUserRes.ok && user) {
+      const notificationRes = await createReplyNotification(post, targetUserRes.item, user, true);
+      if (notificationRes.ok) {
+        alert(`${targetUserRes.item.name}님께 답변 알림을 보냈습니다.`);
+      }
+    }
+
     return res;
   }, null);
 
@@ -175,7 +186,7 @@ export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProp
 
       {/* 답변 입력 모달 */}
       {showReplyPopup && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center" onClick={() => setShowReplyPopup(false)}>
+        <div className="fixed inset-0 z-50 bg-[rgba(0,0,0,0.3)] flex items-center justify-center" onClick={() => setShowReplyPopup(false)}>
           <div className="bg-white p-6 rounded shadow-md w-full max-w-lg" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-semibold mb-4">답변 작성</h3>
             <form

@@ -28,7 +28,7 @@ export default function EditQnaForm({ post }: EditQnaFormProps) {
     <>
       <form action={formAction}>
         {isLoading && (
-          <div className="absolute inset-0 z-10  bg-grey bg-opacity-30 flex flex-col items-center justify-end">
+          <div className="absolute inset-0 z-10  bg-[rgba(0,0,0,0.3)] flex flex-col items-center justify-end">
             {/* 로딩 원(스피너) */}
             <div className="w-12 h-12 border-4 border-[#A97452] border-t-transparent rounded-full animate-spin mb-2"></div>
             <span className="text-white font-semibold text-sm">처리 중...</span>

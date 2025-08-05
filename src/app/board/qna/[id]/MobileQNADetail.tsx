@@ -10,6 +10,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useActionState } from 'react';
 import { ApiRes } from '@/types/api';
+import { getUserById } from '@/utils/getUsers';
+import { createReplyNotification } from '@/data/actions/addNotification';
 
 interface MobileProps {
   post: Post;
@@ -26,6 +28,15 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
   const [showReplyPopup, setShowReplyPopup] = useState(false);
   const [state, formAction, isPending] = useActionState(async (prevState: ApiRes<PostReply> | null, formData: FormData) => {
     const res = await createReply(prevState, formData);
+    const targetUserRes = await getUserById(Number(post.user._id));
+
+    if (targetUserRes.ok && user) {
+      const notificationRes = await createReplyNotification(post, targetUserRes.item, user, true);
+      if (notificationRes.ok) {
+        alert(`${targetUserRes.item.name}님께 답변 알림을 보냈습니다.`);
+      }
+    }
+
     return res;
   }, null);
 
@@ -170,7 +181,7 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
       </aside>
 
       {showReplyPopup && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center" onClick={() => setShowReplyPopup(false)}>
+        <div className="fixed inset-0 z-50 bg-[rgba(0,0,0,0.3)] flex items-center justify-center" onClick={() => setShowReplyPopup(false)}>
           <div className="bg-white p-4 rounded shadow-md w-11/12 max-w-sm" onClick={e => e.stopPropagation()}>
             <h3 className="text-base font-semibold mb-2">답변 작성</h3>
             <form

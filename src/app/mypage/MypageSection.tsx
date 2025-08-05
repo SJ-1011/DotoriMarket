@@ -32,7 +32,7 @@ export default function MypageSection() {
 
   if (type === '')
     return (
-      <div className="absolute inset-0 z-10 bg-grey bg-opacity-30 flex flex-col items-center justify-center">
+      <div className="absolute inset-0 z-10 bg-[rgba(0,0,0,0.3)] flex flex-col items-center justify-center">
         {/* 로딩 원(스피너) */}
         <div className="w-12 h-12 border-4 border-[#A97452] border-t-transparent rounded-full animate-spin mb-2"></div>
         <span className="text-white font-semibold text-sm">데이터 로드 중...</span>
