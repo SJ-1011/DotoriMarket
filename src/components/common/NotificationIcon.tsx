@@ -403,7 +403,7 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
                           {item.type === 'message' ? (
                             <></>
                           ) : (
-                            <button type="button" className="absolute top-5 right-5" onClick={() => handleReadOne(item._id.toString())}>
+                            <button type="button" className="absolute top-5 right-5 cursor-pointer" onClick={() => handleReadOne(item._id.toString())}>
                               <CloseIcon />
                             </button>
                           )}
