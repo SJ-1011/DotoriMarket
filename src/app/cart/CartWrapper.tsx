@@ -24,11 +24,11 @@ export default function CartWrapper() {
   const previousQty = useRef<Record<number, number>>({});
   const debounceTimers = useRef<Record<number, NodeJS.Timeout | null>>({});
   const { decrease } = useCartBadgeStore();
-  const { user } = useLoginStore();
+  const { user, isLogin } = useLoginStore();
   const cartStore = useCartQuantityStore();
   const router = useRouter();
   const { selectedItems, setSelectedItems, toggleAll, toggleItem } = useCartSelection(cartData);
-
+  const alertedRef = useRef(false);
   // 선택된 상품 총합 계산
   const selectedPriceInfo = useMemo(() => {
     if (!cartData) return { productOnlyTotal: 0, shippingFee: 0, total: 0 };
@@ -38,6 +38,16 @@ export default function CartWrapper() {
 
     return { productOnlyTotal, shippingFee, total: productOnlyTotal + shippingFee };
   }, [cartData, selectedItems, cartStore.quantities]);
+
+  // 권한 가드
+  useEffect(() => {
+    if (alertedRef.current) return;
+    if (isLogin === false) {
+      alertedRef.current = true;
+      alert('로그인이 필요합니다.');
+      router.replace('/login');
+    }
+  }, [isLogin, router]);
 
   // 장바구니 데이터 초기 fetch + Zustand 초기화
   useEffect(() => {
