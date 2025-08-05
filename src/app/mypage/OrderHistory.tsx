@@ -172,8 +172,8 @@ export default function OrderHistory() {
                           <li key={999999 - index} className="p-8 bg-white rounded-2xl shadow-[0_0_10px_rgba(0,0,0,0.1)]">
                             <div className="flex flex-col sm:flex-row flex-nowrap sm:items-center gap-4 sm:gap-0">
                               <div className="flex flex-row flex-nowrap items-center gap-4">
-                                <div className="w-[70px] sm:w-[100px] aspect-square">
-                                  <Image src={product.image ? product.image.path : ''} alt={`${order.products[0].name} 결제 이미지`} className="border border-primary rounded-lg" width={100} height={100} />
+                                <div className="w-[70px] sm:w-[100px] aspect-square relative">
+                                  <Image src={product.image ? product.image.path : ''} alt={`${order.products[0].name} 결제 이미지`} className="border border-primary rounded-lg object-cover" fill />
                                 </div>
                                 <div className="flex flex-col flex-nowrap gap-1">
                                   <p className="sm:text-base lg:text-lg font-bold">{CalculationDays(order.createdAt)}</p>

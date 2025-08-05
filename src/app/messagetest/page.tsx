@@ -19,7 +19,7 @@ export default function MessageTest() {
         const target = await getUserById(13);
 
         if (target.ok) {
-          const res = await createMessage(reply, target.item, user);
+          await createMessage(reply, target.item, user);
         }
       };
       handleSubmit();
