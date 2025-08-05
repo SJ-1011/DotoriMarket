@@ -64,6 +64,24 @@ function getSubCategoryInfo(categoryCode: string, smallCategoryCode: string, big
 
 // Breadcrumb 아이템 생성 함수
 function getBreadcrumbItems(product: Product) {
+  // 신상품/인기상품 처리
+  if (product.extra?.isNew) {
+    return [
+      { label: '홈', href: '/' },
+      { label: '신상품', href: '/category/new' },
+      { label: product.name, href: `/products/${product._id}` },
+    ];
+  }
+
+  if (product.extra?.isBest) {
+    return [
+      { label: '홈', href: '/' },
+      { label: '인기상품', href: '/category/popular' },
+      { label: product.name, href: `/products/${product._id}` },
+    ];
+  }
+
+  // 일반 카테고리 처리
   const categoryCode = product.extra?.category?.[0] ?? '';
   const smallCategoryCode = product.extra?.category?.[1] ?? '';
   const bigCategory = CATEGORY_MAP[categoryCode] ?? { label: '카테고리', href: '#' };

@@ -118,7 +118,16 @@ export default function ProductCreateForm() {
       return;
     }
 
-    if (!data.name.trim() || data.price <= 0 || data.quantity <= 0 || !data.mainImage || !data.categoryMain || !data.categorySub) {
+    if (data.name.trim().length < 2) {
+      alert('상품명은 2글자 이상 입력해 주세요.');
+      return;
+    }
+
+    // 서브 카테고리가 없어도 되는 카테고리들
+    const categoriesWithoutSub = ['PC02', 'new', 'popular'];
+    const needsSubCategory = !categoriesWithoutSub.includes(data.categoryMain || '');
+
+    if (!data.name.trim() || data.price <= 0 || data.quantity <= 0 || !data.mainImage || !data.categoryMain || (needsSubCategory && !data.categorySub)) {
       alert('모든 필드를 입력해 주세요.');
       return;
     }
@@ -126,7 +135,33 @@ export default function ProductCreateForm() {
     setSaving(true);
 
     try {
-      const convertedSubCategory = convertSubCategoryToCode(data.categoryMain, data.categorySub);
+      // 특수 카테고리 처리
+      let extraData: { category: string[]; isNew?: boolean; isBest?: boolean };
+
+      if (data.categoryMain === 'new') {
+        // 신상품인 경우
+        extraData = {
+          category: [],
+          isNew: true,
+        };
+      } else if (data.categoryMain === 'popular') {
+        // 인기상품인 경우
+        extraData = {
+          category: [],
+          isBest: true,
+        };
+      } else if (data.categoryMain === 'PC02') {
+        // 미니어처인 경우
+        extraData = {
+          category: [data.categoryMain],
+        };
+      } else {
+        // 일반 카테고리인 경우
+        const convertedSubCategory = convertSubCategoryToCode(data.categoryMain, data.categorySub || '');
+        extraData = {
+          category: [data.categoryMain, convertedSubCategory],
+        };
+      }
 
       const res = await addProduct(
         {
@@ -135,9 +170,7 @@ export default function ProductCreateForm() {
           quantity: data.quantity,
           content: '상품 설명이 없습니다.',
           shippingFees: data.shippingFees,
-          extra: {
-            category: [data.categoryMain, convertedSubCategory],
-          },
+          extra: extraData,
           mainImage: data.mainImage,
         },
         user.token.accessToken,
