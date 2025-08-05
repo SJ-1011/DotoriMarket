@@ -45,7 +45,6 @@ export default function Login() {
         setErrorMsg('');
         router.push(redirectUrl);
       } else {
-        alert(`${res.message}`);
         setErrorMsg(res.message);
       }
     };
