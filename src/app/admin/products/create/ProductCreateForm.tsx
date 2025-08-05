@@ -118,7 +118,12 @@ export default function ProductCreateForm() {
       return;
     }
 
-    if (!data.name.trim() || data.price <= 0 || data.quantity <= 0 || !data.mainImage || !data.categoryMain || !data.categorySub) {
+    if (data.name.trim().length < 2) {
+      alert('상품명은 2글자 이상 입력해 주세요.');
+      return;
+    }
+
+    if (!data.name.trim() || data.price <= 0 || data.quantity <= 0 || !data.mainImage || !data.categoryMain || data.categorySub == null) {
       alert('모든 필드를 입력해 주세요.');
       return;
     }
