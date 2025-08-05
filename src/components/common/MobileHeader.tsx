@@ -24,7 +24,7 @@ export default function MobileHeader() {
 
   // 메뉴 종류
   const menuContent = {
-    category: ['전체상품','신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품'],
+    category: ['전체상품', '신상품', '인기상품', '캐릭터', '미니어처', '문구', '리빙&소품'],
     board: ['공지사항', '자유게시판', '문의게시판'],
     myInfo: ['마이페이지', '내가 쓴 글', '배송 주소록 관리', '장바구니', '관심 상품', '회원 정보 수정', '로그아웃'],
     adminInfo: ['관리자 마이페이지', '로그아웃'],
@@ -41,7 +41,7 @@ export default function MobileHeader() {
   };
 
   const menuLink = {
-    전체상품:'category/all',
+    전체상품: 'category/all',
     신상품: 'category/new',
     인기상품: 'category/popular',
     미니어처: 'category/miniature',
@@ -83,10 +83,15 @@ export default function MobileHeader() {
               <Link href="/search">
                 <SearchIcon className="w-6 h-6" aria-label="상품 검색" />
               </Link>
-              <Link href="/cart" className="relative">
-                <CartIcon pathProps={{ stroke: '#A97452' }} svgProps={{ className: 'w-6 h-6' }} aria-label="장바구니" />
-                {count > 0 && <span className="absolute -top-1 -right-1 bg-red text-white font-bold text-[10px] w-[15px] h-[15px] flex items-center justify-center rounded-full">{count}</span>}
-              </Link>
+
+              {user?.type === 'admin' ? (
+                <></>
+              ) : (
+                <Link href="/cart" className="relative">
+                  <CartIcon pathProps={{ stroke: '#A97452' }} svgProps={{ className: 'w-6 h-6' }} aria-label="장바구니" />
+                  {count > 0 && <span className="absolute -top-1 -right-1 bg-red text-white font-bold text-[10px] w-[15px] h-[15px] flex items-center justify-center rounded-full">{count}</span>}
+                </Link>
+              )}
             </div>
           </div>
         </nav>
