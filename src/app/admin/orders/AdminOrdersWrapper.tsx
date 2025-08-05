@@ -12,6 +12,7 @@ import { patchOrderState } from '@/data/actions/patchOrderState';
 import Loading from '@/app/loading';
 
 export default function AdminOrdersWrapper() {
+  const { isLogin, isAdmin, isLoading } = useLoginStore();
   const { user } = useLoginStore();
   const router = useRouter();
 
@@ -93,8 +94,10 @@ export default function AdminOrdersWrapper() {
 
   /** 권한 가드 */
   useEffect(() => {
-    if (user && user.type !== 'admin') router.replace('/mypage');
-  }, [user, router]);
+    if (!isLoading && (!isLogin || !isAdmin)) {
+      router.push('/unauthorized');
+    }
+  }, [isLoading, isLogin, isAdmin, router]);
 
   /** 초기 데이터 로드 */
   useEffect(() => {

@@ -203,12 +203,16 @@ export default function ResidentCard() {
             </div>
 
             {/* 바코드 */}
-            <div className="absolute bottom-0 right-10 w-30 h-5 lg:w-40 lg:h-7">
+            <div className="absolute bottom-0.5 left-5  w-30 h-5 lg:w-40 lg:h-7">
               <Image loader={imageLoader} src="/mypage-barcode.png" alt="Barcode" className="object-cover" fill />
             </div>
 
             {/* 작은 텍스트 */}
-            <div className="absolute left-5 text-[#95aa81] text-[0.5rem] bottom-2 lg:lg:bottom-3">CONSOLE.10G</div>
+            <div className="absolute left-5 text-[#95aa81] text-[0.5rem] lg:text-[0.6rem] bottom-6 lg:lg:bottom-8.5">CONSOLE.10G</div>
+
+            <div className="absolute bottom-0 right-10 w-10 h-10 lg:w-13 lg:h-13">
+              <Image src="/dotoriQR.png" alt="Dotori QR" fill className="object-cover" />
+            </div>
           </div>
         </div>
       )}
