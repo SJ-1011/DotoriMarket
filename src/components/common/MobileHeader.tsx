@@ -13,6 +13,7 @@ import { useLoginStore } from '@/stores/loginStore';
 import { useRouter } from 'next/navigation';
 import NotificationIcon from './NotificationIcon';
 import { useCartBadgeStore } from '@/stores/cartBadgeStore';
+import { toast } from 'react-hot-toast';
 
 export default function MobileHeader() {
   const { isLogin, logout } = useLoginStore();
@@ -169,7 +170,7 @@ export default function MobileHeader() {
                       onClick={() => {
                         setIsOpenMenu(false);
                         logout();
-                        alert('로그아웃');
+                        toast.success('로그아웃 되었습니다.');
                         router.push('/');
                       }}
                       className="cursor-pointer"

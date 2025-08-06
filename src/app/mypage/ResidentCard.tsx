@@ -8,6 +8,7 @@ import { patchUserImage } from '@/data/actions/patchUserImage';
 import { patchUserIntro } from '@/data/actions/patcUserIntro';
 import { useUserStore } from '@/stores/userStore';
 import Skeleton from '@/components/common/Skeleton';
+import { toast } from 'react-hot-toast';
 
 export default function ResidentCard() {
   const userState = useUserStore(state => state.user);
@@ -90,7 +91,7 @@ export default function ResidentCard() {
     }).then(res => res.json());
 
     if (uploadRes.ok !== 1) {
-      alert('이미지 업로드 실패');
+      toast.error('이미지 업로드 실패');
       return;
     }
 
@@ -101,9 +102,8 @@ export default function ResidentCard() {
 
     if (patchRes.ok === 1) {
       await refreshUser();
-      alert('프로필 이미지가 변경되었습니다!');
+      toast.success('프로필 이미지가 변경되었습니다!');
 
-      console.log('프로필 이미지가 변경되었습니다!');
       setUser(prev => prev && { ...prev, image: `${newImage.path}` });
       try {
         console.log(fetchLoginUser);
@@ -112,7 +112,7 @@ export default function ResidentCard() {
         console.log('스토어에 저장이 안댐');
       }
     } else {
-      alert('이미지 변경 실패');
+      toast.error('이미지 변경 실패');
     }
   };
 
@@ -125,10 +125,10 @@ export default function ResidentCard() {
     const patchRes = await patchUserIntro(loginUser._id, trimmedIntro, loginUser.token.accessToken);
 
     if (patchRes.ok === 1) {
-      alert('한줄 소개가 변경되었습니다!');
+      toast.success('한줄 소개가 변경되었습니다!');
       setUser(prev => prev && { ...prev, intro: trimmedIntro });
     } else {
-      alert('한줄 소개 변경 실패');
+      toast.error('한줄 소개 변경 실패');
     }
     setEditing(false);
     setIsSaving(false);
@@ -175,7 +175,7 @@ export default function ResidentCard() {
                       onClick={() => {
                         // 기본 이미지로 설정
                         if (!loginUser?._id || !loginUser.token?.accessToken) {
-                          alert('로그인 정보가 없습니다.');
+                          toast.error('로그인 정보가 없습니다.');
                           return;
                         }
 
@@ -190,9 +190,9 @@ export default function ResidentCard() {
                             refreshUser();
                             setUser(prev => prev && { ...prev, image: defaultImage.path });
                             fetchLoginUser();
-                            alert('기본 프로필로 변경되었습니다.');
+                            toast.success('기본 프로필로 변경되었습니다.');
                           } else {
-                            alert('기본 이미지 설정 실패');
+                            toast.error('기본 이미지 설정 실패');
                           }
                           setShowProfileModal(false);
                         });

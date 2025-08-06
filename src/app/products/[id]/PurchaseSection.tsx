@@ -19,6 +19,7 @@ import { useCartBadgeStore } from '@/stores/cartBadgeStore';
 import { getCarts } from '@/utils/getCarts';
 import { getFullImageUrl } from '@/utils/getFullImageUrl';
 import { getBookmarkStatus } from '@/utils/getBookmarkStatus';
+import toast from 'react-hot-toast';
 
 interface PurchaseSectionProps {
   product: Product & { myBookmarkId?: number };
@@ -155,7 +156,7 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       } catch {
-        alert('주소 복사에 실패했습니다. 수동으로 복사해 주세요.');
+        toast.error('주소 복사에 실패했습니다. 수동으로 복사해 주세요.');
       }
     }
   };
@@ -165,13 +166,13 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
   const pathname = usePathname();
   const handleClick = () => {
     if (!user) {
-      alert('로그인이 필요합니다.');
+      toast.error('로그인이 필요합니다.');
       router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
     if (!isSoldOut) {
-      alert('구매 페이지로 이동합니다.');
+      toast('구매 페이지로 이동합니다.');
       router.push(`/order?productId=${product._id}&qty=${quantity}`);
     }
   };
@@ -184,13 +185,13 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
   // 장바구니 버튼
   const handleAddToCart = async () => {
     if (!user) {
-      alert('로그인이 필요합니다.');
+      toast.error('로그인이 필요합니다.');
       router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
     if (isSoldOut) {
-      alert('품절된 상품은 장바구니에 담을 수 없습니다.');
+      toast.error('품절된 상품은 장바구니에 담을 수 없습니다.');
       return;
     }
 
@@ -208,9 +209,9 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
       if (!alreadyExists) {
         useCartBadgeStore.setState(state => ({ count: state.count + 1 }));
       }
-      alert('장바구니에 상품이 추가되었습니다!');
+      toast.success('장바구니에 상품이 추가되었습니다!');
     } catch {
-      alert('장바구니 추가에 실패했습니다. 다시 시도해 주세요.');
+      toast.error('장바구니 추가에 실패했습니다. 다시 시도해 주세요.');
     }
   };
 
@@ -278,11 +279,11 @@ export default function PurchaseSection({ product, reviews, loadingReviews }: Pu
               <div className="flex items-center gap-4">
                 {/* 수량 조절 버튼 */}
                 <div className="flex items-center border overflow-hidden">
-                  <button onClick={decreaseQuantity} className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity <= 1}>
+                  <button onClick={decreaseQuantity} className="cursor-pointer w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity <= 1}>
                     -
                   </button>
                   <span className="w-8 text-center text-sm">{quantity}</span>
-                  <button onClick={increaseQuantity} className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity >= remainingStock}>
+                  <button onClick={increaseQuantity} className="cursor-pointer w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity >= remainingStock}>
                     +
                   </button>
                 </div>

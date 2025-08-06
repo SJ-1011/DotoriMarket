@@ -9,6 +9,7 @@ import OrderCostSummary from './OrderCostSummary';
 import OrderPayment from './OrderPayment';
 import { useState } from 'react';
 import { UserAddress } from '@/types';
+import toast from 'react-hot-toast';
 
 interface Props {
   cartItems: CartItem[];
@@ -37,7 +38,7 @@ export default function OrderClient({ cartCost, cartItems, userInfo, addresses, 
   const handleOrderSubmit = async (data: OrderForm) => {
     // 카드사 미선택 시 주문 막기
     if (payment.method === 'card' && !payment.bank) {
-      alert('카드사를 선택해주세요.');
+      toast.error('카드사를 선택해주세요.');
       return;
     }
 

@@ -11,6 +11,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation'; //답변 완료 후 딜레이 주고 다시 그 경로로 가게 하기 위해(그래야 답변 추가된 화면 뜨니까) 써봅시다
 import { createReplyNotification } from '@/data/actions/addNotification';
 import { getUserById } from '@/utils/getUsers';
+import { toast } from 'react-hot-toast';
+
 interface DesktopProps {
   post: Post;
   posts: Post[];
@@ -30,7 +32,7 @@ export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProp
     if (targetUserRes.ok && user) {
       const notificationRes = await createReplyNotification(post, targetUserRes.item, user, true);
       if (notificationRes.ok) {
-        alert(`${targetUserRes.item.name}님께 답변 알림을 보냈습니다.`);
+        toast.success(`${targetUserRes.item.name}님께 답변 알림을 보냈습니다.`);
       }
     }
 
@@ -66,10 +68,10 @@ export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProp
       const result = await deletePost(null, formData);
 
       if (result?.ok) {
-        alert('삭제가 완료되었습니다.');
+        toast.success('삭제가 완료되었습니다.');
         // deletePost 내부에서 페이지 이동 처리됨
       } else {
-        alert(result?.message || '삭제에 실패했습니다.');
+        toast.error(result?.message || '삭제에 실패했습니다.');
       }
     }
   };
@@ -203,10 +205,10 @@ export default function DesktopQNADetail({ post, posts, id, reply }: DesktopProp
               <input type="hidden" name="type" value="qna" />
               <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
               <div className="flex justify-end gap-2">
-                <button type="button" onClick={() => setShowReplyPopup(false)} className="px-4 py-2 bg-gray-300 text-gray-700 rounded">
+                <button type="button" onClick={() => setShowReplyPopup(false)} className="px-4 py-2 bg-gray-300 text-gray-700 rounded cursor-pointer">
                   취소
                 </button>
-                <button type="submit" className="px-4 py-2 bg-primary-dark text-white hover:bg-[#966343] rounded" disabled={isPending}>
+                <button type="submit" className="px-4 py-2 bg-primary-dark text-white hover:bg-[#966343] rounded cursor-pointer" disabled={isPending}>
                   {isPending ? '등록 중...' : '등록'}
                 </button>
               </div>

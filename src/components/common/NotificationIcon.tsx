@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { User } from '@/types';
 import { Product } from '@/types/Product';
 import { Post } from '@/types/Post';
+import toast from 'react-hot-toast';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function NotificationIcon({ isMobile = false }: { isMobile?: boolean }) {
@@ -90,8 +91,8 @@ export default function NotificationIcon({ isMobile = false }: { isMobile?: bool
       try {
         await fetchNotification();
         console.log('알림 불러오기');
-      } catch (err) {
-        alert(err);
+      } catch {
+        toast.error('알림 불러오기 실패');
       }
     };
 

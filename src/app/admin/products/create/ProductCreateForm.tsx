@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useLoginStore } from '@/stores/loginStore';
 import { addProduct } from '@/data/actions/addProduct';
 import CategorySelector from '@/app/admin/products/components/CategorySelector';
+import { toast } from 'react-hot-toast';
 
 interface FormData {
   name: string;
@@ -114,12 +115,13 @@ export default function ProductCreateForm() {
 
   const handleSave = async () => {
     if (!user?.token.accessToken) {
-      alert('로그인이 필요합니다.');
+      toast.error('로그인이 필요합니다.');
+
       return;
     }
 
     if (data.name.trim().length < 2) {
-      alert('상품명은 2글자 이상 입력해 주세요.');
+      toast.error('상품명은 2글자 이상 입력해 주세요.');
       return;
     }
 
@@ -128,7 +130,7 @@ export default function ProductCreateForm() {
     const needsSubCategory = !categoriesWithoutSub.includes(data.categoryMain || '');
 
     if (!data.name.trim() || data.price <= 0 || data.quantity <= 0 || !data.mainImage || !data.categoryMain || (needsSubCategory && !data.categorySub)) {
-      alert('모든 필드를 입력해 주세요.');
+      toast.error('모든 필드를 입력해 주세요.');
       return;
     }
 
@@ -177,12 +179,13 @@ export default function ProductCreateForm() {
       );
 
       if (res.ok) {
+        toast.success('상품이 성공적으로 등록되었습니다!');
         router.push(`/products/${res.item._id}`);
       } else {
-        alert(res.message);
+        toast.error(res.message || '상품 등록에 실패했습니다.');
       }
     } catch (error) {
-      alert('상품 등록 중 오류가 발생했습니다.');
+      toast.error('상품 등록 중 오류가 발생했습니다.');
       console.error(error);
     } finally {
       setSaving(false);

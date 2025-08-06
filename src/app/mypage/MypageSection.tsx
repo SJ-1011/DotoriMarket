@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useLoginStore } from '@/stores/loginStore';
 import AdminGraph from './AdminGraph';
 import AdminList from './AdminList';
+import { toast } from 'react-hot-toast';
 
 export default function MypageSection() {
   const user = useLoginStore(state => state.user);
@@ -23,7 +24,7 @@ export default function MypageSection() {
           setType(userType);
         }
       } catch {
-        alert('일시적인 네트워크 오류로 마이페이지를 불러올 수 없습니다.');
+        toast.error('일시적인 네트워크 오류로 마이페이지를 불러올 수 없습니다.');
       }
     };
 
