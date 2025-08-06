@@ -11,6 +11,9 @@
   <a href="https://dotori-island.vercel.app" target="_blank">
     <img src="https://img.shields.io/badge/%F0%9F%8C%B0%20Dotori-A97452?style=for-the-badge&logo=&logoColor=white" alt="도토리섬" />
   </a>
+  <a href="https://github.com/FRONTENDBOOTCAMP-13th/Final-10-console.10g/wiki" target="_blank">
+  <img src="https://img.shields.io/badge/GitHub_Wiki-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Wiki" />
+</a>
 </div>
 
 <br/>
