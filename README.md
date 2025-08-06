@@ -19,21 +19,21 @@
 
 ## 👥 팀 console.10g 소개
 
-<table align="center" border="1" cellpadding="10" cellspacing="0" style="text-align: center; table-layout: fixed; width: 100%;">
+<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; table-layout: fixed; text-align: center;">
   <thead>
     <tr>
-      <th>PM (Project Manager)</th>
-      <th>PL (Project Leader)</th>
-      <th>데이터 엔지니어</th>
-      <th>디자이너 (UI/UX)</th>
+      <th style="width: 25%;">PM (Project Manager)</th>
+      <th style="width: 25%;">PL (Project Leader)</th>
+      <th style="width: 25%;">데이터 엔지니어</th>
+      <th style="width: 25%;">디자이너 (UI/UX)</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><img src="https://avatars.githubusercontent.com/YouVin" width="120" height="120"/></td>
-      <td><img src="https://avatars.githubusercontent.com/SJ-1011" width="120" height="120"/></td>
-      <td><img src="https://avatars.githubusercontent.com/noognoog" width="120" height="120"/></td>
-      <td><img src="https://avatars.githubusercontent.com/yebin-jeong" width="120" height="120"/></td>
+      <td><img src="https://avatars.githubusercontent.com/YouVin" width="120" height="120" style="display: block; margin: 0 auto;" /></td>
+      <td><img src="https://avatars.githubusercontent.com/SJ-1011" width="120" height="120" style="display: block; margin: 0 auto;" /></td>
+      <td><img src="https://avatars.githubusercontent.com/noognoog" width="120" height="120" style="display: block; margin: 0 auto;" /></td>
+      <td><img src="https://avatars.githubusercontent.com/yebin-jeong" width="120" height="120" style="display: block; margin: 0 auto;" /></td>
     </tr>
     <tr>
       <td>황유빈</td>
