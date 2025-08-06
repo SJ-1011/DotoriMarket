@@ -12,6 +12,7 @@ import { useActionState } from 'react';
 import { ApiRes } from '@/types/api';
 import { getUserById } from '@/utils/getUsers';
 import { createReplyNotification } from '@/data/actions/addNotification';
+import { toast } from 'react-hot-toast';
 
 interface MobileProps {
   post: Post;
@@ -33,7 +34,7 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
     if (targetUserRes.ok && user) {
       const notificationRes = await createReplyNotification(post, targetUserRes.item, user, true);
       if (notificationRes.ok) {
-        alert(`${targetUserRes.item.name}님께 답변 알림을 보냈습니다.`);
+        toast.success(`${targetUserRes.item.name}님께 답변 알림을 보냈습니다.`);
       }
     }
 
@@ -69,10 +70,10 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
       formData.append('boardType', 'qna');
       const result = await deletePost(null, formData);
       if (result?.ok) {
-        alert('삭제가 완료되었습니다.');
+        toast.success('삭제가 완료되었습니다.');
         // deletePost 내부에서 페이지 이동 처리됨
       } else {
-        alert(result?.message || '삭제에 실패했습니다.');
+        toast.error(result?.message || '삭제에 실패했습니다.');
       }
     }
   };
@@ -198,10 +199,10 @@ export default function MobileQNADetail({ post, posts, id, reply }: MobileProps)
               <input type="hidden" name="type" value="qna" />
               <input type="hidden" name="accessToken" value={user?.token?.accessToken ?? ''} />
               <div className="flex justify-end gap-2">
-                <button type="button" onClick={() => setShowReplyPopup(false)} className="px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded">
+                <button type="button" onClick={() => setShowReplyPopup(false)} className="px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded cursor-pointer">
                   취소
                 </button>
-                <button type="submit" disabled={isPending} className="px-3 py-1 bg-primary-dark text-white text-xs rounded hover:bg-[#966343]">
+                <button type="submit" disabled={isPending} className="px-3 py-1 bg-primary-dark text-white text-xs rounded hover:bg-[#966343] cursor-pointer">
                   {isPending ? '등록 중...' : '등록'}
                 </button>
               </div>
