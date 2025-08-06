@@ -11,6 +11,7 @@ import FavoriteBorder from '@/components/icon/FavoriteBorderIcon';
 import ImageModal from './ImageModal';
 import MypageIcon from '@/components/icon/MypageIcon';
 import CommentBubble from '@/components/icon/CommentIcon';
+import { toast } from 'react-hot-toast';
 
 interface Props {
   post: Post;
@@ -43,7 +44,7 @@ export default function CommunityPostCard({ post, clientId, bookmarkId: initialB
     e.preventDefault();
 
     if (!user?.token?.accessToken) {
-      alert('로그인이 필요합니다!');
+      toast.error('로그인이 필요합니다!');
       return;
     }
 

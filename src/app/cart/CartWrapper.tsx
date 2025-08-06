@@ -18,6 +18,7 @@ import CartButtons from './CartButtons';
 import { CartResponse } from '@/types/Cart';
 import { getProductById } from '@/utils/getProducts';
 import { useCartBadgeStore } from '@/stores/cartBadgeStore';
+import { toast } from 'react-hot-toast';
 
 export default function CartWrapper() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
@@ -44,7 +45,7 @@ export default function CartWrapper() {
     if (alertedRef.current) return;
     if (isLogin === false) {
       alertedRef.current = true;
-      alert('로그인이 필요합니다.');
+      toast.error('로그인이 필요합니다.');
       router.replace('/login');
     }
   }, [isLogin, router]);
@@ -114,7 +115,7 @@ export default function CartWrapper() {
     const currentQty = cartStore.getQuantity(id);
     const maxQty = stock - buyQty;
     if (currentQty >= maxQty) {
-      alert(`최대 ${maxQty}개까지 구매 가능합니다.`);
+      toast.error(`최대 ${maxQty}개까지 구매 가능합니다.`);
       return;
     }
     cartStore.setQuantity(id, currentQty + 1);
@@ -154,7 +155,7 @@ export default function CartWrapper() {
 
   const handlePurchase = () => {
     if (selectedItems.length === 0) {
-      alert('구매할 상품을 선택해주세요.');
+      toast.error('구매할 상품을 선택해주세요.');
       return;
     }
     router.push(`/order?ids=${selectedItems.join(',')}`);
