@@ -4,6 +4,15 @@
   <img src="public/readmelogo.png" alt="도토리섬 메인 로고" width="600px" height="300px"/>
 </p>
 
+<div align="center">
+  <a href="https://www.notion.so/10-console-10g-22973873401a80f4b617c2698ca08bab?source=copy_link" target="_blank">
+    <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white" alt="Notion" />
+  </a>
+  <a href="https://dotori-island.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/%F0%9F%8C%B0%20Dotori-A97452?style=for-the-badge&logo=&logoColor=white" alt="도토리섬" />
+  </a>
+</div>
+
 <br/>
 <br/>
 
@@ -20,38 +29,52 @@
 ## 👥 팀 console.10g 소개
 
 <table align="center" border="1" cellpadding="10" cellspacing="0" style="width: 100%; table-layout: fixed; text-align: center;">
+  <colgroup>
+    <col width="25%">
+    <col width="25%">
+    <col width="25%">
+    <col width="25%">
+  </colgroup>
   <thead>
     <tr>
-      <th style="width: 25%;">PM (Project Manager)</th>
-      <th style="width: 25%;">PL (Project Leader)</th>
-      <th style="width: 25%;">데이터 엔지니어</th>
-      <th style="width: 25%;">디자이너 (UI/UX)</th>
+      <th>PM (Project Manager)</th>
+      <th>PL (Project Leader)</th>
+      <th>데이터 엔지니어</th>
+      <th>디자이너 (UI/UX)</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><img src="https://avatars.githubusercontent.com/YouVin" width="120" height="120" style="display: block; margin: 0 auto;" /></td>
-      <td><img src="https://avatars.githubusercontent.com/SJ-1011" width="120" height="120" style="display: block; margin: 0 auto;" /></td>
-      <td><img src="https://avatars.githubusercontent.com/noognoog" width="120" height="120" style="display: block; margin: 0 auto;" /></td>
-      <td><img src="https://avatars.githubusercontent.com/yebin-jeong" width="120" height="120" style="display: block; margin: 0 auto;" /></td>
+      <td><p align="center"><img src="https://avatars.githubusercontent.com/YouVin" width="200" height="200" /></p></td>
+      <td><p align="center"><img src="https://avatars.githubusercontent.com/SJ-1011" width="200" height="200" /></p></td>
+      <td><p align="center"><img src="https://avatars.githubusercontent.com/noognoog" width="200" height="200" /></p></td>
+      <td><p align="center"><img src="https://avatars.githubusercontent.com/yebin-jeong" width="200" height="200" /></p></td>
     </tr>
     <tr>
-      <td>황유빈</td>
-      <td>이선진</td>
-      <td>엄현욱</td>
-      <td>정예빈</td>
+      <td align="center">황유빈</td>
+      <td align="center">이선진</td>
+      <td align="center">엄현욱</td>
+      <td align="center">정예빈</td>
     </tr>
     <tr>
-      <td>일정·기획·커뮤니케이션 총괄</td>
-      <td>개발 리딩 · 기술 방향 설정<br> · 코드 품질 관리</td>
-      <td>데이터 설계 · 분석<br> · 성능 최적화</td>
-      <td>사용자 경험과 비주얼 디자인 담당</td>
+      <td align="center">일정·기획·커뮤니케이션<br> 총괄</td>
+      <td align="center">개발 리딩 · 기술 방향<br> 설정 · 코드 품질 관리</td>
+      <td align="center">데이터 설계 · 분석<br> · 성능 최적화</td>
+      <td align="center">사용자 경험과 비주얼<br> 디자인 담당</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/yubin">GitHub</a></td>
-      <td><a href="https://github.com/SJ-1011">GitHub</a></td>
-      <td><a href="https://github.com/noognoog">GitHub</a></td>
-      <td><a href="https://github.com/yebin-jeong">GitHub</a></td>
+      <td align="center"><a href="https://github.com/yubin" target="_blank">
+  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub 링크" />
+</a></td>
+      <td align="center"><a href="https://github.com/SJ-1011" target="_blank">
+  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub 링크" />
+</a></td>
+      <td align="center"><a href="https://github.com/noognoog" target="_blank">
+  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub 링크" />
+</a></td>
+      <td align="center"><a href="https://github.com/yebin-jeong" target="_blank">
+  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub 링크" />
+</a></td>
     </tr>
   </tbody>
 </table>
@@ -98,6 +121,7 @@
       <td><strong>배포 / 협업 도구</strong></td>
       <td>
         <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" />
+        <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white" alt="Notion" />
         <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" />
         <img src="https://img.shields.io/badge/Koyeb-121212?style=for-the-badge&logo=koyeb&logoColor=white" />
         <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" />
