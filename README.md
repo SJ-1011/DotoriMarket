@@ -19,7 +19,7 @@
 
 ## 👥 팀 console.10g 소개
 
-<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; table-layout: fixed; text-align: center;">
+<table align="center" border="1" cellpadding="10" cellspacing="0" style="width: 100%; table-layout: fixed; text-align: center;">
   <thead>
     <tr>
       <th style="width: 25%;">PM (Project Manager)</th>
@@ -43,8 +43,8 @@
     </tr>
     <tr>
       <td>일정·기획·커뮤니케이션 총괄</td>
-      <td>개발 리딩 · 기술 방향 설정 · 코드 품질 관리</td>
-      <td>데이터 설계 · 분석 · 성능 최적화</td>
+      <td>개발 리딩 · 기술 방향 설정<br> · 코드 품질 관리</td>
+      <td>데이터 설계 · 분석<br> · 성능 최적화</td>
       <td>사용자 경험과 비주얼 디자인 담당</td>
     </tr>
     <tr>
@@ -111,7 +111,7 @@
 
 ## 📆 개발 일정
 
-<table border="1" cellpadding="10" cellspacing="0" style="width: 100%;">
+<table align="center" border="1" cellpadding="10" cellspacing="0" style="width: 100%;">
   <thead>
     <tr>
       <th>스프린트</th>
