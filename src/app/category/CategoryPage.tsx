@@ -138,7 +138,6 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
           if (res.ok) {
             setProducts(res.item);
             setTotalPage(Math.ceil(res.item.length / itemsPerPage));
-            setIsProduct(true);
           }
         }
         // 카테고리 상품 조회
@@ -149,11 +148,12 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
           if (res.ok) {
             setProducts(res.item);
             setTotalPage(Math.ceil(res.item.length / itemsPerPage));
-            setIsProduct(true);
           }
         }
       } catch {
         console.error('상품 조회 실패');
+      } finally {
+        setIsProduct(true);
       }
     };
     fetchProducts();
@@ -162,6 +162,7 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
   // 북마크 가져오기
   useEffect(() => {
     if (!user?.token?.accessToken) {
+      setIsBookmark(true);
       setLoading(false);
       return;
     }
@@ -180,11 +181,11 @@ export default function CategoryPage({ category, title, detailArray, detail, cat
           bookmarkId: v._id,
         }));
         setLikedProducts(products);
-        setIsBookmark(true);
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
+        setIsBookmark(true);
       }
     };
     fetchLiked();
